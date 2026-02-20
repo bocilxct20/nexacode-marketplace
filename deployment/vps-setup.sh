@@ -54,9 +54,21 @@ nvm use 20
 
 # --- 7. Project Setup ---
 echo "🏗️ Setting up project folder..."
-mkdir -p /var/www/$PROJECT_NAME
-# Note: You should have cloned your repo manually or via this script if repository URL is provided.
-# Assuming this script is run INSIDE the project folder or project is already there.
+
+# Get current script location to find project root
+# Jika dijalankan dari folder deployment/vps-setup.sh
+CURRENT_DIR=$(pwd)
+
+# Cek apakah kita sudah di /var/www
+if [[ "$CURRENT_DIR" != "/var/www/$PROJECT_NAME"* ]]; then
+    echo "📦 Moving project from $CURRENT_DIR to /var/www/$PROJECT_NAME..."
+    mkdir -p /var/www
+    # Pindahkan semua file ke /var/www/nexacode-marketplace
+    if [ -d "/var/www/$PROJECT_NAME" ]; then
+        rm -rf "/var/www/$PROJECT_NAME"
+    fi
+    mv "$CURRENT_DIR" "/var/www/$PROJECT_NAME"
+fi
 
 cd /var/www/$PROJECT_NAME
 
