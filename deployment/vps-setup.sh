@@ -58,6 +58,9 @@ nvm use 20
 # --- 7. Project Setup ---
 echo "🏗️ Setting up project folder..."
 
+# Fix Git dubious ownership error
+git config --global --add safe.directory /var/www/$PROJECT_NAME || true
+
 # Get current script location to find project root
 CURRENT_DIR=$(pwd)
 

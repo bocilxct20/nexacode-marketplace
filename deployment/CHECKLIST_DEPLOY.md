@@ -38,6 +38,9 @@ sudo bash deployment/vps-setup.sh
 Kalau kamu melakukan perubahan kode lagi di lokal, cara updatenya di VPS adalah:
 ```bash
 cd /var/www/nexacode-marketplace
+# Jalankan ini kalau muncul error 'dubious ownership'
+sudo git config --global --add safe.directory /var/www/nexacode-marketplace
+
 git pull origin main
 sudo bash deployment/vps-setup.sh
 ```
