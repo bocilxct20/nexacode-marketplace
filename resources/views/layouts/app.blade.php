@@ -43,6 +43,8 @@
         <!-- Flux UI -->
         @fluxAppearance
         @livewireStyles
+        @fluxScripts
+        @livewireScripts
         @stack('head')
 
         <script>
@@ -410,10 +412,9 @@
         </flux:main>
 
         <flux:toast />
-        @livewireScripts
+
         <livewire:chat-widget />
         <livewire:help.help-widget />
-        
         {{-- Elite Help Center: Proactive Engine --}}
         <div x-data="{
             rules: [
@@ -443,7 +444,6 @@
         }"></div>
 
         <livewire:global.lightbox />
-        @fluxScripts
 
         <script>
             document.addEventListener('livewire:init', () => {

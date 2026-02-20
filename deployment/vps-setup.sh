@@ -152,14 +152,6 @@ CACHE_STORE=array SESSION_DRIVER=array php artisan migrate --force
 CACHE_STORE=array SESSION_DRIVER=array php artisan db:seed --class=AdminSeeder --force
 php artisan storage:link --force
 
-# Now safe to initialize Flux and clear caches with the real configuration
-echo "💎 Initializing Flux UI..."
-php artisan cache:clear
-php artisan flux:publish --all --no-interaction || echo "⚠️ Flux publish failed or skipped"
-php artisan view:clear
-php artisan route:clear
-php artisan config:cache
-
 # Flux Pro Asset Fix
 echo "💎 Checking Flux Pro assets..."
 if [ -d "vendor/livewire/flux-pro" ]; then
@@ -176,7 +168,30 @@ if [ -d "vendor/livewire/flux-pro" ]; then
     cp vendor/livewire/flux/dist/manifest.json vendor/livewire/flux-pro/dist/manifest.json
     
     chown -R www-data:www-data vendor/livewire/flux-pro/dist
+    
+    # Also fix the already published assets in public (if any)
+    if [ -d "public/vendor/flux" ]; then
+        echo "💎 Updating already published Flux assets in public/..."
+        cp vendor/livewire/flux/dist/flux-lite.min.js public/vendor/flux/flux.min.js
+        cp vendor/livewire/flux/dist/flux-lite.min.js public/vendor/flux/flux.js
+        cp vendor/livewire/flux/dist/flux.css public/vendor/flux/flux.css
+        chown -R www-data:www-data public/vendor/flux
+    fi
 fi
+
+# Now safe to initialize Flux and clear caches with the real configuration
+echo "💎 Initializing Flux UI..."
+php artisan cache:clear
+php artisan flux:publish --all --no-interaction || echo "⚠️ Flux publish failed or skipped"
+php artisan view:clear
+php artisan route:clear
+php artisan config:cache
+
+# Permissions
+echo "🔐 Setting permissions..."
+chown -R www-data:www-data /var/www/$PROJECT_NAME
+chmod -R 775 /var/www/$PROJECT_NAME/storage
+chmod -R 775 /var/www/$PROJECT_NAME/bootstrap/cache
 
 # Install JS Deps & Build
 echo "📦 Installing JS dependencies and building assets..."
