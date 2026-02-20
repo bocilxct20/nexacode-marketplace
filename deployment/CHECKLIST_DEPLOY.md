@@ -34,21 +34,31 @@ cd nexacode-marketplace
 sudo bash deployment/vps-setup.sh
 ```
 
-## 3. Update Project (Jika sudah pernah install)
-Kalau kamu melakukan perubahan kode lagi di lokal, cara updatenya di VPS adalah:
+## 3. Update Project (Cara Sinkronkan Perubahan)
+Kalau kamu melakukan update kode lagi di lokal, ikuti langkah ini:
+
+### A. Di Komputer Lokal
+```bash
+git add .
+git commit -m "Update project: Deskripsi perubahan kamu"
+git push origin main
+```
+
+### B. Di VPS (Terminal SSH)
+Masuk ke folder project, tarik perubahan, lalu jalankan script setup:
 ```bash
 cd /var/www/nexacode-marketplace
-# Jalankan ini kalau muncul error 'Permission denied' atau 'dubious ownership'
-sudo chown -R $(whoami):$(whoami) /var/www/nexacode-marketplace
-git config --global --add safe.directory /var/www/nexacode-marketplace
 
+# Tarik update dari GitHub
 git pull origin main
+
+# Jalankan ulang setup (Otomatis urus composer, npm build, migration, & fix Flux)
 sudo bash deployment/vps-setup.sh
 ```
 
 ## 4. Tips Tambahan
-- **Folder `packages/`**: Jangan hapus folder ini! Folder ini berisi file `.zip` Flux Pro yang dibutuhkan saat instalasi.
-- **Database**: Password database dibuat secara acak oleh script dan disimpan di file `.env`.
-- **SSL/HTTPS**: Script otomatis menjalankan Certbot untuk mengaktifkan HTTPS.
+- **Idempoten**: Script `vps-setup.sh` bersifat aman untuk dijalankan berkali-kali. Ia hanya akan menginstall yang kurang atau melakukan build ulang asset yang berubah.
+- **Database**: Password database TIDAK akan berubah walaupun script dijalankan ulang (sudah diamankan di `.env`).
+- **Flux Fix**: Script akan otomatis memperbaiki folder `dist` Flux Pro setiap kali dijalankan.
 
-**Website sekarang sudah Online dengan standar Production! 🚀**
+**Website sekarang sudah Update dengan standar Production! 🚀**

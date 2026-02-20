@@ -138,6 +138,14 @@ php artisan view:clear
 php artisan route:clear
 php artisan config:cache
 
+# Flux Pro Asset Fix
+echo "💎 Checking Flux Pro assets..."
+if [ -d "vendor/livewire/flux-pro" ] && [ ! -d "vendor/livewire/flux-pro/dist" ]; then
+    echo "💎 Fixing missing Flux Pro assets by copying from Flux..."
+    cp -r vendor/livewire/flux/dist vendor/livewire/flux-pro/
+    chown -R www-data:www-data vendor/livewire/flux-pro/dist
+fi
+
 # Install JS Deps & Build
 echo "📦 Installing JS dependencies and building assets..."
 npm install
