@@ -115,6 +115,16 @@ composer install --no-dev --optimize-autoloader
 
 # Clear config cache before migrate to ensure new .env is loaded
 php artisan config:clear
+php artisan cache:clear
+
+# Publish Flux Pro views and assets
+# Kita coba publish jika provider-nya sudah terdeteksi
+php artisan vendor:publish --tag=flux-assets --force || echo "⚠️  Flux assets skip"
+php artisan vendor:publish --tag=flux-views --force || echo "⚠️  Flux views skip"
+
+# Final cache clear
+php artisan view:clear
+php artisan route:clear
 
 # Install JS Deps & Build
 npm install
