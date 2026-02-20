@@ -89,6 +89,8 @@ if [ ! -f .env ]; then
 fi
 
 # Install PHP Deps
+# Kita pakai update khusus untuk flux-pro agar lock file sinkron dengan zip di folder packages
+composer update livewire/flux-pro --no-interaction --no-dev
 composer install --no-dev --optimize-autoloader
 
 # Install JS Deps & Build
