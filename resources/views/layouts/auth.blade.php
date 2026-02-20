@@ -28,6 +28,24 @@
             display: none;
         }
     </style>
+
+    <script>
+        // === Flux Polyfills ===
+        window.Flux = window.Flux || {};
+        window.Flux.toast = function (data) {
+            const toastData = {
+                variant: data[0]?.variant || data.variant || 'success',
+                heading: data[0]?.heading || data.heading || '',
+                text: data[0]?.text || data.text || (typeof data === 'string' ? data : '')
+            };
+            window.dispatchEvent(new CustomEvent('toast-show', { detail: toastData }));
+        };
+        window.fluxModal = window.fluxModal || function(name, ...args) {
+            document.addEventListener('alpine:initialized', () => {
+                if (window.fluxModal) window.fluxModal(name, ...args);
+            }, { once: true });
+        };
+    </script>
 </head>
 <body class="h-full antialiased font-sans text-zinc-900 dark:text-zinc-100 bg-white dark:bg-zinc-950">
     {{ $slot }}

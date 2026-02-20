@@ -28,15 +28,20 @@
         @stack('head')
 
         <script>
-            // Global Flux Toast Wrapper (Polyfill for Flux.toast is not a function)
+            // === Flux Polyfills ===
             window.Flux = window.Flux || {};
             window.Flux.toast = function (data) {
                 const toastData = {
-                    variant: data.variant || 'success',
-                    heading: data.heading || (data.variant === 'error' || data.variant === 'danger' ? 'Error' : 'Success'),
-                    text: data.text || data
+                    variant: data[0]?.variant || data.variant || 'success',
+                    heading: data[0]?.heading || data.heading || '',
+                    text: data[0]?.text || data.text || (typeof data === 'string' ? data : '')
                 };
-                window.dispatchEvent(new CustomEvent('flux-toast', { detail: toastData }));
+                window.dispatchEvent(new CustomEvent('toast-show', { detail: toastData }));
+            };
+            window.fluxModal = window.fluxModal || function(name, ...args) {
+                document.addEventListener('alpine:initialized', () => {
+                    if (window.fluxModal) window.fluxModal(name, ...args);
+                }, { once: true });
             };
         </script>
     </head>
@@ -188,9 +193,8 @@
 
 
         <flux:toast />
-        @livewireScripts
-        {{-- <livewire:chat-widget /> --}}
         @fluxScripts
+        @livewireScripts
 
         <script>
             document.addEventListener('livewire:init', () => {
