@@ -115,23 +115,22 @@ export COMPOSER_MEMORY_LIMIT=-1
 composer require livewire/flux-pro:2.11.1 livewire/flux:2.11.1 -W --no-interaction --no-scripts
 composer install --no-dev --optimize-autoloader --no-interaction
 
-# Clear config cache before migrate to ensure new .env is loaded
-echo "🧼 Cleaning configuration..."
-php artisan config:clear
-
-# Artisan commands
-echo "🛠️  Running Artisan commands (Migrations & Seeding)..."
-php artisan key:generate --force
-php artisan migrate --force
-php artisan db:seed --class=AdminSeeder --force
+# Clear config cache and run migrations
+# We use CACHE_STORE=array and SESSION_DRIVER=array to avoid database dependency before tables exist
+echo "🧼 Cleaning configuration and running migrations..."
+CACHE_STORE=array SESSION_DRIVER=array php artisan config:clear
+CACHE_STORE=array SESSION_DRIVER=array php artisan key:generate --force
+CACHE_STORE=array SESSION_DRIVER=array php artisan migrate --force
+CACHE_STORE=array SESSION_DRIVER=array php artisan db:seed --class=AdminSeeder --force
 php artisan storage:link --force
 
-# Now safe to clear other caches and initialize Flux
-echo "💎 Initializing Flux UI and clearing caches..."
+# Now safe to initialize Flux and clear caches with the real configuration
+echo "💎 Initializing Flux UI..."
 php artisan cache:clear
 php artisan flux:publish --all --no-interaction || echo "⚠️ Flux publish failed or skipped"
 php artisan view:clear
 php artisan route:clear
+php artisan config:cache
 
 # Install JS Deps & Build
 echo "📦 Installing JS dependencies and building assets..."
