@@ -117,8 +117,8 @@ chmod +x setup-scheduler.sh
 
 # --- 11. SSL (Certbot) ---
 echo "SSL Setup..."
-# apt install -y python3-certbot-nginx
-# certbot --nginx -d $DOMAIN --non-interactive --agree-tos -m $EMAIL
+apt install -y python3-certbot-nginx
+certbot --nginx -d nexacode.id --non-interactive --agree-tos -m admin@nexacode.id
 
 echo "✅ ALL DONE! Your website is ready at https://$DOMAIN"
 echo "Admin Login: $EMAIL / Password123 (Please change after login!)"
