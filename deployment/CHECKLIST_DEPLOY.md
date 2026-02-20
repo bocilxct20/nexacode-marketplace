@@ -1,67 +1,48 @@
-# Production Deployment Checklist 🚀
+# Production Deployment Guide (Automated) 🚀
 
-Gunakan panduan ini saat kamu melakukan SSH ke VPS.
+Ikuti langkah-langkah ini untuk memindahkan perubahan dari **Lokal** ke **VPS Baru** menggunakan script otomatis.
 
-## 1. Persiapan Server (Ubuntu 22.04+)
-- [ ] Update OS: `sudo apt update && sudo apt upgrade -y`
-- [ ] Install PHP 8.2 & Extensions: `php-fpm, php-mysql, php-xml, php-curl, php-mbstring, php-zip, php-intl`.
-- [ ] Install Nginx & MySQL/MariaDB.
-- [ ] Install Composer & Node.js (via NVM).
+## 1. Persiapan di Komputer Lokal (Lokal)
+Pastikan semua perubahan sudah tersimpan dan didorong ke GitHub.
+```bash
+# Tambahkan semua file yang berubah
+git add .
 
-## 2. Clone Project
+# Buat catatan perubahan
+git commit -m "Fix: Upgrade Flux Pro v2.11.1 and Update VPS Auto-Installer"
+
+# Kirim ke GitHub
+git push origin main
+```
+
+## 2. Persiapan di VPS Baru (Fresh VPS)
+Gunakan SSH untuk masuk ke VPS kamu, lalu jalankan perintah ini:
+
+### A. Clone Project
 ```bash
 cd /var/www
+# Ganti repository_url dengan URL GitHub kamu
 git clone <repository_url> nexacode-marketplace
 cd nexacode-marketplace
 ```
 
-> [!IMPORTANT]
-> **Flux Pro Error Fix:** Pastikan folder `packages/` yang berisi file `.zip` Flux Pro sudah ter-upload ke root folder project di VPS. Tanpa folder ini, `composer install` akan gagal karena Flux Pro di-install dari artifact lokal.
-
-## 3. Konfigurasi Environment
+### B. Jalankan Auto-Installer
+Hanya butuh satu perintah ini untuk menginstal PHP 8.4, Nginx, MySQL, Flux Pro, dll:
 ```bash
-cp .env.example .env
-nano .env
-```
-**Atur variabel penting ini:**
-- `APP_ENV=production`
-- `APP_DEBUG=false`
-- `APP_URL=https://nexacode.id`
-- `ADMIN_EMAIL=admin@nexacode.id`
-- `ADMIN_PASSWORD=PasswordRahasiaKamu123`
-- `DB_DATABASE=marketplace_db` (Sesuaikan)
-- `REVERB_HOST=nexacode.id`
-- `REVERB_PORT=443`
-- `REVERB_SCHEME=https`
-
-## 4. Install Dependencies & Build
-```bash
-composer install --no-dev --optimize-autoloader
-npm install
-npm run build
-php artisan key:generate
-php artisan migrate --force
-php artisan db:seed --class=AdminSeeder --force
+sudo bash deployment/vps-setup.sh
 ```
 
-## 5. Setup Permissions
+## 3. Update Project (Jika sudah pernah install)
+Kalau kamu melakukan perubahan kode lagi di lokal, cara updatenya di VPS adalah:
 ```bash
-sudo chown -R www-data:www-data /var/www/nexacode-marketplace
-sudo chmod -R 775 /var/www/nexacode-marketplace/storage
-sudo chmod -R 775 /var/www/nexacode-marketplace/bootstrap/cache
+cd /var/www/nexacode-marketplace
+git pull origin main
+sudo bash deployment/vps-setup.sh
 ```
 
-## 6. Setup Services
-- [ ] **Nginx**: Salin `deployment/nginx.conf` ke `/etc/nginx/sites-available/marketplace` dan aktifkan.
-- [ ] **Supervisor**: Salin `deployment/supervisor.conf` ke `/etc/supervisor/conf.d/marketplace.conf`.
-- [ ] **Scheduler**: Jalankan `./setup-scheduler.sh`.
-- [ ] **SSL**: Jalankan `sudo certbot --nginx -d nexacode.id`.
+## 4. Tips Tambahan
+- **Folder `packages/`**: Jangan hapus folder ini! Folder ini berisi file `.zip` Flux Pro yang dibutuhkan saat instalasi.
+- **Database**: Password database dibuat secara acak oleh script dan disimpan di file `.env`.
+- **SSL/HTTPS**: Script otomatis menjalankan Certbot untuk mengaktifkan HTTPS.
 
-## 7. Final Check
-```bash
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
-```
-
-**Website sekarang sudah Online! 🚀**
+**Website sekarang sudah Online dengan standar Production! 🚀**

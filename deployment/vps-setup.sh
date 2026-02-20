@@ -59,18 +59,19 @@ nvm use 20
 echo "🏗️ Setting up project folder..."
 
 # Get current script location to find project root
-# Jika dijalankan dari folder deployment/vps-setup.sh
 CURRENT_DIR=$(pwd)
 
 # Cek apakah kita sudah di /var/www
 if [[ "$CURRENT_DIR" != "/var/www/$PROJECT_NAME"* ]]; then
     echo "📦 Moving project from $CURRENT_DIR to /var/www/$PROJECT_NAME..."
     mkdir -p /var/www
-    # Pindahkan semua file ke /var/www/nexacode-marketplace
     if [ -d "/var/www/$PROJECT_NAME" ]; then
-        rm -rf "/var/www/$PROJECT_NAME"
+        echo "⚠️ Target directory /var/www/$PROJECT_NAME already exists. Updating files..."
+        # Copy instead of move if target exists to avoid losing data or permission issues
+        cp -R "$CURRENT_DIR/." "/var/www/$PROJECT_NAME/"
+    else
+        mv "$CURRENT_DIR" "/var/www/$PROJECT_NAME"
     fi
-    mv "$CURRENT_DIR" "/var/www/$PROJECT_NAME"
 fi
 
 cd /var/www/$PROJECT_NAME
@@ -107,36 +108,38 @@ set_env "ADMIN_EMAIL" "$EMAIL"
 set_env "ADMIN_PASSWORD" "Password123"
 
 # Install PHP Deps
-# Kita pakai update khusus untuk flux-pro agar lock file sinkron dengan zip di folder packages
-# Kita tambahkan livewire/livewire -W agar versinya turun ke v3 sesuai mau-nya Flux Pro 2.2.5
+echo "🎼 Installing PHP dependencies..."
 export COMPOSER_ALLOW_SUPERUSER=1
-composer update livewire/flux-pro livewire/livewire -W --no-interaction --no-dev
-composer install --no-dev --optimize-autoloader
+export COMPOSER_MEMORY_LIMIT=-1
+# Sync Flux Pro artifact and update dependencies
+composer require livewire/flux-pro:2.11.1 livewire/flux:2.11.1 -W --no-interaction --no-scripts
+composer install --no-dev --optimize-autoloader --no-interaction
 
 # Clear config cache before migrate to ensure new .env is loaded
 php artisan config:clear
 php artisan cache:clear
 
-# Publish Flux Pro views and assets
-# Kita coba publish jika provider-nya sudah terdeteksi
-php artisan vendor:publish --tag=flux-assets --force || echo "⚠️  Flux assets skip"
-php artisan vendor:publish --tag=flux-views --force || echo "⚠️  Flux views skip"
+# Publish Flux Pro views and assets (v2.11 standard)
+echo "💎 Initializing Flux UI..."
+php artisan flux:publish --all --no-interaction || echo "⚠️ Flux publish failed or skipped"
 
 # Final cache clear
 php artisan view:clear
 php artisan route:clear
 
 # Install JS Deps & Build
+echo "📦 Installing JS dependencies and building assets..."
 npm install
 npm run build
 
 # Artisan commands
-php artisan key:generate
+php artisan key:generate --force
 php artisan migrate --force
 php artisan db:seed --class=AdminSeeder --force
-php artisan storage:link
+php artisan storage:link --force
 
 # Permissions
+echo "🔐 Setting permissions..."
 chown -R www-data:www-data /var/www/$PROJECT_NAME
 chmod -R 775 /var/www/$PROJECT_NAME/storage
 chmod -R 775 /var/www/$PROJECT_NAME/bootstrap/cache
@@ -144,29 +147,33 @@ chmod -R 775 /var/www/$PROJECT_NAME/bootstrap/cache
 # --- 8. Configure Nginx ---
 echo "🌐 Configuring Nginx..."
 cp deployment/nginx.conf /etc/nginx/sites-available/$PROJECT_NAME
-sed -i "s/your-domain.com/$DOMAIN/g" /etc/nginx/sites-available/$PROJECT_NAME
-sed -i "s|/var/www/marketplace|/var/www/$PROJECT_NAME|g" /etc/nginx/sites-available/$PROJECT_NAME
+# Use | as delimiter to avoid path slash conflicts
+sed -i "s|server_name .*|server_name $DOMAIN;|g" /etc/nginx/sites-available/$PROJECT_NAME
+sed -i "s|root .*|root /var/www/$PROJECT_NAME/public;|g" /etc/nginx/sites-available/$PROJECT_NAME
 ln -sf /etc/nginx/sites-available/$PROJECT_NAME /etc/nginx/sites-enabled/
 rm -f /etc/nginx/sites-enabled/default
 nginx -t && systemctl restart nginx
 
 # --- 9. Configure Supervisor ---
 echo "👷 Configuring Supervisor..."
+mkdir -p /var/www/$PROJECT_NAME/storage/logs
 cp deployment/supervisor.conf /etc/supervisor/conf.d/$PROJECT_NAME.conf
-# Fix path in supervisor if necessary
-sed -i "s|/var/www/marketplace|/var/www/$PROJECT_NAME|g" /etc/supervisor/conf.d/$PROJECT_NAME.conf
+# Fix paths in supervisor
+sed -i "s|/var/www/nexacode-marketplace|/var/www/$PROJECT_NAME|g" /etc/supervisor/conf.d/$PROJECT_NAME.conf
 supervisorctl reread
 supervisorctl update
-supervisorctl start all
+supervisorctl restart all
 
 # --- 10. Setup Scheduler ---
-chmod +x setup-scheduler.sh
-./setup-scheduler.sh
+if [ -f "setup-scheduler.sh" ]; then
+    chmod +x setup-scheduler.sh
+    ./setup-scheduler.sh --force
+fi
 
 # --- 11. SSL (Certbot) ---
-echo "SSL Setup..."
+echo "🔒 Setting up SSL with Certbot..."
 apt install -y python3-certbot-nginx
-certbot --nginx -d nexacode.id --non-interactive --agree-tos -m admin@nexacode.id
+certbot --nginx -d $DOMAIN --non-interactive --agree-tos -m $EMAIL
 
 echo "✅ ALL DONE! Your website is ready at https://$DOMAIN"
 echo "Admin Login: $EMAIL / Password123 (Please change after login!)"

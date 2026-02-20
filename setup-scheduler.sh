@@ -40,14 +40,18 @@ echo ""
 if crontab -l 2>/dev/null | grep -q "artisan schedule:run"; then
     echo "⚠️  Cron entry already exists!"
     echo ""
-    echo "Current crontab:"
-    crontab -l | grep "artisan schedule:run"
-    echo ""
-    read -p "Do you want to replace it? (y/n): " -n 1 -r
-    echo ""
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-        echo "Setup cancelled."
-        exit 0
+    if [[ "$1" == "--force" ]]; then
+        echo "Forcing replacement..."
+    else
+        echo "Current crontab:"
+        crontab -l | grep "artisan schedule:run"
+        echo ""
+        read -p "Do you want to replace it? (y/n): " -n 1 -r
+        echo ""
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            echo "Setup cancelled."
+            exit 0
+        fi
     fi
     # Remove old entry
     crontab -l | grep -v "artisan schedule:run" | crontab -
