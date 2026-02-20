@@ -159,7 +159,7 @@ if [ -d "vendor/livewire/flux-pro" ]; then
     mkdir -p vendor/livewire/flux-pro/dist
     
     # We copy flux-lite.min.js to both flux.min.js and flux.js 
-    # Because flux-lite.min.js is the one that actually contains components like fluxModal
+    # This ensures components like fluxModal are available in both debug and production modes
     cp vendor/livewire/flux/dist/flux-lite.min.js vendor/livewire/flux-pro/dist/flux.min.js
     cp vendor/livewire/flux/dist/flux-lite.min.js vendor/livewire/flux-pro/dist/flux.js
     
@@ -167,16 +167,21 @@ if [ -d "vendor/livewire/flux-pro" ]; then
     cp vendor/livewire/flux/dist/flux.css vendor/livewire/flux-pro/dist/flux.css
     cp vendor/livewire/flux/dist/manifest.json vendor/livewire/flux-pro/dist/manifest.json
     
-    chown -R www-data:www-data vendor/livewire/flux-pro/dist
-    
-    # Also fix the already published assets in public (if any)
-    if [ -d "public/vendor/flux" ]; then
-        echo "💎 Updating already published Flux assets in public/..."
-        cp vendor/livewire/flux/dist/flux-lite.min.js public/vendor/flux/flux.min.js
-        cp vendor/livewire/flux/dist/flux-lite.min.js public/vendor/flux/flux.js
-        cp vendor/livewire/flux/dist/flux.css public/vendor/flux/flux.css
-        chown -R www-data:www-data public/vendor/flux
-    fi
+    chown -R www-data:www-data vendor/livewire/flux-pro/dist || true
+fi
+
+# Force publish Flux assets to public directory
+echo "📤 Publishing Flux assets..."
+php artisan flux:publish --all --no-interaction || echo "⚠️ Flux publish failed"
+
+# Double check public directory and fix if necessary (in case publish didn't include our patched files)
+if [ -d "public/vendor/flux" ]; then
+    echo "💎 Ensuring public Flux assets are patched..."
+    cp vendor/livewire/flux/dist/flux-lite.min.js public/vendor/flux/flux.min.js
+    cp vendor/livewire/flux/dist/flux-lite.min.js public/vendor/flux/flux.js
+    cp vendor/livewire/flux/dist/flux.css public/vendor/flux/flux.css
+    cp vendor/livewire/flux/dist/manifest.json public/vendor/flux/manifest.json
+    chown -R www-data:www-data public/vendor/flux || true
 fi
 
 # Now safe to initialize Flux and clear caches with the real configuration
