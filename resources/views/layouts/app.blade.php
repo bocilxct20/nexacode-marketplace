@@ -46,15 +46,25 @@
         @stack('head')
 
         <script>
-            // Global Flux Toast Wrapper (Polyfill for Flux.toast is not a function)
+            // === Flux Polyfills ===
+            // Toast: dispatches 'toast-show' for our custom Alpine toast component
             window.Flux = window.Flux || {};
             window.Flux.toast = function (data) {
                 const toastData = {
-                    variant: data.variant || 'success',
-                    heading: data.heading || (data.variant === 'error' || data.variant === 'danger' ? 'Error' : 'Success'),
-                    text: data.text || data
+                    variant: data[0]?.variant || data.variant || 'success',
+                    heading: data[0]?.heading || data.heading || '',
+                    text: data[0]?.text || data.text || (typeof data === 'string' ? data : '')
                 };
-                window.dispatchEvent(new CustomEvent('flux-toast', { detail: toastData }));
+                window.dispatchEvent(new CustomEvent('toast-show', { detail: toastData }));
+            };
+
+            // fluxModal: safety-net polyfill
+            // The real implementation is registered by flux.js (mountain.fluxModal via Alpine magic)
+            // This prevents "is not defined" errors if Alpine evaluates the expression before flux.js runs
+            window.fluxModal = window.fluxModal || function(name, ...args) {
+                document.addEventListener('alpine:initialized', () => {
+                    if (window.fluxModal) window.fluxModal(name, ...args);
+                }, { once: true });
             };
         </script>
     </head>
