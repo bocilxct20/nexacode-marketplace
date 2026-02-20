@@ -72,21 +72,36 @@ fi
 
 cd /var/www/$PROJECT_NAME
 
+# Function to safely set .env variables
+set_env() {
+    local key=$1
+    local value=$2
+    if grep -q "^$key=" .env; then
+        sed -i "s|^$key=.*|$key=$value|" .env
+    elif grep -q "^# $key=" .env; then
+        sed -i "s|^# $key=.*|$key=$value|" .env
+    else
+        echo "$key=$value" >> .env
+    fi
+}
+
 # Setup .env
 if [ ! -f .env ]; then
     cp .env.example .env
-    sed -i "s/APP_ENV=local/APP_ENV=production/" .env
-    sed -i "s/APP_DEBUG=true/APP_DEBUG=false/" .env
-    sed -i "s|APP_URL=http://localhost|APP_URL=https://$DOMAIN|" .env
-    sed -i "s/DB_CONNECTION=sqlite/DB_CONNECTION=mysql/" .env
-    sed -i "s/DB_DATABASE=.*/DB_DATABASE=$DB_NAME/" .env
-    sed -i "s/DB_USERNAME=.*/DB_USERNAME=$DB_USER/" .env
-    sed -i "s/DB_PASSWORD=.*/DB_PASSWORD=$DB_PASS/" .env
-    # Add Admin Credentials for Seeder
-    echo "" >> .env
-    echo "ADMIN_EMAIL=$EMAIL" >> .env
-    echo "ADMIN_PASSWORD=Password123" >> .env
 fi
+
+echo "📝 Configuring .env..."
+set_env "APP_ENV" "production"
+set_env "APP_DEBUG" "false"
+set_env "APP_URL" "https://$DOMAIN"
+set_env "DB_CONNECTION" "mysql"
+set_env "DB_HOST" "127.0.0.1"
+set_env "DB_PORT" "3306"
+set_env "DB_DATABASE" "$DB_NAME"
+set_env "DB_USERNAME" "$DB_USER"
+set_env "DB_PASSWORD" "$DB_PASS"
+set_env "ADMIN_EMAIL" "$EMAIL"
+set_env "ADMIN_PASSWORD" "Password123"
 
 # Install PHP Deps
 # Kita pakai update khusus untuk flux-pro agar lock file sinkron dengan zip di folder packages
@@ -94,6 +109,9 @@ fi
 export COMPOSER_ALLOW_SUPERUSER=1
 composer update livewire/flux-pro livewire/livewire -W --no-interaction --no-dev
 composer install --no-dev --optimize-autoloader
+
+# Clear config cache before migrate to ensure new .env is loaded
+php artisan config:clear
 
 # Install JS Deps & Build
 npm install
