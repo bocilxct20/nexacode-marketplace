@@ -162,14 +162,18 @@ php artisan config:cache
 
 # Flux Pro Asset Fix
 echo "💎 Checking Flux Pro assets..."
-if [ -d "vendor/livewire/flux-pro" ] && [ ! -d "vendor/livewire/flux-pro/dist" ]; then
+if [ -d "vendor/livewire/flux-pro" ]; then
     echo "💎 Fixing missing Flux Pro assets by copying from Flux..."
-    cp -r vendor/livewire/flux/dist vendor/livewire/flux-pro/
+    mkdir -p vendor/livewire/flux-pro/dist
     
-    # Ensure flux.js exists even if source is minified (to prevent error when APP_DEBUG=true)
-    if [ ! -f "vendor/livewire/flux-pro/dist/flux.js" ] && [ -f "vendor/livewire/flux-pro/dist/flux.min.js" ]; then
-        cp vendor/livewire/flux-pro/dist/flux.min.js vendor/livewire/flux-pro/dist/flux.js
-    fi
+    # We copy flux-lite.min.js to both flux.min.js and flux.js 
+    # Because flux-lite.min.js is the one that actually contains components like fluxModal
+    cp vendor/livewire/flux/dist/flux-lite.min.js vendor/livewire/flux-pro/dist/flux.min.js
+    cp vendor/livewire/flux/dist/flux-lite.min.js vendor/livewire/flux-pro/dist/flux.js
+    
+    # Also copy the CSS and manifest from flux
+    cp vendor/livewire/flux/dist/flux.css vendor/livewire/flux-pro/dist/flux.css
+    cp vendor/livewire/flux/dist/manifest.json vendor/livewire/flux-pro/dist/manifest.json
     
     chown -R www-data:www-data vendor/livewire/flux-pro/dist
 fi
