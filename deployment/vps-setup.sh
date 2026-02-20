@@ -58,8 +58,11 @@ nvm use 20
 # --- 7. Project Setup ---
 echo "🏗️ Setting up project folder..."
 
-# Fix Git dubious ownership error
-git config --global --add safe.directory /var/www/$PROJECT_NAME || true
+# Fix Git dubious ownership error for all users
+git config --system --add safe.directory /var/www/$PROJECT_NAME || true
+
+# Ensure current user owns the folder to avoid 'Permission denied' in .git
+sudo chown -R $(whoami):$(whoami) /var/www/$PROJECT_NAME || true
 
 # Get current script location to find project root
 CURRENT_DIR=$(pwd)
