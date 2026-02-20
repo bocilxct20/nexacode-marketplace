@@ -45,9 +45,13 @@ git push origin main
 ```
 
 ### B. Di VPS (Terminal SSH)
-Masuk ke folder project, tarik perubahan, lalu jalankan script setup:
+Masuk ke folder project, ambil alih kepemilikan file, lalu jalankan script setup:
 ```bash
 cd /var/www/nexacode-marketplace
+
+# Pastikan user kamu bisa akses folder Git
+sudo chown -R $USER:$USER /var/www/nexacode-marketplace
+git config --global --add safe.directory /var/www/nexacode-marketplace
 
 # Tarik update dari GitHub
 git pull origin main

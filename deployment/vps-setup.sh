@@ -112,6 +112,28 @@ set_env "DB_USERNAME" "$DB_USER"
 set_env "DB_PASSWORD" "$DB_PASS"
 set_env "ADMIN_EMAIL" "$EMAIL"
 set_env "ADMIN_PASSWORD" "Password123"
+set_env "DOMAIN" "$DOMAIN"
+
+# Generate Reverb Keys if not already present
+if ! grep -q "^REVERB_APP_ID=" .env; then
+    echo "🔑 Generating Reverb keys..."
+    REVERB_APP_ID=$(LC_ALL=C tr -dc '0-9' < /dev/urandom | head -c10)
+    REVERB_APP_KEY=$(LC_ALL=C tr -dc 'a-z0-9' < /dev/urandom | head -c20)
+    REVERB_APP_SECRET=$(LC_ALL=C tr -dc 'a-z0-9' < /dev/urandom | head -c20)
+    
+    set_env "REVERB_APP_ID" "$REVERB_APP_ID"
+    set_env "REVERB_APP_KEY" "$REVERB_APP_KEY"
+    set_env "REVERB_APP_SECRET" "$REVERB_APP_SECRET"
+    set_env "REVERB_HOST" "0.0.0.0"
+    set_env "REVERB_PORT" "8080"
+    set_env "REVERB_SCHEME" "https"
+    
+    # Frontend variables for Vite
+    set_env "VITE_REVERB_APP_KEY" "$REVERB_APP_KEY"
+    set_env "VITE_REVERB_HOST" "$DOMAIN"
+    set_env "VITE_REVERB_PORT" "443"
+    set_env "VITE_REVERB_SCHEME" "https"
+fi
 
 # Install PHP Deps
 echo "🎼 Installing PHP dependencies..."
@@ -143,6 +165,12 @@ echo "💎 Checking Flux Pro assets..."
 if [ -d "vendor/livewire/flux-pro" ] && [ ! -d "vendor/livewire/flux-pro/dist" ]; then
     echo "💎 Fixing missing Flux Pro assets by copying from Flux..."
     cp -r vendor/livewire/flux/dist vendor/livewire/flux-pro/
+    
+    # Ensure flux.js exists even if source is minified (to prevent error when APP_DEBUG=true)
+    if [ ! -f "vendor/livewire/flux-pro/dist/flux.js" ] && [ -f "vendor/livewire/flux-pro/dist/flux.min.js" ]; then
+        cp vendor/livewire/flux-pro/dist/flux.min.js vendor/livewire/flux-pro/dist/flux.js
+    fi
+    
     chown -R www-data:www-data vendor/livewire/flux-pro/dist
 fi
 

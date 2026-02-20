@@ -60,7 +60,7 @@ return [
     |--------------------------------------------------------------------------
     */
     'headers' => [
-        'csp' => "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://app.sandbox.midtrans.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.bunny.net; font-src 'self' data: https://fonts.bunny.net; img-src 'self' data: https:; media-src 'self' https://assets.mixkit.co; connect-src 'self' https://cdn.jsdelivr.net https://app.sandbox.midtrans.com ws://localhost:8081 wss://localhost:8081;",
+        'csp' => "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://app.sandbox.midtrans.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.bunny.net; font-src 'self' data: https://fonts.bunny.net; img-src 'self' data: https:; media-src 'self' https://assets.mixkit.co; connect-src 'self' https://cdn.jsdelivr.net https://app.sandbox.midtrans.com https://static.cloudflareinsights.com ws://localhost:8081 wss://localhost:8081 wss://" . env('DOMAIN', 'nexacode.id') . ";",
         'hsts' => 'max-age=31536000; includeSubDomains',
         'x_frame_options' => 'SAMEORIGIN',
         'x_content_type_options' => 'nosniff',
