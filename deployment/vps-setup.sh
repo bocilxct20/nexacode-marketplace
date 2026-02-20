@@ -135,6 +135,7 @@ chmod -R 775 /var/www/$PROJECT_NAME/bootstrap/cache
 echo "🌐 Configuring Nginx..."
 cp deployment/nginx.conf /etc/nginx/sites-available/$PROJECT_NAME
 sed -i "s/your-domain.com/$DOMAIN/g" /etc/nginx/sites-available/$PROJECT_NAME
+sed -i "s|/var/www/marketplace|/var/www/$PROJECT_NAME|g" /etc/nginx/sites-available/$PROJECT_NAME
 ln -sf /etc/nginx/sites-available/$PROJECT_NAME /etc/nginx/sites-enabled/
 rm -f /etc/nginx/sites-enabled/default
 nginx -t && systemctl restart nginx
