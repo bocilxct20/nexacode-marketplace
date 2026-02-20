@@ -18,7 +18,7 @@
         "laravel/socialite": "^5.24",
         "laravel/tinker": "^2.10.1",
         "league/commonmark": "^2.8",
-        "livewire/flux-pro": "2.11.1",
+        "livewire/flux-pro": "2.2.5",
         "mallardduck/blade-lucide-icons": "^1.26",
         "midtrans/midtrans-php": "^2.6",
         "pragmarx/google2fa": "^8.0",
