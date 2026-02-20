@@ -12,6 +12,8 @@ use App\Models\Role;
 use App\Models\SupportTicket;
 use App\Models\SupportReply;
 use App\Models\User;
+use App\Enums\OrderStatus;
+use App\Enums\EarningStatus;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
@@ -121,7 +123,7 @@ class MarketplaceSeeder extends Seeder
                 $order = new Order([
                     'buyer_id' => $buyer->id,
                     'total_amount' => $product->price,
-                    'status' => Order::STATUS_COMPLETED,
+                    'status' => OrderStatus::COMPLETED,
                 ]);
                 $order->save();
 
@@ -137,7 +139,7 @@ class MarketplaceSeeder extends Seeder
                     'product_id' => $product->id,
                     'order_id' => $order->id,
                     'amount' => $product->price * 0.8,
-                    'status' => 'pending',
+                    'status' => EarningStatus::PENDING,
                 ]);
 
                 // Create a support ticket for half the orders

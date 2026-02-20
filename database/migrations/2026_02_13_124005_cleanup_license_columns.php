@@ -12,12 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->renameColumn('regular_price', 'price');
-            $table->dropColumn('extended_price');
+            if (Schema::hasColumn('products', 'regular_price')) {
+                $table->renameColumn('regular_price', 'price');
+            }
+            if (Schema::hasColumn('products', 'extended_price')) {
+                $table->dropColumn('extended_price');
+            }
         });
 
         Schema::table('order_items', function (Blueprint $table) {
-            $table->dropColumn('license_type');
+            if (Schema::hasColumn('order_items', 'license_type')) {
+                $table->dropColumn('license_type');
+            }
         });
     }
 
@@ -27,12 +33,18 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->renameColumn('price', 'regular_price');
-            $table->decimal('extended_price', 10, 2)->after('regular_price');
+            if (Schema::hasColumn('products', 'price')) {
+                $table->renameColumn('price', 'regular_price');
+            }
+            if (!Schema::hasColumn('products', 'extended_price')) {
+                $table->decimal('extended_price', 10, 2)->after('regular_price');
+            }
         });
 
         Schema::table('order_items', function (Blueprint $table) {
-            $table->enum('license_type', ['regular', 'extended'])->after('product_id');
+            if (!Schema::hasColumn('order_items', 'license_type')) {
+                $table->enum('license_type', ['regular', 'extended'])->after('product_id');
+            }
         });
     }
 };

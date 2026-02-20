@@ -1,5 +1,0 @@
-// 2FA Verification Route (outside auth middleware)
-Route::middleware(['auth'])->group(function () {
-    Route::get('/two-factor/verify', [App\Http\Controllers\Auth\TwoFactorController::class, 'showVerify'])->name('two-factor.verify');
-    Route::post('/two-factor/verify', [App\Http\Controllers\Auth\TwoFactorController::class, 'verify']);
-});
