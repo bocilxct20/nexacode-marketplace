@@ -20,14 +20,16 @@ Gunakan SSH untuk masuk ke VPS kamu, lalu jalankan perintah ini:
 
 ### A. Clone Project
 ```bash
-cd /var/www
-# Ganti repository_url dengan URL GitHub kamu
-git clone <repository_url> nexacode-marketplace
+# Buat folder web server jika belum ada
+sudo mkdir -p /var/www && cd /var/www
+
+# Ganti URL di bawah dengan URL Repository GitHub kamu!
+# Contoh: git clone https://github.com/UsernameKamu/nexacode.git nexacode-marketplace
+sudo git clone <URL_GitHub_Kamu> nexacode-marketplace
 cd nexacode-marketplace
 ```
 
 ### B. Jalankan Auto-Installer
-Hanya butuh satu perintah ini untuk menginstal PHP 8.4, Nginx, MySQL, Flux Pro, dll:
 ```bash
 sudo bash deployment/vps-setup.sh
 ```

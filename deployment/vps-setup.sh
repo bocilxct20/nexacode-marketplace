@@ -116,14 +116,20 @@ composer require livewire/flux-pro:2.11.1 livewire/flux:2.11.1 -W --no-interacti
 composer install --no-dev --optimize-autoloader --no-interaction
 
 # Clear config cache before migrate to ensure new .env is loaded
+echo "🧼 Cleaning configuration..."
 php artisan config:clear
+
+# Artisan commands
+echo "🛠️  Running Artisan commands (Migrations & Seeding)..."
+php artisan key:generate --force
+php artisan migrate --force
+php artisan db:seed --class=AdminSeeder --force
+php artisan storage:link --force
+
+# Now safe to clear other caches and initialize Flux
+echo "💎 Initializing Flux UI and clearing caches..."
 php artisan cache:clear
-
-# Publish Flux Pro views and assets (v2.11 standard)
-echo "💎 Initializing Flux UI..."
 php artisan flux:publish --all --no-interaction || echo "⚠️ Flux publish failed or skipped"
-
-# Final cache clear
 php artisan view:clear
 php artisan route:clear
 
@@ -131,12 +137,6 @@ php artisan route:clear
 echo "📦 Installing JS dependencies and building assets..."
 npm install
 npm run build
-
-# Artisan commands
-php artisan key:generate --force
-php artisan migrate --force
-php artisan db:seed --class=AdminSeeder --force
-php artisan storage:link --force
 
 # Permissions
 echo "🔐 Setting permissions..."
