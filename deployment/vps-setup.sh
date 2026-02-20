@@ -90,7 +90,9 @@ fi
 
 # Install PHP Deps
 # Kita pakai update khusus untuk flux-pro agar lock file sinkron dengan zip di folder packages
-composer update livewire/flux-pro --no-interaction --no-dev
+# Kita tambahkan livewire/livewire -W agar versinya turun ke v3 sesuai mau-nya Flux Pro 2.2.5
+export COMPOSER_ALLOW_SUPERUSER=1
+composer update livewire/flux-pro livewire/livewire -W --no-interaction --no-dev
 composer install --no-dev --optimize-autoloader
 
 # Install JS Deps & Build
