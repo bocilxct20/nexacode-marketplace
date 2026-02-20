@@ -13,7 +13,8 @@ DOMAIN="nexacode.id"
 EMAIL="admin@nexacode.id"
 DB_NAME="marketplace_db"
 DB_USER="nexacode_user"
-DB_PASS=$(openssl rand -base64 12)
+# Generate safe alphanumeric password to avoid shell/SQL escaping issues
+DB_PASS=$(LC_ALL=C tr -dc 'A-Za-z0-9' < /dev/urandom | head -c16)
 
 echo "------------------------------------------"
 echo "Project: $PROJECT_NAME"
@@ -36,6 +37,8 @@ apt install -y php8.4-fpm php8.4-mysql php8.4-xml php8.4-curl php8.4-mbstring ph
 echo "🗄️ Setting up database..."
 mysql -e "CREATE DATABASE IF NOT EXISTS $DB_NAME;"
 mysql -e "CREATE USER IF NOT EXISTS '$DB_USER'@'localhost' IDENTIFIED BY '$DB_PASS';"
+# Always update password in case user already exists
+mysql -e "ALTER USER '$DB_USER'@'localhost' IDENTIFIED BY '$DB_PASS';"
 mysql -e "GRANT ALL PRIVILEGES ON $DB_NAME.* TO '$DB_USER'@'localhost';"
 mysql -e "FLUSH PRIVILEGES;"
 
