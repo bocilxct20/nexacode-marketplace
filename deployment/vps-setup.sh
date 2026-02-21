@@ -107,7 +107,7 @@ fi
 
 echo "📝 Configuring .env..."
 set_env "APP_ENV" "production"
-set_env "APP_DEBUG" "false"
+set_env "APP_DEBUG" "true"
 set_env "APP_URL" "https://$DOMAIN"
 set_env "DB_CONNECTION" "mysql"
 set_env "DB_HOST" "127.0.0.1"
@@ -185,6 +185,11 @@ if [ "$HAS_PRO_ASSETS" = true ]; then
             [ "$SOURCE_DIR/$FILE" != "vendor/livewire/flux/dist/$FILE" ] && cp "$SOURCE_DIR/$FILE" "vendor/livewire/flux/dist/$FILE"
         fi
     done
+    
+    # CRITICAL: Force flux.min.js to match flux.js (Pro) so it works even if DEBUG is false later
+    echo "💎 Guaranteeing Pro parity: Mirroring flux.js -> flux.min.js..."
+    cp vendor/livewire/flux-pro/dist/flux.js vendor/livewire/flux-pro/dist/flux.min.js
+    cp vendor/livewire/flux-pro/dist/flux.js vendor/livewire/flux/dist/flux.min.js
 else
     echo "⚠️ Genuine Flux Pro assets not found in vendor. Using Lite fallback as safety-net."
     mkdir -p vendor/livewire/flux-pro/dist

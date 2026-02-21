@@ -55,7 +55,7 @@ class PaymentProofUpload extends Component
             text: 'Your payment proof has been uploaded successfully. We will verify it shortly.',
         );
 
-        return redirect()->route('payment.show', $this->order);
+        return redirect()->route('checkout.payment', $this->order);
     }
 
     public function render()

@@ -82,7 +82,7 @@ class CheckoutController extends Controller
             }
         }
 
-        return redirect()->route('payment.show', $order)->with('status', 'Order created successfully.');
+        return redirect()->route('checkout.payment', $order)->with('status', 'Order created successfully.');
     }
 
     public function payment(Order $order)

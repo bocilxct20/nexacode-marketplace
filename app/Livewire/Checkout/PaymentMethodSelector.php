@@ -47,7 +47,7 @@ class PaymentMethodSelector extends Component
             text: "Silakan selesaikan pembayaran menggunakan {$method->name}.",
         );
 
-        return redirect()->route('payment.show', $this->order);
+        return redirect()->route('checkout.payment', $this->order);
     }
 
     public function render()

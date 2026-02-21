@@ -37,7 +37,7 @@
                             <flux:badge color="amber" size="sm" class="text-[9px] font-black">{{ $unpaidOrders->count() }}</flux:badge>
                         </div>
                         @foreach($unpaidOrders as $order)
-                            <a href="{{ route('payment.show', $order) }}" class="flex items-center gap-3 p-4 hover:bg-amber-500/10 transition-colors border-b border-amber-500/10 last:border-0">
+                            <a href="{{ route('checkout.payment', $order) }}" class="flex items-center gap-3 p-4 hover:bg-amber-500/10 transition-colors border-b border-amber-500/10 last:border-0">
                                 <div class="size-9 rounded-xl bg-amber-500 flex items-center justify-center shadow-lg shadow-amber-500/20 shrink-0">
                                     <flux:icon name="credit-card" variant="solid" class="size-5 text-white" />
                                 </div>

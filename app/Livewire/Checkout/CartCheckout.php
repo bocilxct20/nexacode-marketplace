@@ -190,7 +190,7 @@ class CartCheckout extends Component
 
             Flux::toast(variant: 'success', heading: 'Order Created', text: 'Pesanan berhasil dibuat. Melanjutkan ke pembayaran...');
             
-            return redirect()->route('payment.show', $order);
+            return redirect()->route('checkout.payment', $order);
 
         } catch (\Exception $e) {
             Log::error('Checkout failed: ' . $e->getMessage());

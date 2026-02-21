@@ -15,7 +15,7 @@
                 <flux:menu.separator />
                 
                 @foreach ($unpaidOrders as $order)
-                    <flux:menu.item href="{{ route('payment.show', $order) }}" class="flex flex-col items-start gap-1 py-3 group">
+                    <flux:menu.item href="{{ route('checkout.payment', $order) }}" class="flex flex-col items-start gap-1 py-3 group">
                         <div class="flex justify-between w-full items-center">
                             <span class="font-bold text-sm text-zinc-800 dark:text-zinc-200 group-hover:text-emerald-500 transition-colors">
                                 {{ $order->type === 'subscription' ? 'Plan Upgrade' : 'Product Order' }}

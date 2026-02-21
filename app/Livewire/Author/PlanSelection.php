@@ -78,7 +78,7 @@ class PlanSelection extends Component
             \Log::error('Failed to send order confirmation email: ' . $e->getMessage());
         }
 
-        return redirect()->route('payment.show', $order);
+        return redirect()->route('checkout.payment', $order);
     }
 
     public function startTrial($planId)

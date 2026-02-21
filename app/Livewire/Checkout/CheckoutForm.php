@@ -165,7 +165,7 @@ class CheckoutForm extends Component
             text: 'Your order has been created. Processing payment...',
         );
 
-        return redirect()->route('payment.show', $order);
+        return redirect()->route('checkout.payment', $order);
     }
 
     public function render()

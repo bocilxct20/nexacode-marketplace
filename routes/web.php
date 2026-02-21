@@ -107,7 +107,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/checkout', \App\Livewire\Checkout\CartCheckout::class)->name('checkout.index');
     Route::get('/checkout/{product:slug}', [CheckoutController::class, 'checkout'])->name('checkout.show');
     Route::post('/checkout/{product:slug}', [CheckoutController::class, 'process'])->name('checkout.process');
-    Route::get('/payment/{order}', [CheckoutController::class, 'payment'])->name('payment.show');
+    Route::get('/payment/{order}', [CheckoutController::class, 'payment'])->name('checkout.payment');
     Route::get('/orders/{order}/invoice', [CheckoutController::class, 'downloadInvoice'])->name('orders.invoice');
     Route::post('/payment/{order}/confirm', [CheckoutController::class, 'confirm'])->name('payment.confirm');
     Route::post('/payment/{order}/upload-proof', [CheckoutController::class, 'uploadPaymentProof'])->name('payment.upload-proof')->middleware('throttle:5,1');
