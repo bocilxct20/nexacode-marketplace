@@ -56,6 +56,14 @@ git config --global --add safe.directory /var/www/nexacode-marketplace
 # Tarik update dari GitHub
 git pull origin main
 
+### 🛠️ Jika Muncul Error (Conflict) saat `git pull`:
+Jika muncul error "Your local changes... would be overwritten by merge", jalankan perintah ini untuk memaksa VPS mengikuti GitHub:
+```bash
+# Paksa VPS mengikuti kode terbaru dari GitHub (Menghapus perubahan lokal di VPS)
+git reset --hard origin/main
+git pull origin main
+```
+
 # Jalankan ulang setup (Otomatis urus composer, npm build, migration, & fix Flux)
 sudo bash deployment/vps-setup.sh
 ```
