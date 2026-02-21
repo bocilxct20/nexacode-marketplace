@@ -12,6 +12,7 @@
     <title>Admin Panel - {{ $platformSettings['site_name'] ?? 'NEXACODE' }}</title>
 
     @fluxAppearance
+    @fluxScripts
     @livewireStyles
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800" rel="stylesheet" />
@@ -228,7 +229,6 @@
 
     <flux:toast />
     @livewireScripts
-    @fluxScripts
     <script>
         document.addEventListener('livewire:init', () => {
             // Global Toast Listener

@@ -24,6 +24,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         
         @fluxAppearance
+        @fluxScripts
         @livewireStyles
         @stack('head')
 
@@ -177,7 +178,6 @@
 
         <flux:toast />
         @livewireScripts
-        @fluxScripts
 
         <script>
             document.addEventListener('livewire:init', () => {

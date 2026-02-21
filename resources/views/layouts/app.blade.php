@@ -42,6 +42,7 @@
         
         <!-- Flux UI -->
         @fluxAppearance
+        @fluxScripts
         @livewireStyles
         @stack('head')
 
@@ -434,7 +435,6 @@
 
         <livewire:global.lightbox />
         @livewireScripts
-        @fluxScripts
 
         <script>
             document.addEventListener('livewire:init', () => {
