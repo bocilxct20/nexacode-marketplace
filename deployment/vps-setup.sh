@@ -55,11 +55,19 @@ apt install -y nodejs
 # --- 7. Project Setup ---
 echo "🏗️ Setting up project folder..."
 
+# Identify the real user (who ran sudo)
+REAL_USER=${SUDO_USER:-$(whoami)}
+echo "👤 Project Owner: $REAL_USER"
+
+# Add the user to www-data group
+usermod -a -G www-data $REAL_USER || true
+
 # Fix Git dubious ownership error for all users
 git config --system --add safe.directory /var/www/$PROJECT_NAME || true
 
-# Ensure current user owns the folder to avoid 'Permission denied' in .git
-sudo chown -R $(whoami):$(whoami) /var/www/$PROJECT_NAME || true
+# Initial ownership fix
+sudo chown -R $REAL_USER:www-data /var/www/$PROJECT_NAME || true
+sudo chmod -R 775 /var/www/$PROJECT_NAME || true
 
 # Get current script location to find project root
 CURRENT_DIR=$(pwd)
@@ -180,7 +188,7 @@ else
     cp vendor/livewire/flux/dist/manifest.json vendor/livewire/flux-pro/dist/manifest.json
 fi
 
-chown -R www-data:www-data vendor/livewire/flux-pro/dist || true
+chown -R $REAL_USER:www-data vendor/livewire/flux-pro/dist || true
 
 # Now safe to initialize Flux and clear caches with the real configuration
 echo "💎 Initializing Flux UI..."
@@ -201,7 +209,7 @@ if [ -d "public/vendor/flux" ]; then
         [ -f "vendor/livewire/flux-pro/dist/editor.js" ] && cp vendor/livewire/flux-pro/dist/editor.js public/vendor/flux/editor.js
         [ -f "vendor/livewire/flux-pro/dist/editor.css" ] && cp vendor/livewire/flux-pro/dist/editor.css public/vendor/flux/editor.css
     fi
-    chown -R www-data:www-data public/vendor/flux || true
+    chown -R $REAL_USER:www-data public/vendor/flux || true
 fi
 
 php artisan view:clear
@@ -210,25 +218,15 @@ php artisan config:cache
 
 # Permissions
 echo "🔐 Setting permissions..."
-chown -R www-data:www-data /var/www/$PROJECT_NAME
+chown -R $REAL_USER:www-data /var/www/$PROJECT_NAME
 chmod -R 775 /var/www/$PROJECT_NAME/storage
 chmod -R 775 /var/www/$PROJECT_NAME/bootstrap/cache
 
 # Permissions fix before build
 echo "🔐 Ensuring correct permissions for build..."
-chown -R www-data:www-data /var/www/$PROJECT_NAME
+chown -R $REAL_USER:www-data /var/www/$PROJECT_NAME
 chmod -R 775 /var/www/$PROJECT_NAME
 
-# Install JS Deps & Build
-echo "📦 Installing JS dependencies and building assets..."
-npm install
-npm run build
-
-# Permissions final check
-echo "🔐 Setting final permissions..."
-chown -R www-data:www-data /var/www/$PROJECT_NAME
-chmod -R 775 /var/www/$PROJECT_NAME/storage
-chmod -R 775 /var/www/$PROJECT_NAME/bootstrap/cache
 
 # --- 8. Configure Nginx ---
 echo "🌐 Configuring Nginx..."
@@ -260,6 +258,17 @@ fi
 echo "🔒 Setting up SSL with Certbot..."
 apt install -y python3-certbot-nginx
 certbot --nginx -d $DOMAIN --non-interactive --agree-tos -m $EMAIL
+
+# --- 12. Final Build & Permissions ---
+# We do this at the very end to ensure all services are ready
+echo "📦 Finalizing: Installing JS dependencies and building assets..."
+npm install
+npm run build
+
+echo "🔐 Finalizing: Setting project ownership..."
+chown -R $REAL_USER:www-data /var/www/$PROJECT_NAME
+chmod -R 775 /var/www/$PROJECT_NAME/storage
+chmod -R 775 /var/www/$PROJECT_NAME/bootstrap/cache
 
 echo "✅ ALL DONE! Your website is ready at https://$DOMAIN"
 echo "Admin Login: $EMAIL / Password123 (Please change after login!)"

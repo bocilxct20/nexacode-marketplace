@@ -53,12 +53,6 @@ cd /var/www/nexacode-marketplace
 sudo chown -R $USER:$USER /var/www/nexacode-marketplace
 git config --global --add safe.directory /var/www/nexacode-marketplace
 
-# Tarik update dari GitHub
-git pull origin main
-
-### 🛠️ Jika Muncul Error (Conflict) saat `git pull`:
-Jika muncul error "Your local changes... would be overwritten by merge", jalankan perintah ini untuk memaksa VPS mengikuti GitHub:
-```bash
 # Paksa VPS mengikuti kode terbaru dari GitHub (Menghapus perubahan lokal di VPS)
 git reset --hard origin/main
 git pull origin main
@@ -66,6 +60,17 @@ git pull origin main
 
 # Jalankan ulang setup (Otomatis urus composer, npm build, migration, & fix Flux)
 sudo bash deployment/vps-setup.sh
+```
+
+### 🗝️ Jika Muncul Error `EACCES: permission denied` saat `npm run build`:
+Ini terjadi karena folder dimiliki oleh `www-data` (hasil setup). Jalankan perintah ini untuk mengambil alih izin:
+```bash
+# Ambil alih kepemilikan folder (Ganti 'nexacode' dengan user kamu jika berbeda)
+sudo chown -R $USER:www-data /var/www/nexacode-marketplace
+sudo chmod -R 775 /var/www/nexacode-marketplace
+
+# Coba build lagi
+npm run build
 ```
 
 ## 4. Tips Tambahan
