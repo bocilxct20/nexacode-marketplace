@@ -24,10 +24,10 @@
         "midtrans/midtrans-php": "^2.6",
         "pragmarx/google2fa": "^8.0",
         "pragmarx/google2fa-laravel": "^2.3",
-        "predis/predis": "^3.4"
+        "predis/predis": "^3.4",
+        "fakerphp/faker": "^1.23"
     },
     "require-dev": {
-        "fakerphp/faker": "^1.23",
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.24",
         "laravel/sail": "^1.41",
