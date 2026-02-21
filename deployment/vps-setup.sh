@@ -144,8 +144,6 @@ fi
 echo "🎼 Installing PHP dependencies..."
 export COMPOSER_ALLOW_SUPERUSER=1
 export COMPOSER_MEMORY_LIMIT=-1
-# Sync Flux Pro artifact and update dependencies
-composer require livewire/flux-pro:2.11.1 livewire/flux:2.11.1 -W --no-interaction --no-scripts
 composer install --no-dev --optimize-autoloader --no-interaction
 
 # Clear config cache and run migrations
@@ -266,6 +264,14 @@ certbot --nginx -d $DOMAIN --non-interactive --agree-tos -m $EMAIL
 # --- 12. Final Build & Permissions ---
 # We do this at the very end to ensure all services are ready
 echo "📦 Finalizing: Installing JS dependencies and building assets..."
+
+# Final check for Flux Pro before build
+echo "💎 Step 5: composer require livewire/flux-pro..."
+composer require livewire/flux-pro
+
+echo "💎 Step 6: composer dump-autoload..."
+composer dump-autoload
+
 npm install
 npm run build
 
