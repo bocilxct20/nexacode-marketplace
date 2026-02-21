@@ -20,7 +20,6 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @fluxAppearance
-    @fluxScripts
     @livewireStyles
 
     {{-- Global Livewire Loading Fix (Prevents skeletons from showing on initial page load) --}}
@@ -36,5 +35,6 @@
 
     <flux:toast />
     @livewireScripts
+    @fluxScripts
 </body>
 </html>
