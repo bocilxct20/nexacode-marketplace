@@ -179,8 +179,10 @@ if [ "$HAS_PRO_ASSETS" = true ]; then
     
     for FILE in "${FILES_TO_SYNC[@]}"; do
         if [ -f "$SOURCE_DIR/$FILE" ]; then
-            cp "$SOURCE_DIR/$FILE" "vendor/livewire/flux-pro/dist/$FILE"
-            cp "$SOURCE_DIR/$FILE" "vendor/livewire/flux/dist/$FILE"
+            # Sync to flux-pro (Target 1)
+            [ "$SOURCE_DIR/$FILE" != "vendor/livewire/flux-pro/dist/$FILE" ] && cp "$SOURCE_DIR/$FILE" "vendor/livewire/flux-pro/dist/$FILE"
+            # Sync to flux (Target 2)
+            [ "$SOURCE_DIR/$FILE" != "vendor/livewire/flux/dist/$FILE" ] && cp "$SOURCE_DIR/$FILE" "vendor/livewire/flux/dist/$FILE"
         fi
     done
 else
