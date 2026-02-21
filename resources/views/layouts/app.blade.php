@@ -35,7 +35,7 @@
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700,800" rel="stylesheet" />
+        <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800" rel="stylesheet" />
 
         <!-- Styles / Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -46,26 +46,7 @@
         @stack('head')
 
         <script>
-            // === Flux Polyfills ===
-            // Toast: dispatches 'toast-show' for our custom Alpine toast component
-            window.Flux = window.Flux || {};
-            window.Flux.toast = function (data) {
-                const toastData = {
-                    variant: data[0]?.variant || data.variant || 'success',
-                    heading: data[0]?.heading || data.heading || '',
-                    text: data[0]?.text || data.text || (typeof data === 'string' ? data : '')
-                };
-                window.dispatchEvent(new CustomEvent('toast-show', { detail: toastData }));
-            };
 
-            // fluxModal: safety-net polyfill
-            // The real implementation is registered by flux.js (mountain.fluxModal via Alpine magic)
-            // This prevents "is not defined" errors if Alpine evaluates the expression before flux.js runs
-            window.fluxModal = window.fluxModal || function(name, ...args) {
-                document.addEventListener('alpine:initialized', () => {
-                    if (window.fluxModal) window.fluxModal(name, ...args);
-                }, { once: true });
-            };
         </script>
     </head>
     <body class="min-h-screen flex flex-col bg-white dark:bg-zinc-950 antialiased font-sans text-zinc-900 dark:text-zinc-100 {{ request()->routeIs('home') || request()->is('/') ? 'is-homepage' : '' }}" 
@@ -452,8 +433,8 @@
         }"></div>
 
         <livewire:global.lightbox />
-        @fluxScripts
         @livewireScripts
+        @fluxScripts
 
         <script>
             document.addEventListener('livewire:init', () => {

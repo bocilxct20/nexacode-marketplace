@@ -13,29 +13,10 @@
 
     @fluxAppearance
     @livewireStyles
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800" rel="stylesheet" />
     @stack('head')
 
-    <script>
-        // === Flux Polyfills ===
-        // Toast: dispatches 'toast-show' for our custom Alpine toast component
-        window.Flux = window.Flux || {};
-        window.Flux.toast = function (data) {
-            const toastData = {
-                variant: data[0]?.variant || data.variant || 'success',
-                heading: data[0]?.heading || data.heading || '',
-                text: data[0]?.text || data.text || (typeof data === 'string' ? data : '')
-            };
-            window.dispatchEvent(new CustomEvent('toast-show', { detail: toastData }));
-        };
-
-        // fluxModal: safety-net polyfill - prevents "is not defined" errors
-        // before flux.js registers the real implementation
-        window.fluxModal = window.fluxModal || function(name, ...args) {
-            document.addEventListener('alpine:initialized', () => {
-                if (window.fluxModal) window.fluxModal(name, ...args);
-            }, { once: true });
-        };
-    </script>
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -246,8 +227,8 @@
     </flux:main>
 
     <flux:toast />
-    @fluxScripts
     @livewireScripts
+    @fluxScripts
     <script>
         document.addEventListener('livewire:init', () => {
             // Global Toast Listener
@@ -269,6 +250,5 @@
             @endif
         });
     </script>
-    <livewire:chat-widget />
 </body>
 </html>

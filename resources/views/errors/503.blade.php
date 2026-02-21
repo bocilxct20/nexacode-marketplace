@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Under Maintenance - {{ $platformSettings['site_name'] ?? config('app.name') }}</title>
     
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800" rel="stylesheet" />
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @fluxAppearance
 
@@ -55,6 +59,16 @@
         </div>
     </div>
 
+    <script>
+        window.Flux = window.Flux || {};
+        window.Flux.toast = function (data) {
+            const d = { variant: data[0]?.variant||data.variant||'success', heading: data[0]?.heading||data.heading||'', text: data[0]?.text||data.text||(typeof data==='string'?data:'') };
+            window.dispatchEvent(new CustomEvent('toast-show', { detail: d }));
+        };
+        window.fluxModal = window.fluxModal || function(name, ...args) {
+            document.addEventListener('alpine:initialized', () => { if (window.fluxModal) window.fluxModal(name, ...args); }, { once: true });
+        };
+    </script>
     @fluxScripts
 </body>
 </html>

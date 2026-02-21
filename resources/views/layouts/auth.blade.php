@@ -16,7 +16,7 @@
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700,800" rel="stylesheet" />
+    <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800" rel="stylesheet" />
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @fluxAppearance
@@ -29,29 +29,12 @@
         }
     </style>
 
-    <script>
-        // === Flux Polyfills ===
-        window.Flux = window.Flux || {};
-        window.Flux.toast = function (data) {
-            const toastData = {
-                variant: data[0]?.variant || data.variant || 'success',
-                heading: data[0]?.heading || data.heading || '',
-                text: data[0]?.text || data.text || (typeof data === 'string' ? data : '')
-            };
-            window.dispatchEvent(new CustomEvent('toast-show', { detail: toastData }));
-        };
-        window.fluxModal = window.fluxModal || function(name, ...args) {
-            document.addEventListener('alpine:initialized', () => {
-                if (window.fluxModal) window.fluxModal(name, ...args);
-            }, { once: true });
-        };
-    </script>
 </head>
 <body class="h-full antialiased font-sans text-zinc-900 dark:text-zinc-100 bg-white dark:bg-zinc-950">
     {{ $slot }}
 
     <flux:toast />
-    @fluxScripts
     @livewireScripts
+    @fluxScripts
 </body>
 </html>

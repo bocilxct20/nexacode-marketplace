@@ -149,45 +149,48 @@ echo "🧼 Cleaning configuration and running migrations..."
 CACHE_STORE=array SESSION_DRIVER=array php artisan config:clear
 CACHE_STORE=array SESSION_DRIVER=array php artisan key:generate --force
 CACHE_STORE=array SESSION_DRIVER=array php artisan migrate --force
-CACHE_STORE=array SESSION_DRIVER=array php artisan db:seed --class=AdminSeeder --force
+CACHE_STORE=array SESSION_DRIVER=array php artisan db:seed --force
 php artisan storage:link --force
 
 # Flux Pro Asset Fix
 echo "💎 Checking Flux Pro assets..."
 if [ -d "vendor/livewire/flux-pro" ]; then
-    echo "💎 Fixing missing Flux Pro assets by copying from Flux..."
     mkdir -p vendor/livewire/flux-pro/dist
     
-    # We copy flux-lite.min.js to both flux.min.js and flux.js 
-    # This ensures components like fluxModal are available in both debug and production modes
-    cp vendor/livewire/flux/dist/flux-lite.min.js vendor/livewire/flux-pro/dist/flux.min.js
-    cp vendor/livewire/flux/dist/flux-lite.min.js vendor/livewire/flux-pro/dist/flux.js
-    
-    # Also copy the CSS and manifest from flux
-    cp vendor/livewire/flux/dist/flux.css vendor/livewire/flux-pro/dist/flux.css
-    cp vendor/livewire/flux/dist/manifest.json vendor/livewire/flux-pro/dist/manifest.json
+    # Check if flux.js already exists and is the Pro version (>300KB)
+    if [ -f "vendor/livewire/flux-pro/dist/flux.js" ] && [ $(stat -c%s "vendor/livewire/flux-pro/dist/flux.js") -gt 300000 ]; then
+        echo "✅ Genuine Flux Pro JS detected in vendor. Skipping Lite fallback."
+    else
+        echo "⚠️ Genuine Flux Pro assets not found in vendor. Using Lite fallback as safety-net."
+        cp vendor/livewire/flux/dist/flux-lite.min.js vendor/livewire/flux-pro/dist/flux.min.js
+        cp vendor/livewire/flux/dist/flux-lite.min.js vendor/livewire/flux-pro/dist/flux.js
+        cp vendor/livewire/flux/dist/flux.css vendor/livewire/flux-pro/dist/flux.css
+        cp vendor/livewire/flux/dist/manifest.json vendor/livewire/flux-pro/dist/manifest.json
+    fi
     
     chown -R www-data:www-data vendor/livewire/flux-pro/dist || true
 fi
 
-# Force publish Flux assets to public directory
-echo "📤 Publishing Flux assets..."
-php artisan flux:publish --all --no-interaction || echo "⚠️ Flux publish failed"
+# Now safe to initialize Flux and clear caches with the real configuration
+echo "� Initializing Flux UI..."
+php artisan cache:clear
 
-# Double check public directory and fix if necessary (in case publish didn't include our patched files)
+# Publish Flux assets (this might copy files to public/vendor/flux)
+php artisan flux:publish --all --no-interaction || echo "⚠️ Flux publish failed or skipped"
+
+# Double check public directory and fix if necessary (ensure we don't serve Lite JS if we have Pro JS)
 if [ -d "public/vendor/flux" ]; then
-    echo "💎 Ensuring public Flux assets are patched..."
-    cp vendor/livewire/flux/dist/flux-lite.min.js public/vendor/flux/flux.min.js
-    cp vendor/livewire/flux/dist/flux-lite.min.js public/vendor/flux/flux.js
-    cp vendor/livewire/flux/dist/flux.css public/vendor/flux/flux.css
-    cp vendor/livewire/flux/dist/manifest.json public/vendor/flux/manifest.json
+    # Check if the public version is Lite (< 300KB) but we have Pro JS in vendor
+    if [ -f "public/vendor/flux/flux.js" ] && [ $(stat -c%s "public/vendor/flux/flux.js") -lt 300000 ] && [ -f "vendor/livewire/flux-pro/dist/flux.js" ] && [ $(stat -c%s "vendor/livewire/flux-pro/dist/flux.js") -gt 300000 ]; then
+        echo "💎 Patching public Flux assets with Pro version..."
+        cp vendor/livewire/flux-pro/dist/flux.js public/vendor/flux/flux.js
+        cp vendor/livewire/flux-pro/dist/flux.js public/vendor/flux/flux.min.js
+        cp vendor/livewire/flux-pro/dist/flux.css public/vendor/flux/flux.css
+        cp vendor/livewire/flux-pro/dist/manifest.json public/vendor/flux/manifest.json
+    fi
     chown -R www-data:www-data public/vendor/flux || true
 fi
 
-# Now safe to initialize Flux and clear caches with the real configuration
-echo "💎 Initializing Flux UI..."
-php artisan cache:clear
-php artisan flux:publish --all --no-interaction || echo "⚠️ Flux publish failed or skipped"
 php artisan view:clear
 php artisan route:clear
 php artisan config:cache

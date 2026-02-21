@@ -65,7 +65,16 @@ class DatabaseSeeder extends Seeder
         $author->roles()->attach(\App\Models\Role::where('slug', 'author')->first());
         $author->roles()->attach(\App\Models\Role::where('slug', 'buyer')->first());
 
-        // 5. Marketplace Seeding
+        // 5. Plans & Payment Methods
+        $this->call([
+            SubscriptionPlanSeeder::class,
+            PaymentMethodSeeder::class,
+        ]);
+
+        // 6. Marketplace Seeding (Products, Sales, etc.)
         $this->call(MarketplaceSeeder::class);
+
+        // 7. Help Center
+        $this->call(HelpCenterSeeder::class);
     }
 }
