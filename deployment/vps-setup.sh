@@ -164,21 +164,31 @@ HAS_PRO_ASSETS=false
 # Check for genuine Pro JS (>300KB) or Rich Text Editor assets (editor.js)
 if [ -f "vendor/livewire/flux-pro/dist/flux.js" ] && [ $(stat -c%s "vendor/livewire/flux-pro/dist/flux.js") -gt 300000 ]; then
     HAS_PRO_ASSETS=true
+    SOURCE_DIR="vendor/livewire/flux-pro/dist"
 elif [ -f "vendor/livewire/flux/dist/flux.js" ] && [ $(stat -c%s "vendor/livewire/flux/dist/flux.js") -gt 300000 ]; then
-    # Even if they are in the Lite folder (as shown in user screenshot), we'll consider them Pro
     HAS_PRO_ASSETS=true
-    echo "💎 Pro assets detected in Lite folder. Normalizing to Pro folder..."
-    mkdir -p vendor/livewire/flux-pro/dist
-    cp vendor/livewire/flux/dist/flux.js vendor/livewire/flux-pro/dist/flux.js
-    cp vendor/livewire/flux/dist/flux.css vendor/livewire/flux-pro/dist/flux.css
-    [ -f "vendor/livewire/flux/dist/editor.js" ] && cp vendor/livewire/flux/dist/editor.js vendor/livewire/flux-pro/dist/editor.js
-    [ -f "vendor/livewire/flux/dist/editor.css" ] && cp vendor/livewire/flux/dist/editor.css vendor/livewire/flux-pro/dist/editor.css
+    SOURCE_DIR="vendor/livewire/flux/dist"
+    echo "💎 Pro assets detected in Lite folder."
 fi
 
 if [ "$HAS_PRO_ASSETS" = true ]; then
-    echo "✅ Genuine Flux Pro assets detected. Ensuring vendor files are consistent..."
-    # Ensure all required files are in the Pro folder for the patch logic below
-    cp vendor/livewire/flux-pro/dist/flux.js vendor/livewire/flux-pro/dist/flux.min.js || true
+    echo "✅ Genuine Flux Pro assets detected. Syncing to ALL vendor folders for consistency..."
+    mkdir -p vendor/livewire/flux/dist
+    mkdir -p vendor/livewire/flux-pro/dist
+    
+    # Sync to flux-pro (Target 1)
+    cp $SOURCE_DIR/flux.js vendor/livewire/flux-pro/dist/flux.js
+    cp $SOURCE_DIR/flux.js vendor/livewire/flux-pro/dist/flux.min.js
+    cp $SOURCE_DIR/flux.css vendor/livewire/flux-pro/dist/flux.css
+    [ -f "$SOURCE_DIR/editor.js" ] && cp $SOURCE_DIR/editor.js vendor/livewire/flux-pro/dist/editor.js
+    [ -f "$SOURCE_DIR/editor.css" ] && cp $SOURCE_DIR/editor.css vendor/livewire/flux-pro/dist/editor.css
+    
+    # Sync to flux (Target 2 - Consistency fix)
+    cp $SOURCE_DIR/flux.js vendor/livewire/flux/dist/flux.js
+    cp $SOURCE_DIR/flux.js vendor/livewire/flux/dist/flux.min.js
+    cp $SOURCE_DIR/flux.css vendor/livewire/flux/dist/flux.css
+    [ -f "$SOURCE_DIR/editor.js" ] && cp $SOURCE_DIR/editor.js vendor/livewire/flux/dist/editor.js
+    [ -f "$SOURCE_DIR/editor.css" ] && cp $SOURCE_DIR/editor.css vendor/livewire/flux/dist/editor.css
 else
     echo "⚠️ Genuine Flux Pro assets not found in vendor. Using Lite fallback as safety-net."
     mkdir -p vendor/livewire/flux-pro/dist
@@ -189,6 +199,7 @@ else
 fi
 
 chown -R $REAL_USER:www-data vendor/livewire/flux-pro/dist || true
+chown -R $REAL_USER:www-data vendor/livewire/flux/dist || true
 
 # Now safe to initialize Flux and clear caches with the real configuration
 echo "💎 Initializing Flux UI..."
