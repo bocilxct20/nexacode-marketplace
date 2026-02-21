@@ -47,13 +47,10 @@ echo "🎼 Installing Composer..."
 curl -sS https://getcomposer.org/installer | php
 mv composer.phar /usr/local/bin/composer
 
-# --- 6. Install Node.js (via NVM) ---
-echo "🟢 Installing Node.js..."
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-nvm install 20
-nvm use 20
+# --- 6. Install Node.js 20 (Global via NodeSource) ---
+echo "🟢 Installing Node.js 20 system-wide..."
+curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+apt install -y nodejs
 
 # --- 7. Project Setup ---
 echo "🏗️ Setting up project folder..."
@@ -154,25 +151,39 @@ php artisan storage:link --force
 
 # Flux Pro Asset Fix
 echo "💎 Checking Flux Pro assets..."
-if [ -d "vendor/livewire/flux-pro" ]; then
+HAS_PRO_ASSETS=false
+
+# Check for genuine Pro JS (>300KB) or Rich Text Editor assets (editor.js)
+if [ -f "vendor/livewire/flux-pro/dist/flux.js" ] && [ $(stat -c%s "vendor/livewire/flux-pro/dist/flux.js") -gt 300000 ]; then
+    HAS_PRO_ASSETS=true
+elif [ -f "vendor/livewire/flux/dist/flux.js" ] && [ $(stat -c%s "vendor/livewire/flux/dist/flux.js") -gt 300000 ]; then
+    # Even if they are in the Lite folder (as shown in user screenshot), we'll consider them Pro
+    HAS_PRO_ASSETS=true
+    echo "💎 Pro assets detected in Lite folder. Normalizing to Pro folder..."
     mkdir -p vendor/livewire/flux-pro/dist
-    
-    # Check if flux.js already exists and is the Pro version (>300KB)
-    if [ -f "vendor/livewire/flux-pro/dist/flux.js" ] && [ $(stat -c%s "vendor/livewire/flux-pro/dist/flux.js") -gt 300000 ]; then
-        echo "✅ Genuine Flux Pro JS detected in vendor. Skipping Lite fallback."
-    else
-        echo "⚠️ Genuine Flux Pro assets not found in vendor. Using Lite fallback as safety-net."
-        cp vendor/livewire/flux/dist/flux-lite.min.js vendor/livewire/flux-pro/dist/flux.min.js
-        cp vendor/livewire/flux/dist/flux-lite.min.js vendor/livewire/flux-pro/dist/flux.js
-        cp vendor/livewire/flux/dist/flux.css vendor/livewire/flux-pro/dist/flux.css
-        cp vendor/livewire/flux/dist/manifest.json vendor/livewire/flux-pro/dist/manifest.json
-    fi
-    
-    chown -R www-data:www-data vendor/livewire/flux-pro/dist || true
+    cp vendor/livewire/flux/dist/flux.js vendor/livewire/flux-pro/dist/flux.js
+    cp vendor/livewire/flux/dist/flux.css vendor/livewire/flux-pro/dist/flux.css
+    [ -f "vendor/livewire/flux/dist/editor.js" ] && cp vendor/livewire/flux/dist/editor.js vendor/livewire/flux-pro/dist/editor.js
+    [ -f "vendor/livewire/flux/dist/editor.css" ] && cp vendor/livewire/flux/dist/editor.css vendor/livewire/flux-pro/dist/editor.css
 fi
 
+if [ "$HAS_PRO_ASSETS" = true ]; then
+    echo "✅ Genuine Flux Pro assets detected. Ensuring vendor files are consistent..."
+    # Ensure all required files are in the Pro folder for the patch logic below
+    cp vendor/livewire/flux-pro/dist/flux.js vendor/livewire/flux-pro/dist/flux.min.js || true
+else
+    echo "⚠️ Genuine Flux Pro assets not found in vendor. Using Lite fallback as safety-net."
+    mkdir -p vendor/livewire/flux-pro/dist
+    cp vendor/livewire/flux/dist/flux-lite.min.js vendor/livewire/flux-pro/dist/flux.min.js
+    cp vendor/livewire/flux/dist/flux-lite.min.js vendor/livewire/flux-pro/dist/flux.js
+    cp vendor/livewire/flux/dist/flux.css vendor/livewire/flux-pro/dist/flux.css
+    cp vendor/livewire/flux/dist/manifest.json vendor/livewire/flux-pro/dist/manifest.json
+fi
+
+chown -R www-data:www-data vendor/livewire/flux-pro/dist || true
+
 # Now safe to initialize Flux and clear caches with the real configuration
-echo "� Initializing Flux UI..."
+echo "💎 Initializing Flux UI..."
 php artisan cache:clear
 
 # Publish Flux assets (this might copy files to public/vendor/flux)
@@ -180,13 +191,15 @@ php artisan flux:publish --all --no-interaction || echo "⚠️ Flux publish fai
 
 # Double check public directory and fix if necessary (ensure we don't serve Lite JS if we have Pro JS)
 if [ -d "public/vendor/flux" ]; then
-    # Check if the public version is Lite (< 300KB) but we have Pro JS in vendor
-    if [ -f "public/vendor/flux/flux.js" ] && [ $(stat -c%s "public/vendor/flux/flux.js") -lt 300000 ] && [ -f "vendor/livewire/flux-pro/dist/flux.js" ] && [ $(stat -c%s "vendor/livewire/flux-pro/dist/flux.js") -gt 300000 ]; then
+    # Check if we have Pro JS in vendor but public is still Lite (<300KB)
+    if [ "$HAS_PRO_ASSETS" = true ] && ([ ! -f "public/vendor/flux/flux.js" ] || [ $(stat -c%s "public/vendor/flux/flux.js") -lt 300000 ]); then
         echo "💎 Patching public Flux assets with Pro version..."
         cp vendor/livewire/flux-pro/dist/flux.js public/vendor/flux/flux.js
         cp vendor/livewire/flux-pro/dist/flux.js public/vendor/flux/flux.min.js
         cp vendor/livewire/flux-pro/dist/flux.css public/vendor/flux/flux.css
-        cp vendor/livewire/flux-pro/dist/manifest.json public/vendor/flux/manifest.json
+        # Also sync Editor assets if they exist
+        [ -f "vendor/livewire/flux-pro/dist/editor.js" ] && cp vendor/livewire/flux-pro/dist/editor.js public/vendor/flux/editor.js
+        [ -f "vendor/livewire/flux-pro/dist/editor.css" ] && cp vendor/livewire/flux-pro/dist/editor.css public/vendor/flux/editor.css
     fi
     chown -R www-data:www-data public/vendor/flux || true
 fi
@@ -201,13 +214,18 @@ chown -R www-data:www-data /var/www/$PROJECT_NAME
 chmod -R 775 /var/www/$PROJECT_NAME/storage
 chmod -R 775 /var/www/$PROJECT_NAME/bootstrap/cache
 
+# Permissions fix before build
+echo "🔐 Ensuring correct permissions for build..."
+chown -R www-data:www-data /var/www/$PROJECT_NAME
+chmod -R 775 /var/www/$PROJECT_NAME
+
 # Install JS Deps & Build
 echo "📦 Installing JS dependencies and building assets..."
 npm install
 npm run build
 
-# Permissions
-echo "🔐 Setting permissions..."
+# Permissions final check
+echo "🔐 Setting final permissions..."
 chown -R www-data:www-data /var/www/$PROJECT_NAME
 chmod -R 775 /var/www/$PROJECT_NAME/storage
 chmod -R 775 /var/www/$PROJECT_NAME/bootstrap/cache
