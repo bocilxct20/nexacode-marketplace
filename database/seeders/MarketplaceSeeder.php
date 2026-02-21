@@ -58,7 +58,7 @@ class MarketplaceSeeder extends Seeder
         ];
 
         foreach ($tags as $tagData) {
-            ProductTag::create($tagData);
+            ProductTag::firstOrCreate(['slug' => $tagData['slug']], $tagData);
         }
 
         $allTags = ProductTag::all();
@@ -80,10 +80,9 @@ class MarketplaceSeeder extends Seeder
         $products = collect();
 
         foreach ($productNames as $name) {
-            $product = Product::create([
+            $product = Product::firstOrCreate(['slug' => Str::slug($name)], [
                 'author_id' => $authors->random()->id,
                 'name' => $name,
-                'slug' => Str::slug($name),
                 'description' => 'A high-quality ' . $name . ' built with modern technologies. Includes full documentation and lifetime updates.',
                 'thumbnail' => 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=800&auto=format&fit=crop',
                 'demo_url' => 'https://example.com/demo',
@@ -95,20 +94,24 @@ class MarketplaceSeeder extends Seeder
 
             $products->push($product);
 
-            // Attach 1-2 random tags
-            $product->tags()->attach($allTags->random(rand(1, 2))->pluck('id'));
+            // Attach 1-2 random tags if none exist
+            if ($product->tags()->count() === 0) {
+                $product->tags()->attach($allTags->random(rand(1, 2))->pluck('id'));
+            }
 
             // Create 2 versions
-            ProductVersion::create([
+            ProductVersion::firstOrCreate([
                 'product_id' => $product->id,
-                'version_number' => '1.0.0',
+                'version_number' => '1.0.0'
+            ], [
                 'changelog' => 'Initial release.',
                 'file_path' => 'products/' . $product->slug . '-v1.0.0.zip',
             ]);
 
-            ProductVersion::create([
+            ProductVersion::firstOrCreate([
                 'product_id' => $product->id,
-                'version_number' => '1.1.0',
+                'version_number' => '1.1.0'
+            ], [
                 'changelog' => 'Bug fixes and performance improvements.',
                 'file_path' => 'products/' . $product->slug . '-v1.1.0.zip',
             ]);

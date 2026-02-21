@@ -16,54 +16,60 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // 1. Create Roles
-        $adminRole = \App\Models\Role::create([
+        $adminRole = \App\Models\Role::firstOrCreate(['slug' => 'admin'], [
             'name' => 'Administrator',
-            'slug' => 'admin',
             'description' => 'System administrator with full access.',
         ]);
 
-        \App\Models\Role::create([
+        $authorRole = \App\Models\Role::firstOrCreate(['slug' => 'author'], [
             'name' => 'Author',
-            'slug' => 'author',
             'description' => 'Sellers who can upload and manage products.',
         ]);
 
-        \App\Models\Role::create([
+        $buyerRole = \App\Models\Role::firstOrCreate(['slug' => 'buyer'], [
             'name' => 'Buyer',
-            'slug' => 'buyer',
             'description' => 'Customers who purchase products.',
         ]);
 
         // 2. Create Admin User
-        $admin = User::factory()->create([
+        $admin = User::firstOrCreate(['email' => 'admin@nexacode.id'], [
             'name' => 'Nexacode Admin',
             'username' => 'admin',
-            'email' => 'admin@nexacode.id',
             'password' => bcrypt('password123'),
         ]);
 
-        $admin->roles()->attach($adminRole);
-        $admin->roles()->attach(\App\Models\Role::where('slug', 'author')->first());
-        $admin->roles()->attach(\App\Models\Role::where('slug', 'buyer')->first());
+        if (!$admin->roles()->where('slug', 'admin')->exists()) {
+            $admin->roles()->attach($adminRole);
+        }
+        if (!$admin->roles()->where('slug', 'author')->exists()) {
+            $admin->roles()->attach($authorRole);
+        }
+        if (!$admin->roles()->where('slug', 'buyer')->exists()) {
+            $admin->roles()->attach($buyerRole);
+        }
 
         // 3. Create Test Buyer
-        $buyer = User::factory()->create([
+        $buyer = User::firstOrCreate(['email' => 'buyer@nexacode.id'], [
             'name' => 'Test Buyer',
             'username' => 'testbuyer',
-            'email' => 'buyer@nexacode.id',
             'password' => bcrypt('password'),
         ]);
-        $buyer->roles()->attach(\App\Models\Role::where('slug', 'buyer')->first());
+        if (!$buyer->roles()->where('slug', 'buyer')->exists()) {
+            $buyer->roles()->attach($buyerRole);
+        }
 
         // 4. Create Test Author
-        $author = User::factory()->create([
+        $author = User::firstOrCreate(['email' => 'author@nexacode.id'], [
             'name' => 'Test Author',
             'username' => 'testauthor',
-            'email' => 'author@nexacode.id',
             'password' => bcrypt('password'),
         ]);
-        $author->roles()->attach(\App\Models\Role::where('slug', 'author')->first());
-        $author->roles()->attach(\App\Models\Role::where('slug', 'buyer')->first());
+        if (!$author->roles()->where('slug', 'author')->exists()) {
+            $author->roles()->attach($authorRole);
+        }
+        if (!$author->roles()->where('slug', 'buyer')->exists()) {
+            $author->roles()->attach($buyerRole);
+        }
 
         // 5. Plans & Payment Methods
         $this->call([
