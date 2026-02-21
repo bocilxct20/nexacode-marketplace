@@ -176,19 +176,15 @@ if [ "$HAS_PRO_ASSETS" = true ]; then
     mkdir -p vendor/livewire/flux/dist
     mkdir -p vendor/livewire/flux-pro/dist
     
-    # Sync to flux-pro (Target 1)
-    cp $SOURCE_DIR/flux.js vendor/livewire/flux-pro/dist/flux.js
-    cp $SOURCE_DIR/flux.js vendor/livewire/flux-pro/dist/flux.min.js
-    cp $SOURCE_DIR/flux.css vendor/livewire/flux-pro/dist/flux.css
-    [ -f "$SOURCE_DIR/editor.js" ] && cp $SOURCE_DIR/editor.js vendor/livewire/flux-pro/dist/editor.js
-    [ -f "$SOURCE_DIR/editor.css" ] && cp $SOURCE_DIR/editor.css vendor/livewire/flux-pro/dist/editor.css
+    # Files to sync (Complete set from local dist)
+    FILES_TO_SYNC=("flux.js" "flux.min.js" "flux.module.js" "flux.css" "editor.js" "editor.min.js" "editor.module.js" "editor.css" "manifest.json")
     
-    # Sync to flux (Target 2 - Consistency fix)
-    cp $SOURCE_DIR/flux.js vendor/livewire/flux/dist/flux.js
-    cp $SOURCE_DIR/flux.js vendor/livewire/flux/dist/flux.min.js
-    cp $SOURCE_DIR/flux.css vendor/livewire/flux/dist/flux.css
-    [ -f "$SOURCE_DIR/editor.js" ] && cp $SOURCE_DIR/editor.js vendor/livewire/flux/dist/editor.js
-    [ -f "$SOURCE_DIR/editor.css" ] && cp $SOURCE_DIR/editor.css vendor/livewire/flux/dist/editor.css
+    for FILE in "${FILES_TO_SYNC[@]}"; do
+        if [ -f "$SOURCE_DIR/$FILE" ]; then
+            cp "$SOURCE_DIR/$FILE" "vendor/livewire/flux-pro/dist/$FILE"
+            cp "$SOURCE_DIR/$FILE" "vendor/livewire/flux/dist/$FILE"
+        fi
+    done
 else
     echo "⚠️ Genuine Flux Pro assets not found in vendor. Using Lite fallback as safety-net."
     mkdir -p vendor/livewire/flux-pro/dist
@@ -213,12 +209,9 @@ if [ -d "public/vendor/flux" ]; then
     # Check if we have Pro JS in vendor but public is still Lite (<300KB)
     if [ "$HAS_PRO_ASSETS" = true ] && ([ ! -f "public/vendor/flux/flux.js" ] || [ $(stat -c%s "public/vendor/flux/flux.js") -lt 300000 ]); then
         echo "💎 Patching public Flux assets with Pro version..."
-        cp vendor/livewire/flux-pro/dist/flux.js public/vendor/flux/flux.js
-        cp vendor/livewire/flux-pro/dist/flux.js public/vendor/flux/flux.min.js
-        cp vendor/livewire/flux-pro/dist/flux.css public/vendor/flux/flux.css
-        # Also sync Editor assets if they exist
-        [ -f "vendor/livewire/flux-pro/dist/editor.js" ] && cp vendor/livewire/flux-pro/dist/editor.js public/vendor/flux/editor.js
-        [ -f "vendor/livewire/flux-pro/dist/editor.css" ] && cp vendor/livewire/flux-pro/dist/editor.css public/vendor/flux/editor.css
+        for FILE in "${FILES_TO_SYNC[@]}"; do
+            [ -f "vendor/livewire/flux-pro/dist/$FILE" ] && cp "vendor/livewire/flux-pro/dist/$FILE" "public/vendor/flux/$FILE"
+        done
     fi
     chown -R $REAL_USER:www-data public/vendor/flux || true
 fi
