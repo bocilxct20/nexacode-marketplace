@@ -28,13 +28,22 @@
                 >
                     All
                 </flux:button>
-                @foreach($tags as $tag)
+                @foreach($categories as $category)
                     <flux:button 
-                        wire:click="selectCategory({{ $tag->id }})" 
-                        :variant="$selectedCategory == $tag->id ? 'filled' : 'ghost'"
+                        wire:click="selectCategory({{ $category->id }})" 
+                        :variant="$selectedCategory == $category->id ? 'filled' : 'ghost'"
                         size="sm"
                     >
-                        {{ $tag->name }}
+                        @if($category->icon && (str_starts_with($category->icon, 'storage/') || str_starts_with($category->icon, 'http')))
+                            <div class="mr-2 w-3.5 h-3.5 bg-current {{ $selectedCategory == $category->id ? 'text-white' : 'text-zinc-500' }}" 
+                                 style="mask-image: url('{{ asset($category->icon) }}'); mask-size: contain; mask-repeat: no-repeat; mask-position: center; -webkit-mask-image: url('{{ asset($category->icon) }}'); -webkit-mask-size: contain; -webkit-mask-repeat: no-repeat; -webkit-mask-position: center;">
+                            </div>
+                        @elseif($category->icon && str_starts_with($category->icon, 'lucide-'))
+                            <x-dynamic-component :component="$category->icon" class="mr-2 w-3.5 h-3.5" />
+                        @else
+                            <flux:icon :icon="$category->icon ?: 'package'" variant="mini" class="mr-2 w-3.5 h-3.5" />
+                        @endif
+                        {{ $category->name }}
                     </flux:button>
                 @endforeach
             </div>
@@ -50,8 +59,8 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         @forelse($products as $product)
-            <flux:card class="group overflow-hidden flex flex-col p-0 border-none bg-white dark:bg-zinc-900 shadow-sm hover:shadow-md transition-shadow">
-                <a href="{{ route('products.show', $product->slug) }}" class="block relative aspect-[4/3] overflow-hidden">
+            <flux:card class="group overflow-hidden flex flex-col p-0 border-none bg-white dark:bg-zinc-900 shadow-sm hover:shadow-md transition-shadow rounded-2xl">
+                <a href="{{ route('products.show', $product->slug) }}" class="block relative aspect-[4/3] overflow-hidden rounded-2xl">
                     <img src="{{ $product->thumbnail_url }}" alt="{{ $product->name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                     
                     {{-- Status Badges on Thumbnail --}}
@@ -83,11 +92,20 @@
 
                 <div class="p-5 flex flex-col flex-grow">
                     <div class="flex flex-wrap gap-1 mb-3">
-                        @foreach($product->tags->take(2) as $tag)
-                            <span class="text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">
-                                {{ $tag->name }}
+                        @if($product->category)
+                            <span class="text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 flex items-center gap-1.5">
+                                @if($product->category->icon && (str_starts_with($product->category->icon, 'storage/') || str_starts_with($product->category->icon, 'http')))
+                                    <div class="w-3 h-3 bg-current" 
+                                         style="mask-image: url('{{ asset($product->category->icon) }}'); mask-size: contain; mask-repeat: no-repeat; mask-position: center; -webkit-mask-image: url('{{ asset($product->category->icon) }}'); -webkit-mask-size: contain; -webkit-mask-repeat: no-repeat; -webkit-mask-position: center;">
+                                    </div>
+                                @elseif($product->category->icon && str_starts_with($product->category->icon, 'lucide-'))
+                                    <x-dynamic-component :component="$product->category->icon" class="w-3 h-3" />
+                                @else
+                                    <flux:icon :icon="$product->category->icon ?: 'package'" variant="mini" class="w-3 h-3" />
+                                @endif
+                                {{ $product->category->name }}
                             </span>
-                        @endforeach
+                        @endif
                     </div>
 
                     <a href="{{ route('products.show', $product->slug) }}" class="block mb-2 text-lg font-bold text-zinc-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors line-clamp-1">

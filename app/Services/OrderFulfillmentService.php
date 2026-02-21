@@ -149,7 +149,9 @@ class OrderFulfillmentService
             Log::warning('OrderItem missing author for earning calculation: ' . $item->id);
             return;
         }
-        $commissionRate = $this->authorLevelService->getFinalCommissionRate($author);
+        $baseRate = $author->currentPlan()->commission_rate ?? 20.0;
+        $finalRate = $this->authorLevelService->getFinalCommissionRate($author);
+        $discountMultiplier = $this->authorLevelService->getCommissionDiscountMultiplier($author);
         
         $itemPrice = $item->price; // Original/Gross price
         
@@ -163,8 +165,19 @@ class OrderFulfillmentService
             }
         }
 
-        $commissionAmount = ($itemPrice * $commissionRate) / 100;
+        $commissionAmount = ($itemPrice * $finalRate) / 100;
         $authorAmount = $itemPrice - $commissionAmount;
+
+        Log::info("Smart Commission Calculation [Order #{$order->id}]:", [
+            'author_id' => $author->id,
+            'item_id' => $item->id,
+            'base_rate' => $baseRate . '%',
+            'level_discount_multiplier' => ($discountMultiplier * 100) . '%',
+            'final_applied_rate' => $finalRate . '%',
+            'gross_price' => $itemPrice,
+            'commission_deducted' => $commissionAmount,
+            'author_net' => $authorAmount
+        ]);
 
         Earning::create([
             'product_id' => $item->product_id,
@@ -185,29 +198,50 @@ class OrderFulfillmentService
             $this->authorLevelService->addXp($author, $xpAmount);
         }
 
-        // Handle Affiliate
+        // Handle Affiliate & Provider Net
+        $affiliateAmount = 0;
         if ($order->affiliate_id) {
-            $this->handleAffiliateCommission($order, $item, $itemPrice, $commissionAmount);
+            $affiliateAmount = $this->handleAffiliateCommission($order, $item, $itemPrice, $commissionAmount);
         }
+
+        // Formally record Provider's Earning (Net Profit)
+        \App\Models\PlatformEarning::create([
+            'order_id' => $order->id,
+            'order_item_id' => $item->id,
+            'gross_commission' => $commissionAmount,
+            'affiliate_payout' => $affiliateAmount,
+            'net_profit' => $commissionAmount - $affiliateAmount,
+        ]);
     }
 
     /**
      * Handle affiliate commission calculation.
      */
-    protected function handleAffiliateCommission(Order $order, $item, $itemPrice, $platformCommission): void
+    protected function handleAffiliateCommission(Order $order, $item, $itemPrice, $platformCommission): float
     {
         $affiliate = $order->affiliate;
-        $affiliateRate = 10.00; // Fixed 10%
-        $affiliateAmount = ($itemPrice * $affiliateRate) / 100;
-        $affiliateAmount = min($affiliateAmount, $platformCommission);
-
+        
+        // Get the affiliate's share of the platform's cut (e.g., 50%)
+        $sharePercentage = (float) \App\Models\PlatformSetting::get('affiliate_share_of_commission', 50);
+        
+        // Affiliate Amount = Platform Commission Pool * (Share / 100)
+        $affiliateAmount = ($platformCommission * $sharePercentage) / 100;
+        
         if ($affiliateAmount > 0) {
+            Log::info("Smart Affiliate Distribution [Order #{$order->id}]:", [
+                'affiliate_id' => $order->affiliate_id,
+                'distribution_share' => $sharePercentage . '% of platform cut',
+                'platform_commission_pool' => $platformCommission,
+                'final_affiliate_payout' => $affiliateAmount,
+                'provider_retained_net' => $platformCommission - $affiliateAmount
+            ]);
+
             $affiliateEarning = AffiliateEarning::create([
                 'user_id' => $order->affiliate_id,
                 'order_id' => $order->id,
                 'product_id' => $item->product_id,
                 'amount' => $affiliateAmount,
-                'commission_rate' => $affiliateRate,
+                'commission_rate' => $sharePercentage, // Log the split share %
                 'status' => 'completed',
             ]);
 
@@ -225,5 +259,7 @@ class OrderFulfillmentService
                 Log::error('Failed to send affiliate commission email: ' . $e->getMessage());
             }
         }
+
+        return (float) $affiliateAmount;
     }
 }

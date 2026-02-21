@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
-use App\Models\ProductTag;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -23,7 +23,7 @@ class ProductController extends Controller
             abort(404);
         }
 
-        $product->load(['author', 'versions', 'reviews.buyer', 'tags', 'bundles' => function($q) {
+        $product->load(['author', 'versions', 'reviews.buyer', 'category', 'bundles' => function($q) {
             $q->where('status', 'active')->with('products');
         }]);
         
@@ -36,7 +36,7 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource for a specific category (tag).
      */
-    public function category(ProductTag $category)
+    public function category(Category $category)
     {
         return view('products.index', [
             'category' => $category

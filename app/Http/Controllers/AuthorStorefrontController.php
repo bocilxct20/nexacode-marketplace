@@ -21,12 +21,13 @@ class AuthorStorefrontController extends Controller
             abort(404);
         }
 
-        $totalSales = Product::where('author_id', $user->id)->sum('sales_count');
-        $avgRating = Product::where('author_id', $user->id)->avg('avg_rating');
+        $totalSales   = Product::where('author_id', $user->id)->sum('sales_count');
+        $avgRating    = Product::where('author_id', $user->id)->avg('avg_rating');
         $productCount = Product::where('author_id', $user->id)->approved()->count();
-        $isElite = $user->isElite();
+        $isElite      = $user->isElite();
         $followerCount = $user->followers()->count();
+        $memberSince  = $user->created_at->format('M Y');
 
-        return view('authors.show', compact('user', 'totalSales', 'avgRating', 'isElite', 'productCount', 'followerCount'));
+        return view('authors.show', compact('user', 'totalSales', 'avgRating', 'isElite', 'productCount', 'followerCount', 'memberSince'));
     }
 }

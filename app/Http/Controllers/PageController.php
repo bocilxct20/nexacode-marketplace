@@ -23,7 +23,7 @@ class PageController extends Controller
 
     public function home()
     {
-        $categories = \App\Models\ProductTag::all();
+        $categories = \App\Models\Category::orderBy('sort_order')->get();
         $featuredProducts = \App\Models\Product::featured()->inRandomOrder()->take(3)->get();
         $trendingTags = \App\Models\ProductTag::withCount('products')
             ->orderBy('products_count', 'desc')
@@ -86,6 +86,12 @@ class PageController extends Controller
             ]
         ];
         
-        return view('welcome', compact('categories', 'featuredProducts', 'trendingTags', 'stats', 'features', 'testimonials'));
+        // Top Rated Authors (Smart Leaderboard)
+        $topAuthors = \App\Models\User::whereHas('roles', fn($q) => $q->where('slug', 'author'))
+            ->get()
+            ->sortByDesc('ranking_score')
+            ->take(6);
+        
+        return view('welcome', compact('categories', 'featuredProducts', 'trendingTags', 'stats', 'features', 'testimonials', 'topAuthors'));
     }
 }

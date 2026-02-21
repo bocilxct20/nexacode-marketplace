@@ -68,24 +68,33 @@ class RefundController extends Controller
             return redirect()->route('dashboard.orders');
         }
 
+        // Load items.product.author before creating the refund  
+        $order->load('items.product.author');
+
         $refund = RefundRequest::create([
             'order_id' => $order->id,
-            'buyer_id' => $user->id,
+            'user_id'  => $user->id,   // matches migration column name
             'reason' => $request->reason,
             'status' => 'pending',
         ]);
 
-        // Notify Author
-        \Illuminate\Support\Facades\Mail::to($author->email)->queue(new \App\Mail\NewRefundRequest($refund));
+        // Notify Author (if product has an author)
+        $author = optional($order->items->first()?->product)->author;
+        if ($author) {
+            try {
+                \Illuminate\Support\Facades\Mail::to($author->email)->queue(new \App\Mail\NewRefundRequest($refund));
+            } catch (\Exception $e) {
+                \Log::error('Failed to send refund notification to author: ' . $e->getMessage());
+            }
 
-        // Database Notification for Author
-        $author->notify(new \App\Notifications\SystemNotification([
-            'title' => 'New Refund Request ↩️',
-            'message' => 'A buyer has requested a refund for Order #' . $order->id . '.',
-            'type' => 'warning',
-            'action_text' => 'Review Refund',
-            'action_url' => route('author.refunds'),
-        ]));
+            $author->notify(new \App\Notifications\SystemNotification([
+                'title' => 'New Refund Request ↩️',
+                'message' => 'A buyer has requested a refund for Order #' . $order->id . '.',
+                'type' => 'warning',
+                'action_text' => 'Review Refund',
+                'action_url' => route('author.refunds'),
+            ]));
+        }
 
         \Flux::toast(
             variant: 'success',

@@ -15,8 +15,8 @@
         <flux:breadcrumbs>
             <flux:breadcrumbs.item href="{{ route('home') }}" separator="slash">Home</flux:breadcrumbs.item>
             <flux:breadcrumbs.item href="{{ route('products.index') }}" separator="slash">Products</flux:breadcrumbs.item>
-            @if($product->tags->first())
-                <flux:breadcrumbs.item href="{{ route('categories.show', $product->tags->first()->slug) }}" separator="slash">{{ $product->tags->first()->name }}</flux:breadcrumbs.item>
+            @if($product->category)
+                <flux:breadcrumbs.item href="{{ route('products.index', ['category' => $product->category->id]) }}" separator="slash">{{ $product->category->name }}</flux:breadcrumbs.item>
             @endif
             <flux:breadcrumbs.item separator="slash">{{ $product->name }}</flux:breadcrumbs.item>
         </flux:breadcrumbs>
@@ -27,8 +27,8 @@
         <div class="lg:col-span-2 space-y-12">
             <div>
                 <div class="flex items-center gap-3 mb-2">
-                    @if($product->tags->first())
-                        <flux:badge size="sm" color="zinc" variant="outline" class="uppercase font-black tracking-widest text-[9px] px-2 py-0.5">{{ $product->tags->first()->name }}</flux:badge>
+                    @if($product->category)
+                        <flux:badge size="sm" color="zinc" variant="outline" class="uppercase font-black tracking-widest text-[9px] px-2 py-0.5">{{ $product->category->name }}</flux:badge>
                     @endif
                     <div class="h-1 w-8 bg-emerald-500 rounded-full"></div>
                 </div>
@@ -174,7 +174,7 @@
                                 </flux:heading>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     @foreach($product->bundles as $bundle)
-                                        <div class="group p-6 bg-white dark:bg-zinc-900 rounded-[2rem] border border-zinc-200 dark:border-zinc-800 hover:border-emerald-500/50 transition-all duration-300 shadow-sm hover:shadow-xl relative overflow-hidden">
+                                        <div class="group p-6 bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:border-emerald-500/50 transition-all duration-300 shadow-sm hover:shadow-xl relative overflow-hidden">
                                             <div class="flex flex-col h-full">
                                                 <div class="flex items-center justify-between mb-4">
                                                     <flux:badge color="emerald" variant="solid" class="uppercase font-black text-[10px] tracking-widest px-3 py-1 scale-90 origin-left">SAVE {{ $bundle->discount_percentage > 0 ? $bundle->discount_percentage . '%' : 'Rp ' . number_format($bundle->discount_amount) }}</flux:badge>

@@ -180,9 +180,7 @@
                         </p>
                         
                         <div class="flex flex-col sm:flex-row gap-4">
-                            <flux:button x-on:click="Livewire.dispatch('open-admin-support')" variant="primary" icon="chat-bubble-left-right" class="px-8 !bg-emerald-600 hover:!bg-emerald-700 !border-none text-white shadow-xl shadow-emerald-500/20">
-                                Chat Live with Support
-                            </flux:button>
+                            <flux:button href="{{ route('support.chat') }}" variant="primary" icon="chat-bubble-left-right" class="px-8 bg-emerald-600 border-none">Start Live Chat</flux:button>
                             <flux:button href="mailto:privacy@nexacode.com" variant="ghost" icon="envelope" class="text-emerald-600 dark:text-emerald-400">
                                 privacy@nexacode.com
                             </flux:button>

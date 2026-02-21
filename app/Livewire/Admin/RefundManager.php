@@ -58,12 +58,21 @@ class RefundManager extends Component
 
             // Cancel the author earning for this order
             $earning = \App\Models\Earning::where('order_id', $this->selectedRefund->order_id)
-                ->whereIn('status', [\App\Models\Earning::STATUS_PENDING, \App\Models\Earning::STATUS_AVAILABLE])
+                ->whereIn('status', [\App\Enums\EarningStatus::PENDING, \App\Enums\EarningStatus::AVAILABLE])
                 ->first();
 
             if ($earning) {
                 $earning->cancel();
+                
+                // Reverse XP
+                $xpToDeduct = (int) ($earning->amount / 1000);
+                if ($xpToDeduct > 0) {
+                    app(\App\Services\AuthorLevelService::class)->deductXp($earning->author, $xpToDeduct);
+                }
             }
+
+            // Cancel Platform Earnings
+            \App\Models\PlatformEarning::where('order_id', $this->selectedRefund->order_id)->delete();
 
             // Update order status to refunded
             $this->selectedRefund->order->update(['status' => \App\Enums\OrderStatus::REFUNDED]);

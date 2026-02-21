@@ -125,7 +125,7 @@
                     <div class="absolute inset-0 bg-zinc-950/60 backdrop-blur-md" x-on:click="show = false; localStorage.setItem('nexaflash_dismissed_{{ $activeSale->id }}', true)"></div>
 
                     {{-- Modal Card --}}
-                    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-[3rem] p-8 shadow-2xl relative overflow-hidden w-full max-w-lg">
+                    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-8 shadow-2xl relative overflow-hidden w-full max-w-lg">
                         {{-- Background Glow --}}
                         <div class="absolute -top-12 -right-12 size-48 bg-cyan-500/10 dark:bg-cyan-500/20 blur-3xl rounded-full"></div>
                         <div class="absolute -bottom-12 -left-12 size-48 bg-emerald-500/10 dark:bg-emerald-500/20 blur-3xl rounded-full"></div>
@@ -402,36 +402,6 @@
 
         <flux:toast />
 
-        <livewire:chat-widget />
-        <livewire:help.help-widget />
-        {{-- Elite Help Center: Proactive Engine --}}
-        <div x-data="{
-            rules: [
-                { path: '/checkout', articleId: 2, delay: 10000 },
-                { path: '/author/register', articleId: 1, delay: 30000 },
-                { path: '/', articleId: 1, delay: 60000 },
-            ],
-            timer: null,
-            init() {
-                this.checkRules();
-                document.addEventListener('livewire:navigated', () => this.checkRules());
-            },
-            checkRules() {
-                if (this.timer) clearTimeout(this.timer);
-                
-                const currentPath = window.location.pathname;
-                const rule = this.rules.find(r => currentPath === r.path || (r.path !== '/' && currentPath.startsWith(r.path)));
-                
-                if (rule) {
-                    this.timer = setTimeout(() => {
-                        if (window.location.pathname === currentPath) {
-                            Livewire.dispatch('triggerProactiveHelp', { articleId: rule.articleId });
-                        }
-                    }, rule.delay);
-                }
-            }
-        }"></div>
-
         <livewire:global.lightbox />
         @livewireScripts
         @fluxScripts
@@ -455,24 +425,6 @@
                 @if(session('status'))
                     window.Flux.toast({ heading: 'Status Update', text: '{{ session('status') }}' });
                 @endif
-
-                // Real-time Context Tracking for Chat
-                @auth
-                    const reportContext = () => {
-                        const title = document.title.split('-')[0].trim();
-                        const url = window.location.href;
-                        // Dispatch to both possible chat managers
-                        Livewire.dispatch('update-context', { url: url, title: title });
-                    };
-
-                    // Initial report
-                    setTimeout(reportContext, 2000);
-
-                    // Report on navigation (for SPA-like feel if using Livewire navigate)
-                    document.addEventListener('livewire:navigated', () => {
-                        setTimeout(reportContext, 1000);
-                    });
-                @endauth
             });
         </script>
     </body>

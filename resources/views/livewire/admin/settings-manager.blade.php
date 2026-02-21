@@ -159,14 +159,8 @@
             <form wire:submit="saveCategorizedSettings" class="space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <flux:field>
-                        <flux:label>Global Commission Rate (%)</flux:label>
-                        <flux:input type="number" wire:model="commission_rate" min="0" max="100" step="0.1" />
-                        <flux:description>Standard percentage taken from each sale.</flux:description>
-                    </flux:field>
-
-                    <flux:field>
-                        <flux:label>Minimum Payout Amount</flux:label>
-                        <flux:input type="number" wire:model="min_payout" min="0" />
+                        <flux:label>Minimum Withdrawal Amount</flux:label>
+                        <flux:input type="number" wire:model="min_withdrawal" min="0" />
                         <flux:description>Threshold for authors to request a withdrawal.</flux:description>
                     </flux:field>
 

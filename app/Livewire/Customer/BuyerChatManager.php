@@ -19,9 +19,21 @@ class BuyerChatManager extends Component
 
     public $selectedConversationId;
     public $replyMessage = '';
+
+    protected $queryString = [
+        'selectedConversationId' => ['as' => 'id', 'except' => ''],
+    ];
+
     public $attachment;
     public $protectionWarning = null;
     public $readyToLoad = false;
+
+    public function mount()
+    {
+        if ($this->selectedConversationId) {
+            $this->selectConversation($this->selectedConversationId);
+        }
+    }
 
     public function load()
     {

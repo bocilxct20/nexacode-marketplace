@@ -23,6 +23,7 @@ use App\Http\Controllers\AuthorStorefrontController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PageController::class, 'home'])->name('home');
+Route::get('/authors/ranking', \App\Livewire\Page\AuthorRanking::class)->name('page.author-ranking');
 
 // Legal & Support Pages
 Route::get('/privacy-policy', [PageController::class, 'privacy'])->name('privacy');
@@ -113,8 +114,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/payment/{order}/upload-proof', [CheckoutController::class, 'uploadPaymentProof'])->name('payment.upload-proof')->middleware('throttle:5,1');
     Route::post('/payment/{order}/cancel', [CheckoutController::class, 'cancel'])->name('payment.cancel');
     
-    // Midtrans Checkout Routes
-    Route::get('/checkout', [CheckoutController::class, 'midtransCheckout'])->name('checkout.index');
+    // Midtrans Checkout Routes (POST only — GET /checkout is handled by CartCheckout above)
     Route::post('/checkout', [CheckoutController::class, 'midtransProcess'])->name('checkout.midtrans.process');
     Route::get('/checkout/success', [CheckoutController::class, 'paymentSuccess'])->name('checkout.success');
     Route::get('/checkout/pending', [CheckoutController::class, 'paymentPending'])->name('checkout.pending');
@@ -178,6 +178,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/support/create', [SupportController::class, 'create'])->name('support.create');
     Route::post('/support', [SupportController::class, 'store'])->name('support.store');
     Route::get('/support/{ticket}', [SupportController::class, 'show'])->name('support.show');
+    Route::get('/support-chat', [SupportController::class, 'chat'])->name('support.chat');
 
     // Refund System
     Route::get('/orders/{order}/refund', [RefundController::class, 'create'])->name('refunds.create');
@@ -232,6 +233,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     })->name('admin.author-requests');
     Route::get('/users', function () { return view('admin.users'); })->name('admin.users');
     Route::get('/orders', function () { return view('admin.orders'); })->name('admin.orders');
+    Route::get('/categories', \App\Livewire\Admin\CategoryManager::class)->name('admin.categories');
     Route::get('/products', function () { return view('admin.products'); })->name('admin.products');
     Route::get('/payouts', function () { return view('admin.payouts'); })->name('admin.payouts');
     Route::get('/buyer-reports', \App\Livewire\Admin\BuyerReportsManager::class)->name('admin.buyer-reports');

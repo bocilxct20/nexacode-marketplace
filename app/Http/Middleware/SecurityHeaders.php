@@ -9,42 +9,40 @@ use Symfony\Component\HttpFoundation\Response;
 class SecurityHeaders
 {
     /**
-     * Handle an incoming request.
+     * Apply security headers to every response.
      */
     public function handle(Request $request, Closure $next): Response
     {
         $response = $next($request);
 
-        $config = config('security.headers', []);
-
-        // Content Security Policy
-        if (isset($config['csp'])) {
-            $response->headers->set('Content-Security-Policy', $config['csp']);
-        }
-
-        // HTTP Strict Transport Security
-        if (isset($config['hsts'])) {
-            $response->headers->set('Strict-Transport-Security', $config['hsts']);
-        }
+        // X-Content-Type-Options
+        $response->headers->set('X-Content-Type-Options', 'nosniff');
 
         // X-Frame-Options
-        if (isset($config['x_frame_options'])) {
-            $response->headers->set('X-Frame-Options', $config['x_frame_options']);
-        }
+        $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
 
-        // X-Content-Type-Options
-        if (isset($config['x_content_type_options'])) {
-            $response->headers->set('X-Content-Type-Options', $config['x_content_type_options']);
-        }
+        // X-XSS-Protection (legacy browsers)
+        $response->headers->set('X-XSS-Protection', '1; mode=block');
+
+        // HTTP Strict Transport Security (HTTPS only, 1 year)
+        $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
 
         // Referrer-Policy
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
 
         // Permissions-Policy
-        $response->headers->set('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+        $response->headers->set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
 
-        // X-XSS-Protection (legacy but still useful)
-        $response->headers->set('X-XSS-Protection', '1; mode=block');
+        // Content-Security-Policy
+        $csp = "default-src 'self' https:; " .
+               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; " .
+               "style-src 'self' 'unsafe-inline' https: https://fonts.googleapis.com https://fonts.bunny.net; " .
+               "img-src 'self' data: https: blob:; " .
+               "font-src 'self' https: data: https://fonts.bunny.net; " .
+               "connect-src 'self' https: ws: wss:; " .
+               "media-src 'self' https:; " .
+               "frame-ancestors 'self';";
+        $response->headers->set('Content-Security-Policy', $csp);
 
         return $response;
     }

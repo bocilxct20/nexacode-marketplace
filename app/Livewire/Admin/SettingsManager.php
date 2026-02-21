@@ -29,8 +29,7 @@ class SettingsManager extends Component
     public $existing_favicon = '';
 
     // Marketplace
-    public $commission_rate = 0;
-    public $min_payout = 0;
+    public $min_withdrawal = 0;
     public $currency_code = 'IDR';
     public $currency_symbol = 'Rp';
     public $auto_approve_authors = false;
@@ -62,28 +61,30 @@ class SettingsManager extends Component
     {
         if (!auth()->user()?->isAdmin()) return;
 
-        $this->site_name = $this->getSetting('site_name', 'NexaCode Marketplace');
-        $this->support_email = $this->getSetting('support_email', 'support@nexacode.id');
-        $this->site_address = $this->getSetting('site_address', '');
-        
-        $this->existing_logo = $this->getSetting('site_logo', '');
-        $this->existing_favicon = $this->getSetting('site_favicon', '');
+        // Single query — pluck all keys at once instead of 13 individual DB calls
+        $s = PlatformSetting::all()->pluck('value', 'key');
 
-        $this->commission_rate = (float) $this->getSetting('commission_rate', 10);
-        $this->min_payout = (float) $this->getSetting('min_payout', 50000);
-        $this->currency_code = $this->getSetting('currency_code', 'IDR');
-        $this->currency_symbol = $this->getSetting('currency_symbol', 'Rp');
-        $this->auto_approve_authors = (bool) $this->getSetting('auto_approve_authors', false);
-        $this->auto_approve_products = (bool) $this->getSetting('auto_approve_products', false);
-        $this->maintenance_mode = (bool) $this->getSetting('maintenance_mode', false);
+        $this->site_name        = $s->get('site_name', 'NexaCode Marketplace');
+        $this->support_email    = $s->get('support_email', 'support@nexacode.id');
+        $this->site_address     = $s->get('site_address', '');
 
-        $this->meta_title = $this->getSetting('meta_title', 'NexaCode - Digital Marketplace');
-        $this->meta_description = $this->getSetting('meta_description', 'Premium source code and digital products.');
+        $this->existing_logo    = $s->get('site_logo', '');
+        $this->existing_favicon = $s->get('site_favicon', '');
 
-        $this->social_twitter = $this->getSetting('social_twitter', '');
-        $this->social_github = $this->getSetting('social_github', '');
-        $this->social_facebook = $this->getSetting('social_facebook', '');
-        $this->social_instagram = $this->getSetting('social_instagram', '');
+        $this->min_withdrawal        = (float) $s->get('min_withdrawal', 50000);
+        $this->currency_code         = $s->get('currency_code', 'IDR');
+        $this->currency_symbol       = $s->get('currency_symbol', 'Rp');
+        $this->auto_approve_authors  = (bool) $s->get('auto_approve_authors', false);
+        $this->auto_approve_products = (bool) $s->get('auto_approve_products', false);
+        $this->maintenance_mode      = (bool) $s->get('maintenance_mode', false);
+
+        $this->meta_title       = $s->get('meta_title', 'NexaCode - Digital Marketplace');
+        $this->meta_description = $s->get('meta_description', 'Premium source code and digital products.');
+
+        $this->social_twitter   = $s->get('social_twitter', '');
+        $this->social_github    = $s->get('social_github', '');
+        $this->social_facebook  = $s->get('social_facebook', '');
+        $this->social_instagram = $s->get('social_instagram', '');
     }
 
     private function getSetting($key, $default = '')
@@ -96,22 +97,21 @@ class SettingsManager extends Component
     {
         if (!auth()->user()?->isAdmin()) abort(403);
         $data = [
-            'site_name' => $this->site_name,
-            'support_email' => $this->support_email,
-            'site_address' => $this->site_address,
-            'commission_rate' => $this->commission_rate,
-            'min_payout' => $this->min_payout,
-            'currency_code' => $this->currency_code,
-            'currency_symbol' => $this->currency_symbol,
-            'auto_approve_authors' => $this->auto_approve_authors,
-            'auto_approve_products' => $this->auto_approve_products,
-            'maintenance_mode' => $this->maintenance_mode,
-            'meta_title' => $this->meta_title,
-            'meta_description' => $this->meta_description,
-            'social_twitter' => $this->social_twitter,
-            'social_github' => $this->social_github,
-            'social_facebook' => $this->social_facebook,
-            'social_instagram' => $this->social_instagram,
+            'site_name'           => $this->site_name,
+            'support_email'       => $this->support_email,
+            'site_address'        => $this->site_address,
+            'min_withdrawal'      => $this->min_withdrawal,
+            'currency_code'       => $this->currency_code,
+            'currency_symbol'     => $this->currency_symbol,
+            'auto_approve_authors'  => $this->auto_approve_authors ? '1' : '0',
+            'auto_approve_products' => $this->auto_approve_products ? '1' : '0',
+            'maintenance_mode'      => $this->maintenance_mode ? '1' : '0',
+            'meta_title'          => $this->meta_title,
+            'meta_description'    => $this->meta_description,
+            'social_twitter'      => $this->social_twitter,
+            'social_github'       => $this->social_github,
+            'social_facebook'     => $this->social_facebook,
+            'social_instagram'    => $this->social_instagram,
         ];
 
         // Handle Logo Upload

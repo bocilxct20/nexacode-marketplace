@@ -213,6 +213,36 @@ class User extends Authenticatable implements \Illuminate\Contracts\Auth\MustVer
     }
 
     /**
+     * Get the user's tier badge info (label and color).
+     */
+    public function getTierBadgeAttribute(): object
+    {
+        $plan = $this->currentPlan();
+        
+        if ($plan && $plan->is_elite) {
+            return (object) [
+                'label' => 'Elite',
+                'color' => 'amber',
+                'icon' => 'sparkles',
+            ];
+        }
+
+        if ($plan && ($plan->slug === 'pro' || $plan->allow_trial)) {
+            return (object) [
+                'label' => 'Pro',
+                'color' => 'indigo',
+                'icon' => 'bolt',
+            ];
+        }
+
+        return (object) [
+            'label' => 'Basic',
+            'color' => 'zinc',
+            'icon' => 'user',
+        ];
+    }
+
+    /**
      * Check if the user is a Pro author.
      */
     public function isPro(): bool
@@ -233,6 +263,53 @@ class User extends Authenticatable implements \Illuminate\Contracts\Auth\MustVer
             ->map(fn($segment) => mb_substr($segment, 0, 1))
             ->take(2)
             ->join('');
+    }
+
+    /**
+     * Calculate a smart ranking score for the author.
+     */
+    public function getRankingScoreAttribute(): float
+    {
+        // 1. Sales Impact (Quantity)
+        $totalSales = $this->products()->sum('sales_count');
+        $salesScore = $totalSales * 15;
+
+        // 2. Revenue Impact (Economic Value)
+        // Reward high-value sales: Rp 1.000.000 revenue = 100 points
+        $totalRevenue = $this->earnings()->sum('amount');
+        $revenueScore = ($totalRevenue / 10000); 
+
+        // 3. Quality Impact (Weighted by product count)
+        $avgRating = $this->products()->avg('avg_rating') ?: 0;
+        $productCount = $this->products()->count();
+        $qualityScore = ($avgRating * 250) + ($productCount * 100);
+
+        // 4. XP Impact (Loyalty/Activity)
+        $xpScore = $this->xp * 0.15;
+
+        // 5. Tier Bonus
+        $tierBonus = 0;
+        if ($this->isElite()) $tierBonus = 10000;
+        elseif ($this->isPro()) $tierBonus = 3000;
+
+        return $salesScore + $revenueScore + $qualityScore + $xpScore + $tierBonus;
+    }
+
+    /**
+     * Get the author's global rank position.
+     */
+    public function getGlobalRankPosition(): int
+    {
+        return \Illuminate\Support\Facades\Cache::remember("user_{$this->id}_rank", 3600, function () {
+            $authors = User::whereHas('roles', fn($q) => $q->where('slug', 'author'))
+                ->get()
+                ->sortByDesc('ranking_score')
+                ->values();
+            
+            $position = $authors->search(fn($user) => $user->id === $this->id);
+            
+            return $position !== false ? $position + 1 : 0;
+        });
     }
 
     public function isTrialing(): bool

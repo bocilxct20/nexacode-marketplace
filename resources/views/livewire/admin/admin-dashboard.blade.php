@@ -6,8 +6,8 @@
     </div>
     @if (!$readyToLoad)
         {{-- Skeleton State --}}
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            @for ($i = 0; $i < 4; $i++)
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
+            @for ($i = 0; $i < 5; $i++)
                 <flux:card class="animate-pulse">
                     <div class="h-4 w-24 bg-zinc-200 dark:bg-zinc-800 rounded mb-2"></div>
                     <div class="h-8 w-32 bg-zinc-200 dark:bg-zinc-800 rounded"></div>
@@ -35,10 +35,15 @@
         </div>
     @else
         {{-- Actual Content --}}
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
             <flux:card>
-                <flux:subheading class="text-xs uppercase tracking-wider text-zinc-500">Total Revenue</flux:subheading>
+                <flux:subheading class="text-xs uppercase tracking-wider text-zinc-500">Gross Volume</flux:subheading>
                 <div class="text-2xl font-bold mt-1">Rp {{ number_format($stats['total_revenue'], 0, ',', '.') }}</div>
+            </flux:card>
+
+            <flux:card class="bg-emerald-50/50 dark:bg-emerald-500/5 border-emerald-100 dark:border-emerald-500/20">
+                <flux:subheading class="text-xs uppercase tracking-wider text-emerald-600 dark:text-emerald-400 font-bold">Platform Net Profit 🛡️</flux:subheading>
+                <div class="text-2xl font-bold mt-1 text-emerald-700 dark:text-emerald-300">Rp {{ number_format($stats['net_platform_profit'], 0, ',', '.') }}</div>
             </flux:card>
 
             <flux:card>

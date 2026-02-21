@@ -18,7 +18,13 @@ class Product extends Model
         'video_url',
         'demo_url',
         'price',
+        'category_id',
     ];
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
 
     protected static function boot()
     {

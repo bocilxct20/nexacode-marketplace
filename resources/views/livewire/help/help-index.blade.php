@@ -41,7 +41,7 @@
                     @endforeach
                 </div>
             @else
-                <div class="py-20 flex flex-col items-center justify-center bg-zinc-50 dark:bg-zinc-900/50 rounded-[3rem] border-2 border-dashed border-zinc-200 dark:border-zinc-800">
+                <div class="py-20 flex flex-col items-center justify-center bg-zinc-50 dark:bg-zinc-900/50 rounded-2xl border-2 border-dashed border-zinc-200 dark:border-zinc-800">
                     <div class="w-16 h-16 bg-zinc-100 dark:bg-zinc-800 rounded-full flex items-center justify-center mb-4">
                         <flux:icon name="magnifying-glass" class="w-8 h-8 text-zinc-400" />
                     </div>
@@ -56,10 +56,20 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
             @foreach($categories as $category)
                 <a href="{{ route('help.category', $category->slug) }}" wire:navigate class="group">
-                    <flux:card class="h-full p-8 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 border-zinc-100 dark:border-zinc-800 group-hover:border-emerald-500/30">
+                    <flux:card 
+                        class="h-full p-8 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 border-zinc-100 dark:border-zinc-800 hover:border-emerald-500/30"
+                    >
                         <div class="mb-6 flex justify-between items-start">
                             <div class="p-4 bg-emerald-50 dark:bg-emerald-500/10 rounded-2xl group-hover:bg-emerald-500 group-hover:text-white transition-colors duration-300 text-emerald-600 dark:text-emerald-400">
-                                <flux:icon :icon="$category->icon ?: 'book-open'" variant="solid" class="w-8 h-8" />
+                                    @if($category->icon && (str_starts_with($category->icon, 'storage/') || str_starts_with($category->icon, 'http')))
+                                        <div class="w-10 h-10 bg-current transition-colors duration-300" 
+                                             style="mask-image: url('{{ asset($category->icon) }}'); mask-size: contain; mask-repeat: no-repeat; mask-position: center; -webkit-mask-image: url('{{ asset($category->icon) }}'); -webkit-mask-size: contain; -webkit-mask-repeat: no-repeat; -webkit-mask-position: center;">
+                                        </div>
+                                    @elseif(str_starts_with($category->icon ?? '', 'lucide-'))
+                                        <x-dynamic-component :component="$category->icon" class="w-10 h-10 transition-colors duration-300" />
+                                    @else
+                                        <flux:icon :icon="$category->icon ?: 'book-open'" variant="outline" class="w-8 h-8 transition-colors duration-300" />
+                                    @endif
                             </div>
                             <flux:badge size="sm" variant="zinc" class="opacity-0 group-hover:opacity-100 transition-opacity">
                                 {{ $category->articles()->where('is_published', true)->count() }} Artikel
@@ -113,7 +123,7 @@
                 Jika kamu belum menemukan jawaban yang dicari, tim support kami siap membantu kamu secara langsung.
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <flux:button x-on:click="Livewire.dispatch('open-admin-support')" variant="primary" icon="chat-bubble-left-right" class="px-10 h-14 bg-emerald-600 hover:bg-emerald-500 border-none shadow-lg shadow-emerald-900/20 transition-all hover:scale-105">
+                <flux:button wire:click="contactSupport" variant="primary" icon="chat-bubble-left-right" class="px-10 h-14 bg-emerald-600 hover:bg-emerald-500 border-none shadow-lg shadow-emerald-900/20 transition-all hover:scale-105">
                     Mulai Live Chat
                 </flux:button>
                 @auth

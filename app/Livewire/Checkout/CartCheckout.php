@@ -42,6 +42,25 @@ class CartCheckout extends Component
             return redirect()->route('products.index')->with('info', 'Keranjang kamu kosong.');
         }
 
+        // Security Check: Author cannot purchase their own products
+        $userId = Auth::id();
+        foreach ($this->cartItems as $item) {
+            if ($item->product && $item->product->author_id === $userId) {
+                $this->dispatch('toast', variant: 'danger', heading: 'Loopholes Blocked 🛡️', text: 'Kamu tidak dapat membeli produk milik sendiri untuk menjaga integritas sistem XP.');
+                $this->cartItems = collect();
+                return;
+            }
+            if ($item->bundle) {
+                foreach ($item->bundle->products as $p) {
+                    if ($p->author_id === $userId) {
+                        $this->dispatch('toast', variant: 'danger', heading: 'Loopholes Blocked 🛡️', text: 'Salah satu produk dalam bundle adalah milikmu sendiri. Pembelian dibatalkan.');
+                        $this->cartItems = collect();
+                        return;
+                    }
+                }
+            }
+        }
+
         $this->recomputeTotal();
     }
 

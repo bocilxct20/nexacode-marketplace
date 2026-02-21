@@ -103,6 +103,8 @@
                             <flux:text size="sm">@ {{ $user->username ?? $user->id }}</flux:text>
                             <flux:separator vertical />
                             <flux:badge :color="$user->isElite() ? 'amber' : ($user->isPro() ? 'indigo' : 'zinc')" size="sm" class="px-2 uppercase font-black tracking-tighter">{{ $user->currentPlan()?->name ?? 'Basic' }}</flux:badge>
+                            <flux:separator vertical />
+                            <flux:text size="sm" class="text-zinc-400">Member since {{ $memberSince }}</flux:text>
                         </div>
 
                         @if($user->isElite() && $user->storefront_message)
@@ -115,12 +117,13 @@
 
                 {{-- Info & Actions --}}
                 <div class="flex-1 pt-4 lg:pt-8 flex flex-col space-y-8">
-                    <div class="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
-                        <flux:text size="lg" class="max-w-3xl leading-relaxed">
+                    {{-- Bio + Social + Follow Button --}}
+                    <div class="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
+                        <flux:text size="lg" class="max-w-3xl leading-relaxed flex-1">
                             {{ $user->bio ?? 'This author is busy creating amazing content for the community!' }}
                         </flux:text>
 
-                            <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-2 shrink-0">
                             @if($user->website_url || $user->twitter_url || $user->github_url)
                                 <flux:button.group>
                                     @if($user->website_url)
@@ -148,8 +151,8 @@
 
                     <flux:separator />
 
-                    {{-- Metric Grid using Flux Callouts for high contrast in dark mode --}}
-                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    {{-- Metric Grid --}}
+                    <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
                         <flux:callout color="emerald" icon="banknotes">
                             <flux:subheading class="uppercase tracking-widest text-[10px] font-black">Total Sales</flux:subheading>
                             <flux:heading size="xl" class="tabular-nums">{{ number_format($totalSales) }}</flux:heading>
@@ -157,7 +160,7 @@
 
                         <flux:callout color="amber" icon="star">
                             <flux:subheading class="uppercase tracking-widest text-[10px] font-black">Avg Rating</flux:subheading>
-                            <flux:heading size="xl" class="tabular-nums">{{ number_format($avgRating, 1) }}</flux:heading>
+                            <flux:heading size="xl" class="tabular-nums">{{ $avgRating ? number_format($avgRating, 1) : '—' }}</flux:heading>
                         </flux:callout>
 
                         <flux:callout color="indigo" icon="users">
@@ -167,7 +170,17 @@
 
                         <flux:callout color="zinc" icon="cube">
                             <flux:subheading class="uppercase tracking-widest text-[10px] font-black">Public Items</flux:subheading>
-                            <flux:heading size="xl" class="tabular-nums">{{ $productCount }}</flux:heading>
+                            <flux:heading size="xl" class="tabular-nums">{{ number_format($productCount) }}</flux:heading>
+                        </flux:callout>
+
+                        <flux:callout color="sky" icon="shield-check">
+                            <flux:subheading class="uppercase tracking-widest text-[10px] font-black">Trust Score</flux:subheading>
+                            <flux:heading size="xl" class="tabular-nums">{{ number_format($user->ranking_score, 0, ',', '.') }}</flux:heading>
+                        </flux:callout>
+
+                        <flux:callout color="purple" icon="academic-cap">
+                            <flux:subheading class="uppercase tracking-widest text-[10px] font-black">Mastery</flux:subheading>
+                            <flux:heading size="xl" class="tabular-nums">Lv. {{ $user->level ?? 1 }}</flux:heading>
                         </flux:callout>
                     </div>
                 </div>

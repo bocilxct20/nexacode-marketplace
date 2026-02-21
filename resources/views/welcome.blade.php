@@ -9,8 +9,8 @@
     <section class="relative py-24 overflow-hidden bg-zinc-50 dark:bg-zinc-900">
         <flux:container>
             <div class="text-center max-w-3xl mx-auto relative z-10">
-                <flux:heading level="1" class="text-5xl mb-6 font-extrabold tracking-tight">
-                    The world's leading marketplace for <span class="text-emerald-600">source code</span>
+                <flux:heading level="1" class="text-5xl lg:text-7xl mb-8 font-black tracking-tighter leading-tight">
+                    The world's leading marketplace for <span class="bg-gradient-to-r from-emerald-600 to-cyan-600 bg-clip-text text-transparent">source code</span>
                 </flux:heading>
                 <flux:subheading size="lg" class="mb-10 text-zinc-500">
                     Browse thousands of premium scripts, themes, and templates from the world's best authors. Professional tools for professional developers.
@@ -18,20 +18,25 @@
 
                 <form action="{{ route('products.index') }}" method="GET" class="flex flex-col sm:flex-row gap-2 max-w-2xl mx-auto mb-6">
                     <div class="flex-1">
-                        <flux:input name="search" placeholder="Search for anything (e.g. Laravel, React, E-commerce...)">
+                        <flux:input name="search" placeholder="Search for anything (e.g. Laravel, React, E-commerce...)" class="rounded-2xl">
                             <x-slot name="icon">
                                 <flux:icon name="magnifying-glass" variant="micro" class="size-4" />
                             </x-slot>
                         </flux:input>
                     </div>
-                    <flux:button type="submit" variant="primary">Search Items</flux:button>
+                    <flux:button type="submit" variant="primary" class="rounded-2xl">Search Items</flux:button>
                 </form>
 
-                <div class="flex flex-wrap justify-center gap-2 text-sm text-zinc-500 dark:text-zinc-400">
-                    <span>Trending searches:</span>
-                    @foreach($trendingTags as $tag)
-                        <flux:badge color="zinc" variant="outline" href="{{ route('products.index', ['search' => $tag->name]) }}">{{ $tag->name }}</flux:badge>
-                    @endforeach
+                <div class="flex flex-wrap justify-center gap-3 text-sm text-zinc-500 dark:text-zinc-400">
+                    <span class="font-bold flex items-center gap-1.5 opacity-60">
+                        <flux:icon name="bolt" variant="micro" class="size-3" />
+                        Quick Browse:
+                    </span>
+                    <flux:badge color="zinc" variant="outline" class="rounded-xl hover:bg-emerald-500/10 hover:text-emerald-600 transition-colors" href="{{ route('products.index', ['search' => 'Laravel']) }}">Laravel</flux:badge>
+                    <flux:badge color="zinc" variant="outline" class="rounded-xl hover:bg-emerald-500/10 hover:text-emerald-600 transition-colors" href="{{ route('products.index', ['search' => 'SaaS']) }}">SaaS</flux:badge>
+                    <flux:badge color="zinc" variant="outline" class="rounded-xl hover:bg-emerald-500/10 hover:text-emerald-600 transition-colors" href="{{ route('products.index', ['search' => 'React']) }}">React</flux:badge>
+                    <flux:badge color="zinc" variant="outline" class="rounded-xl hover:bg-emerald-500/10 hover:text-emerald-600 transition-colors" href="{{ route('products.index', ['search' => 'E-commerce']) }}">E-commerce</flux:badge>
+                    <flux:badge color="zinc" variant="outline" class="rounded-xl hover:bg-emerald-500/10 hover:text-emerald-600 transition-colors" href="{{ route('products.index', ['search' => 'Flutter']) }}">Flutter</flux:badge>
                 </div>
             </div>
 
@@ -43,28 +48,51 @@
 
     <flux:separator />
 
-    {{-- Trust Ribbon: Platform Stats --}}
-    <section class="py-12 bg-zinc-50 dark:bg-zinc-900 border-y border-zinc-200 dark:border-zinc-800 relative overflow-hidden">
+    {{-- Trust Ribbon: Platform Stats & Guarantees --}}
+    <section class="py-8 bg-zinc-50 dark:bg-zinc-900 border-y border-zinc-200 dark:border-zinc-800 relative overflow-hidden">
         {{-- Discrete Background Pattern --}}
         <div class="absolute inset-0 opacity-[0.03] dark:opacity-[0.01]" style="background-image: radial-gradient(#000 1px, transparent 1px); background-size: 40px 40px;"></div>
         
         <flux:container>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 relative z-10">
-                <div class="flex flex-col items-center text-center group">
-                    <div class="text-4xl font-black text-zinc-900 dark:text-white mb-1 group-hover:text-emerald-600 transition-colors">{{ number_format($stats['products_count'], 0, ',', '.') }}</div>
-                    <div class="text-[10px] uppercase font-bold tracking-[0.2em] text-zinc-500 group-hover:text-zinc-600 dark:group-hover:text-zinc-400 transition-colors">Premium Items</div>
+            <div class="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
+                {{-- Stats --}}
+                <div class="flex gap-8 md:gap-12 flex-1 justify-center md:justify-start">
+                    <div class="flex flex-col items-center group cursor-default">
+                        <div class="text-4xl font-black text-zinc-900 dark:text-white mb-0.5 group-hover:text-emerald-600 transition-colors tabular-nums">{{ number_format($stats['products_count'], 0, ',', '.') }}</div>
+                        <div class="text-[9px] uppercase font-black tracking-[0.2em] text-zinc-400 group-hover:text-zinc-500 transition-colors">Items</div>
+                    </div>
+                    <div class="flex flex-col items-center group cursor-default">
+                        <div class="text-4xl font-black text-zinc-900 dark:text-white mb-0.5 group-hover:text-cyan-600 transition-colors tabular-nums">{{ number_format($stats['authors_count'], 0, ',', '.') }}</div>
+                        <div class="text-[9px] uppercase font-black tracking-[0.2em] text-zinc-400 group-hover:text-zinc-500 transition-colors">Authors</div>
+                    </div>
+                    <div class="flex flex-col items-center group cursor-default">
+                        <div class="text-4xl font-black text-zinc-900 dark:text-white mb-0.5 group-hover:text-amber-600 transition-colors tabular-nums">{{ number_format($stats['buyers_count'], 0, ',', '.') }}</div>
+                        <div class="text-[9px] uppercase font-black tracking-[0.2em] text-zinc-400 group-hover:text-zinc-500 transition-colors">Buyers</div>
+                    </div>
                 </div>
-                <div class="flex flex-col items-center text-center group">
-                    <div class="text-4xl font-black text-zinc-900 dark:text-white mb-1 group-hover:text-cyan-600 transition-colors">{{ number_format($stats['authors_count'], 0, ',', '.') }}</div>
-                    <div class="text-[10px] uppercase font-bold tracking-[0.2em] text-zinc-500 group-hover:text-zinc-600 dark:group-hover:text-zinc-400 transition-colors">Expert Authors</div>
-                </div>
-                <div class="flex flex-col items-center text-center group">
-                    <div class="text-4xl font-black text-zinc-900 dark:text-white mb-1 group-hover:text-amber-600 transition-colors">{{ number_format($stats['buyers_count'], 0, ',', '.') }}</div>
-                    <div class="text-[10px] uppercase font-bold tracking-[0.2em] text-zinc-500 group-hover:text-zinc-600 dark:group-hover:text-zinc-400 transition-colors">Happy Buyers</div>
-                </div>
-                <div class="flex flex-col items-center text-center group">
-                    <div class="text-4xl font-black text-zinc-900 dark:text-white mb-1 group-hover:text-indigo-600 transition-colors">99.9%</div>
-                    <div class="text-[10px] uppercase font-bold tracking-[0.2em] text-zinc-500 group-hover:text-zinc-600 dark:group-hover:text-zinc-400 transition-colors">Uptime SLA</div>
+
+                <flux:separator vertical variant="subtle" class="hidden md:block h-10" />
+
+                {{-- Guarantees --}}
+                <div class="flex flex-wrap justify-center md:justify-end gap-6 md:gap-8 flex-1">
+                    <div class="flex items-center gap-2 group cursor-help">
+                        <div class="size-8 rounded-full bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 group-hover:bg-emerald-500 group-hover:text-white transition-all">
+                            <flux:icon name="shield-check" variant="micro" class="size-4" />
+                        </div>
+                        <span class="text-xs font-bold text-zinc-600 dark:text-zinc-400 uppercase tracking-wider">Certified Code</span>
+                    </div>
+                    <div class="flex items-center gap-2 group cursor-help">
+                        <div class="size-8 rounded-full bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20 group-hover:bg-indigo-500 group-hover:text-white transition-all">
+                            <flux:icon name="banknotes" variant="micro" class="size-4" />
+                        </div>
+                        <span class="text-xs font-bold text-zinc-600 dark:text-zinc-400 uppercase tracking-wider">Secure Escrow</span>
+                    </div>
+                    <div class="flex items-center gap-2 group cursor-help">
+                        <div class="size-8 rounded-full bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20 group-hover:bg-cyan-500 group-hover:text-white transition-all">
+                            <flux:icon name="arrow-path" variant="micro" class="size-4" />
+                        </div>
+                        <span class="text-xs font-bold text-zinc-600 dark:text-zinc-400 uppercase tracking-wider">Refund Protect</span>
+                    </div>
                 </div>
             </div>
         </flux:container>
@@ -147,6 +175,31 @@
         <flux:separator />
     @endif
 
+    {{-- Trending Products --}}
+    <section class="py-20 bg-zinc-50 dark:bg-zinc-900">
+        <flux:container>
+            <div class="flex items-center justify-between mb-12">
+                <div>
+                    <flux:heading size="xl" class="font-bold">Trending Now</flux:heading>
+                    <flux:text class="text-zinc-500">Aset digital paling dicari minggu ini</flux:text>
+                </div>
+                <flux:button variant="ghost" href="{{ route('products.index') }}" icon-trailing="chevron-right">
+                    View Marketplace
+                </flux:button>
+            </div>
+            
+            @livewire('home.product-collections')
+
+            <div class="mt-16 text-center">
+                <flux:button variant="outline" class="px-10" href="{{ route('products.index') }}" icon-trailing="arrow-right">
+                    Explore All Marketplace Items
+                </flux:button>
+            </div>
+        </flux:container>
+    </section>
+
+    <flux:separator />
+
     {{-- Categories Section --}}
     <section class="py-20 bg-white dark:bg-zinc-950">
         <flux:container>
@@ -159,23 +212,72 @@
 
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
                 @foreach($categories->take(6) as $cat)
-                    <flux:card href="{{ route('categories.show', $cat->slug) }}" class="p-8 text-center hover:border-emerald-500 transition-all group cursor-pointer border-zinc-200 dark:border-zinc-800 shadow-sm hover:shadow-md">
-                        <div class="w-12 h-12 mx-auto mb-4 bg-zinc-50 dark:bg-zinc-900 rounded-xl flex items-center justify-center group-hover:bg-emerald-50 dark:group-hover:bg-emerald-900/20 transition-colors">
-                            @php 
-                                $icons = [
-                                    'php-scripts' => 'code-bracket',
-                                    'wordpress' => 'globe-alt',
-                                    'mobile-apps' => 'device-phone-mobile',
-                                    'html-css' => 'document-text',
-                                    'ui-kits' => 'rectangle-group',
-                                    'plugins' => 'puzzle-piece'
-                                ];
-                                $iconName = $icons[$cat->slug] ?? 'cube';
-                            @endphp
-                            <flux:icon :name="$iconName" variant="mini" class="size-6 text-zinc-400 group-hover:text-emerald-500 transition-colors" />
+                    <flux:card 
+                        href="{{ route('products.index', ['category' => $cat->id]) }}" 
+                        class="p-8 text-center hover:border-emerald-500 transition-all group cursor-pointer border-zinc-200 dark:border-zinc-800 shadow-sm hover:shadow-md rounded-2xl"
+                    >
+                        <div class="w-12 h-12 mx-auto mb-4 bg-zinc-50 dark:bg-zinc-900 rounded-xl flex items-center justify-center transition-colors group-hover:bg-emerald-50 dark:group-hover:bg-emerald-900/20">
+                                    @if($cat->icon && (str_starts_with($cat->icon, 'storage/') || str_starts_with($cat->icon, 'http')))
+                                        <div class="w-10 h-10 bg-current transition-colors duration-300" 
+                                             style="mask-image: url('{{ asset($cat->icon) }}'); mask-size: contain; mask-repeat: no-repeat; mask-position: center; -webkit-mask-image: url('{{ asset($cat->icon) }}'); -webkit-mask-size: contain; -webkit-mask-repeat: no-repeat; -webkit-mask-position: center;">
+                                        </div>
+                                    @elseif(str_starts_with($cat->icon ?? '', 'lucide-'))
+                                        <x-dynamic-component :component="$cat->icon" class="w-10 h-10 transition-colors duration-300" />
+                                    @else
+                                        <flux:icon :icon="$cat->icon ?: 'folder'" variant="outline" class="w-8 h-8 transition-colors duration-300" />
+                                    @endif
                         </div>
                         <flux:heading size="lg" class="group-hover:text-emerald-600 transition-colors">{{ $cat->name }}</flux:heading>
                         <flux:text size="sm" class="mt-1">Explore items</flux:text>
+                    </flux:card>
+                @endforeach
+            </div>
+        </flux:container>
+    </section>
+
+    <flux:separator />
+
+    {{-- Top Authors Leaderboard --}}
+    <section class="py-20 bg-zinc-50 dark:bg-zinc-900 border-y border-zinc-200 dark:border-zinc-800 relative overflow-hidden">
+        <flux:container>
+            <div class="flex flex-col md:flex-row items-end justify-between mb-12 gap-6">
+                <div class="max-w-xl">
+                    <flux:badge color="indigo" variant="solid" class="mb-4">Community Stars</flux:badge>
+                    <flux:heading size="xl" class="font-bold">Meet our Elite Authors</flux:heading>
+                    <flux:text class="text-zinc-500">Para kreator terbaik yang membangun masa depan bersama NexaCode.</flux:text>
+                </div>
+                <flux:button variant="ghost" href="{{ route('page.author-ranking') }}" icon-trailing="chevron-right">
+                    View Rankings
+                </flux:button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach($topAuthors as $author)
+                    <flux:card class="p-4 flex items-center gap-4 hover:border-indigo-500 transition-all cursor-pointer group rounded-2xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm">
+                        <div class="relative shrink-0">
+                            <flux:avatar size="lg" :src="$author->avatar_url" class="rounded-xl border-2 border-transparent group-hover:border-indigo-500 transition-all" />
+                            <div class="absolute -top-1 -right-1 size-5 bg-indigo-600 text-white text-[10px] flex items-center justify-center rounded-full font-bold border-2 border-white dark:border-zinc-900 shadow-md">
+                                {{ $loop->iteration }}
+                            </div>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between mb-1 gap-1.5">
+                                <flux:heading size="sm" class="font-bold truncate group-hover:text-indigo-600 transition-colors">{{ $author->name }}</flux:heading>
+                                <flux:badge color="{{ $author->tier_badge->color }}" size="sm" variant="outline" class="text-[8px] uppercase font-black tracking-widest px-1.5 py-0.5 rounded-md min-w-[50px] text-center">
+                                    {{ $author->tier_badge->label }}
+                                </flux:badge>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="flex items-center gap-1">
+                                    <flux:icon name="cube" variant="micro" class="size-3 text-zinc-400" />
+                                    <span class="text-[10px] font-bold text-zinc-500 uppercase">{{ $author->products_count ?? $author->products()->count() }} Items</span>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <flux:icon name="star" variant="micro" class="size-3 text-amber-500" />
+                                    <span class="text-[10px] font-bold text-zinc-500 uppercase">{{ $author->level }} Lvl</span>
+                                </div>
+                            </div>
+                        </div>
                     </flux:card>
                 @endforeach
             </div>
@@ -194,7 +296,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
                 @foreach($features as $feature)
-                    <div class="flex flex-col items-center text-center space-y-4 p-8 bg-zinc-50 dark:bg-zinc-900 rounded-[2.5rem] border border-zinc-200 dark:border-zinc-800 shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-2">
+                    <div class="flex flex-col items-center text-center space-y-4 p-8 bg-zinc-50 dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-2">
                         <div class="size-14 rounded-2xl bg-{{ $feature['color'] }}-500/10 flex items-center justify-center">
                             <flux:icon name="{{ $feature['icon'] }}" variant="solid" class="size-8 text-{{ $feature['color'] }}-500" />
                         </div>
@@ -202,30 +304,6 @@
                         <flux:text class="text-zinc-500 leading-relaxed">{{ $feature['description'] }}</flux:text>
                     </div>
                 @endforeach
-            </div>
-        </flux:container>
-    </section>
-
-    <flux:separator />
-
-    {{-- Newsletter Curation Loop --}}
-    <section class="py-20 bg-white dark:bg-zinc-950">
-        <flux:container>
-            @livewire('home.newsletter-subscription')
-        </flux:container>
-    </section>
-
-    <flux:separator />
-
-    {{-- Trending Products --}}
-    <section class="py-20 bg-zinc-50 dark:bg-zinc-900">
-        <flux:container>
-            @livewire('home.product-collections')
-
-            <div class="mt-16 text-center">
-                <flux:button variant="outline" class="px-10" href="{{ route('products.index') }}" icon-trailing="arrow-right">
-                    Explore All Marketplace Items
-                </flux:button>
             </div>
         </flux:container>
     </section>
@@ -255,7 +333,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
                 @foreach($testimonials as $testimonial)
-                    <div class="p-8 bg-zinc-50 dark:bg-zinc-900/50 backdrop-blur-xl border border-zinc-200 dark:border-white/5 rounded-[2.5rem] relative group hover:border-emerald-500/30 transition-all duration-500 shadow-sm">
+                    <div class="p-8 bg-zinc-50 dark:bg-zinc-900/50 backdrop-blur-xl border border-zinc-200 dark:border-white/5 rounded-2xl relative group hover:border-emerald-500/30 transition-all duration-500 shadow-sm">
                         <flux:icon name="chat-bubble-bottom-center-text" variant="solid" class="size-8 text-emerald-500 opacity-20 absolute top-8 right-8" />
                         <div class="flex items-center gap-4 mb-6">
                             <flux:avatar src="https://ui-avatars.com/api/?background={{ $testimonial['color'] }}&color=fff&name={{ $testimonial['avatar'] }}" class="size-12 rounded-2xl shadow-lg" />
@@ -268,6 +346,15 @@
                     </div>
                 @endforeach
             </div>
+        </flux:container>
+    </section>
+
+    <flux:separator />
+
+    {{-- Newsletter Curation Loop --}}
+    <section class="py-20 bg-white dark:bg-zinc-950">
+        <flux:container>
+            @livewire('home.newsletter-subscription')
         </flux:container>
     </section>
 
@@ -326,8 +413,8 @@
                 </div>
 
                 <div class="relative animate-in fade-in zoom-in duration-1000">
-                    <div class="bg-zinc-900 rounded-[3rem] p-4 shadow-2xl border border-zinc-800 relative z-10">
-                        <div class="aspect-square rounded-[2.5rem] overflow-hidden bg-zinc-800">
+                    <div class="bg-zinc-900 rounded-3xl p-4 shadow-2xl border border-zinc-800 relative z-10">
+                        <div class="aspect-square rounded-2xl overflow-hidden bg-zinc-800">
                             {{-- We can use a stylized placeholder or generated image here --}}
                             <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?q=80&w=800&auto=format&fit=crop" alt="Author Success" class="w-full h-full object-cover mix-blend-overlay opacity-60">
                             <div class="absolute inset-0 flex items-center justify-center">

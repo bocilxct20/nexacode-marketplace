@@ -194,7 +194,7 @@
     @endif
 
     @if(!auth()->user()->isAuthor())
-        <div class="mt-16 relative overflow-hidden rounded-[3rem] border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 p-8 md:p-12">
+        <div class="mt-16 relative overflow-hidden rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 p-8 md:p-12">
             {{-- Background Decals --}}
             <div class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 size-64 bg-emerald-500/10 blur-[80px] rounded-full"></div>
             <div class="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 size-64 bg-indigo-500/10 blur-[80px] rounded-full"></div>

@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Livewire\Admin\Help;
+namespace App\Livewire\Admin;
 
-use App\Models\HelpCategory;
+use App\Models\Category;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Flux;
 
 class CategoryManager extends Component
 {
@@ -19,8 +20,8 @@ class CategoryManager extends Component
     // Form fields
     public $name = '';
     public $slug = '';
-    public $icon = ''; // Actual DB value
-    public $icon_name = 'book-open'; // UI Fallback name
+    public $icon = ''; // Stores the actual DB value (path or name)
+    public $icon_name = 'folder'; // Stores the Lucide fallback name for the UI
     public $iconFile;
     public $description = '';
     public $sort_order = 0;
@@ -32,7 +33,7 @@ class CategoryManager extends Component
 
     public function loadCategories()
     {
-        $this->categories = HelpCategory::orderBy('sort_order')->get();
+        $this->categories = Category::orderBy('sort_order')->get();
     }
 
     public function updated($propertyName)
@@ -59,17 +60,18 @@ class CategoryManager extends Component
         $this->showModal = true;
     }
 
-    public function edit(HelpCategory $category)
+    public function edit(Category $category)
     {
         $this->editingCategory = $category;
         $this->name = $category->name;
         $this->slug = $category->slug;
         $this->icon = $category->icon;
-
+        
+        // If the icon is not a path, it's a Lucide icon, so set our UI fallback field
         if ($category->icon && !str_starts_with($category->icon, 'storage/') && !str_starts_with($category->icon, 'http')) {
             $this->icon_name = $category->icon;
         } else {
-            $this->icon_name = 'book-open';
+            $this->icon_name = 'folder'; // Default fallback
         }
 
         $this->description = $category->description;
@@ -79,28 +81,30 @@ class CategoryManager extends Component
 
     public function save()
     {
-        \Illuminate\Support\Facades\Log::info('Help Save method started');
+        \Illuminate\Support\Facades\Log::info('Save method started');
         
         try {
             $this->validate([
             'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:help_categories,slug,' . ($this->editingCategory->id ?? 'NULL'),
+            'slug' => 'required|string|max:255|unique:categories,slug,' . ($this->editingCategory->id ?? 'NULL'),
             'icon' => 'nullable|string|max:255',
             'iconFile' => 'nullable',
             'description' => 'nullable|string',
             'sort_order' => 'integer',
         ]);
 
-        $finalIcon = $this->icon_name ?: 'book-open';
+        $finalIcon = $this->icon_name ?: 'folder';
 
+        // Check if there's an existing SVG icon we should keep
         if ($this->icon && (str_starts_with($this->icon, 'storage/') || str_starts_with($this->icon, 'http'))) {
             $finalIcon = $this->icon;
         }
 
+        // Check if a new file was uploaded
         if ($this->iconFile) {
             $file = is_array($this->iconFile) ? $this->iconFile[0] : $this->iconFile;
             if ($file instanceof \Illuminate\Http\UploadedFile) {
-                $finalIcon = 'storage/' . $file->store('help-icons', 'public');
+                $finalIcon = 'storage/' . $file->store('category-icons', 'public');
             }
         }
 
@@ -114,26 +118,47 @@ class CategoryManager extends Component
 
         if ($this->editingCategory) {
             $this->editingCategory->update($data);
+            $message = 'Kategori produk berhasil diperbarui.';
         } else {
-            HelpCategory::create($data);
+            Category::create($data);
+            $message = 'Kategori produk baru berhasil dibuat.';
         }
 
         $this->showModal = false;
         $this->loadCategories();
         $this->iconFile = null;
-        $this->dispatch('toast', variant: 'success', heading: 'Berhasil', text: 'Kategori bantuan berhasil disimpan.');
+        
+        Flux::toast(
+            variant: 'success',
+            heading: 'Berhasil',
+            text: $message,
+        );
         } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error('Help Save failed: ' . $e->getMessage());
+            \Illuminate\Support\Facades\Log::error('Save failed: ' . $e->getMessage());
             \Illuminate\Support\Facades\Log::error($e->getTraceAsString());
             throw $e;
         }
     }
 
-    public function delete(HelpCategory $category)
+    public function delete(Category $category)
     {
+        if ($category->products()->count() > 0) {
+            Flux::toast(
+                variant: 'danger',
+                heading: 'Gagal',
+                text: 'Kategori ini tidak bisa dihapus karena masih memiliki produk.',
+            );
+            return;
+        }
+
         $category->delete();
         $this->loadCategories();
-        $this->dispatch('toast', variant: 'success', heading: 'Dihapus', text: 'Kategori bantuan telah dihapus.');
+        
+        Flux::toast(
+            variant: 'success',
+            heading: 'Dihapus',
+            text: 'Kategori produk telah dihapus.',
+        );
     }
 
     public function closeModal()
@@ -148,7 +173,7 @@ class CategoryManager extends Component
         $this->name = '';
         $this->slug = '';
         $this->icon = '';
-        $this->icon_name = 'book-open';
+        $this->icon_name = 'folder';
         $this->iconFile = null;
         $this->description = '';
         $this->sort_order = 0;
@@ -157,6 +182,7 @@ class CategoryManager extends Component
 
     public function render()
     {
-        return view('livewire.admin.help.category-manager');
+        return view('livewire.admin.category-manager')
+            ->layout('layouts.admin');
     }
 }

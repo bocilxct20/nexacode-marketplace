@@ -68,7 +68,7 @@
                     @enderror
                 </div>
 
-                <div class="p-6 bg-zinc-50 dark:bg-zinc-900 rounded-[2rem] border border-zinc-100 dark:border-zinc-800 mb-8">
+                <div class="p-6 bg-zinc-50 dark:bg-zinc-900 rounded-2xl border border-zinc-100 dark:border-zinc-800 mb-8">
                     <flux:heading size="sm" class="mb-4 font-bold uppercase tracking-widest text-zinc-400">Payment Gateway</flux:heading>
                     <div class="flex items-center gap-4">
                         <div class="p-3 bg-white dark:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-700">

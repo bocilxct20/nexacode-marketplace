@@ -35,10 +35,32 @@ class MarketplaceSeeder extends Seeder
             'description' => 'Customers who purchase products.',
         ]);
 
-        // Create Authors
-        $authors = User::factory(3)->create();
-        foreach ($authors as $author) {
+        // Create Authors with Tiers
+        $plans = \App\Models\SubscriptionPlan::all();
+        $authors = User::factory(6)->create(); // Create 6 authors for better leaderboard variety
+        
+        foreach ($authors as $index => $author) {
             $author->roles()->attach($authorRole);
+            
+            // Assign varying plans
+            if ($index === 0) {
+                // At least one Elite
+                $plan = $plans->where('slug', 'elite')->first();
+            } elseif ($index === 1 || $index === 2) {
+                // Some Pro
+                $plan = $plans->where('slug', 'pro')->first();
+            } else {
+                // Rest are Basic
+                $plan = $plans->where('slug', 'basic')->first();
+            }
+            
+            $author->update([
+                'subscription_plan_id' => $plan->id,
+                'subscription_ends_at' => now()->addMonths(1),
+                'xp' => rand(100, 5000),
+                'level' => rand(1, 15),
+                'username' => 'author_' . Str::random(5),
+            ]);
         }
 
         // Create Buyers

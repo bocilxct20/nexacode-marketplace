@@ -343,7 +343,7 @@
                         Our dedicated support team is available 24/7 to help you with any technical issues or marketplace inquiries.
                     </p>
                     <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                        <flux:button x-on:click="Livewire.dispatch('open-admin-support')" variant="primary" icon="chat-bubble-left-right" class="px-8 bg-emerald-600 border-none">
+                        <flux:button href="{{ route('support.chat') }}" variant="primary" icon="chat-bubble-left-right" class="px-8 bg-emerald-600 border-none">
                             Start Live Chat
                         </flux:button>
                         <flux:button variant="ghost" icon="envelope" href="mailto:support@nexacode.com" class="px-8 text-white border-white/20 hover:bg-white/10">

@@ -115,8 +115,10 @@ set_env "DB_PORT" "3306"
 set_env "DB_DATABASE" "$DB_NAME"
 set_env "DB_USERNAME" "$DB_USER"
 set_env "DB_PASSWORD" "$DB_PASS"
+# Generate a secure random admin password
+ADMIN_PASS=$(LC_ALL=C tr -dc 'A-Za-z0-9!@#%^&*' < /dev/urandom | head -c20)
 set_env "ADMIN_EMAIL" "$EMAIL"
-set_env "ADMIN_PASSWORD" "Password123"
+set_env "ADMIN_PASSWORD" "$ADMIN_PASS"
 set_env "DOMAIN" "$DOMAIN"
 
 # Generate Reverb Keys if not already present
@@ -152,6 +154,7 @@ echo "🧼 Cleaning configuration and running migrations..."
 CACHE_STORE=array SESSION_DRIVER=array php artisan config:clear
 CACHE_STORE=array SESSION_DRIVER=array php artisan key:generate --force
 CACHE_STORE=array SESSION_DRIVER=array php artisan migrate --force
+# CRITICAL: Seed Subscription Plans (Basic, Pro, Elite) and other essential data
 CACHE_STORE=array SESSION_DRIVER=array php artisan db:seed --force
 php artisan storage:link --force
 
@@ -288,4 +291,9 @@ chmod -R 775 /var/www/$PROJECT_NAME/storage
 chmod -R 775 /var/www/$PROJECT_NAME/bootstrap/cache
 
 echo "✅ ALL DONE! Your website is ready at https://$DOMAIN"
-echo "Admin Login: $EMAIL / Password123 (Please change after login!)"
+echo "------------------------------------------"
+echo "🔐 ADMIN CREDENTIALS (SAVE THESE NOW!):"
+echo "   Email   : $EMAIL"
+echo "   Password: $ADMIN_PASS"
+echo "------------------------------------------"
+echo "⚠️  These credentials will NOT be shown again."

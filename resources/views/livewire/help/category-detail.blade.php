@@ -14,7 +14,18 @@
                 <flux:heading size="sm" class="mb-6 uppercase tracking-wider text-zinc-400 font-bold">Categories</flux:heading>
                 <flux:navlist variant="sidebar">
                     @foreach($allCategories as $cat)
-                        <flux:navlist.item href="{{ route('help.category', $cat->slug) }}" :current="$cat->id === $category->id" icon="{{ $cat->icon ?: 'book-open' }}">
+                        <flux:navlist.item href="{{ route('help.category', $cat->slug) }}" :current="$cat->id === $category->id">
+                            <x-slot name="icon">
+                                @if($cat->icon && (str_starts_with($cat->icon, 'storage/') || str_starts_with($cat->icon, 'http')))
+                                    <div class="w-4 h-4 bg-current {{ $category->id == $cat->id ? 'text-white' : 'text-zinc-500 dark:text-zinc-400' }}" 
+                                         style="mask-image: url('{{ asset($cat->icon) }}'); mask-size: contain; mask-repeat: no-repeat; mask-position: center; -webkit-mask-image: url('{{ asset($cat->icon) }}'); -webkit-mask-size: contain; -webkit-mask-repeat: no-repeat; -webkit-mask-position: center;">
+                                    </div>
+                                @elseif(str_starts_with($cat->icon ?? '', 'lucide-'))
+                                    <x-dynamic-component :component="$cat->icon" class="w-4 h-4" />
+                                @else
+                                    <flux:icon :icon="$cat->icon ?: 'book-open'" variant="mini" />
+                                @endif
+                            </x-slot>
                             {{ $cat->name }}
                         </flux:navlist.item>
                     @endforeach
@@ -24,7 +35,7 @@
                     <div class="absolute -top-10 -right-10 w-24 h-24 bg-emerald-500/20 blur-2xl rounded-full"></div>
                     <flux:heading size="sm" class="text-white mb-2">Need Help?</flux:heading>
                     <p class="text-xs text-zinc-500 mb-4">Contact our support team anytime.</p>
-                    <flux:button x-on:click="Livewire.dispatch('open-admin-support')" size="sm" variant="primary" class="w-full h-10 bg-emerald-600 border-none">Chat Now</flux:button>
+                    <flux:button wire:click="contactSupport" size="sm" variant="primary" class="w-full h-10 bg-emerald-600 border-none">Chat Now</flux:button>
                 </div>
             </div>
         </aside>
@@ -33,8 +44,16 @@
         <main class="flex-1">
             <div class="mb-12">
                 <div class="flex items-center gap-4 mb-4">
-                    <div class="p-3 bg-emerald-50 dark:bg-emerald-500/10 rounded-xl text-emerald-600 dark:text-emerald-400">
-                        <flux:icon :icon="$category->icon ?: 'book-open'" variant="solid" class="w-8 h-8" />
+                    <div class="p-4 bg-emerald-50 dark:bg-emerald-900/20 rounded-2xl flex items-center justify-center shadow-sm">
+                        @if($category->icon && (str_starts_with($category->icon, 'storage/') || str_starts_with($category->icon, 'http')))
+                            <div class="w-12 h-12 bg-emerald-600 dark:bg-emerald-400" 
+                                 style="mask-image: url('{{ asset($category->icon) }}'); mask-size: contain; mask-repeat: no-repeat; mask-position: center; -webkit-mask-image: url('{{ asset($category->icon) }}'); -webkit-mask-size: contain; -webkit-mask-repeat: no-repeat; -webkit-mask-position: center;">
+                            </div>
+                        @elseif(str_starts_with($category->icon ?? '', 'lucide-'))
+                            <x-dynamic-component :component="$category->icon" class="w-12 h-12 text-emerald-600 dark:text-emerald-400" />
+                        @else
+                            <flux:icon :icon="$category->icon ?: 'book-open'" class="w-12 h-12 text-emerald-600 dark:text-emerald-400" />
+                        @endif
                     </div>
                     <flux:heading size="2xl">{{ $category->name }}</flux:heading>
                 </div>

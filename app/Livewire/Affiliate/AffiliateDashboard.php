@@ -141,13 +141,14 @@ class AffiliateDashboard extends Component
 
         // Notify Admin (Finance)
         try {
-            \Illuminate\Support\Facades\Mail::to(config('mail.aliases.finance'))
-                ->queue(new \App\Notifications\SystemNotification([
+            $financeEmail = config('mail.aliases.finance', config('mail.from.address'));
+            \Illuminate\Support\Facades\Notification::route('mail', $financeEmail)
+                ->notify(new \App\Notifications\SystemNotification([
                     'title' => 'Permintaan Penarikan Dana Affiliate Baru 🛡️',
                     'message' => "Affiliate {$user->name} mengajukan penarikan dana sebesar Rp " . number_format($this->withdrawalAmount, 0, ',', '.') . ".",
                     'type' => 'payout',
                     'action_text' => 'Kelola Penarikan',
-                    'action_url' => route('admin.payouts'), // Assuming same management page
+                    'action_url' => route('admin.payouts'),
                 ]));
         } catch (\Exception $e) {
             \Log::error('Failed to notify finance of affiliate withdrawal: ' . $e->getMessage());

@@ -64,7 +64,7 @@ class ProductManager extends Component
             'slug' => 'required|string|max:255|unique:products,slug,' . $this->editingId,
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
-            'category_id' => 'required|exists:product_tags,id',
+            'category_id' => 'required|exists:categories,id',
             'thumbnail' => $this->editingId ? 'nullable|image|max:2048' : 'required|image|max:2048',
             'demo_url' => 'nullable|url',
             'video_url' => 'nullable|url',
@@ -110,7 +110,7 @@ class ProductManager extends Component
         $this->slug = $product->slug;
         $this->description = $product->description;
         $this->price = $product->price;
-        $this->category_id = $product->tags()->first()?->id;
+        $this->category_id = $product->category_id;
         $this->demo_url = $product->demo_url;
         $this->video_url = $product->video_url;
         $this->is_active = $product->status === 'approved';
@@ -139,6 +139,7 @@ class ProductManager extends Component
             'video_url' => $this->video_url,
             'status' => $this->is_active ? (Auth::user()->isElite() || \App\Models\PlatformSetting::get('auto_approve_products', false) ? 'approved' : 'pending') : 'draft',
             'author_id' => Auth::id(),
+            'category_id' => $this->category_id,
             'is_featured' => $this->is_featured,
             'is_elite_marketed' => Auth::user()->isElite() ? $this->is_elite_marketed : false,
         ];
@@ -195,7 +196,6 @@ class ProductManager extends Component
         if ($this->editingId) {
             $product = Product::where('author_id', Auth::id())->findOrFail($this->editingId);
             $product->update($data);
-            $product->tags()->sync([$this->category_id]);
             
             if ($this->project_file) {
                 // Create a new version for every new file upload during edit
@@ -227,8 +227,6 @@ class ProductManager extends Component
                     ]));
                 }
             }
-
-            $product->tags()->sync([$this->category_id]);
             
             // Create initial version
             $product->versions()->create([

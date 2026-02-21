@@ -3,7 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Product;
-use App\Models\ProductTag;
+use App\Models\Category;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -50,7 +50,7 @@ class ProductCatalog extends Component
     {
         $query = Product::query()
             ->approved()
-            ->with(['author', 'tags'])
+            ->with(['author', 'category'])
             ->orderBy('is_elite_marketed', 'desc')
             ->when($this->search, function ($q) {
                 $q->where(function ($query) {
@@ -59,9 +59,7 @@ class ProductCatalog extends Component
                 });
             })
             ->when($this->selectedCategory, function ($q) {
-                $q->whereHas('tags', function ($query) {
-                    $query->where('product_tags.id', $this->selectedCategory);
-                });
+                $q->where('category_id', $this->selectedCategory);
             });
 
         switch ($this->sort) {
@@ -102,8 +100,8 @@ class ProductCatalog extends Component
 
         return view('livewire.product-catalog', [
             'products' => $products,
-            'tags' => ProductTag::all(),
-            'currentCategory' => $this->selectedCategory ? ProductTag::find($this->selectedCategory) : null,
+            'categories' => Category::orderBy('sort_order')->get(),
+            'currentCategory' => $this->selectedCategory ? Category::find($this->selectedCategory) : null,
         ]);
     }
 }

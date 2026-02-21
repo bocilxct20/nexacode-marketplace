@@ -32,13 +32,16 @@ class AnalyticsDashboard extends Component
         $this->dispatch('chartDataUpdated', $this->chartData);
     }
 
-    public function render(AuthorAnalyticsService $service)
+    public function render(AuthorAnalyticsService $service, \App\Services\AuthorLevelService $levelService)
     {
-        $authorId = Auth::id();
+        $user = Auth::user();
+        $authorId = $user->id;
         
         return view('livewire.author.analytics-dashboard', [
             'topProducts' => $service->getTopProducts($authorId),
             'summaryStats' => $service->getDashboardStats($authorId),
+            'levelProgress' => $levelService->getProgress($user),
+            'globalRank' => $user->getGlobalRankPosition(),
         ])->layout('layouts.author');
     }
 }

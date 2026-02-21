@@ -17,6 +17,47 @@
         </div>
     </div>
 
+    {{-- Reputation & Experience --}}
+    <flux:card class="bg-gradient-to-br from-indigo-500/5 to-transparent border-indigo-500/20 overflow-hidden relative">
+        <div class="absolute -right-8 -top-8 w-32 h-32 bg-indigo-500/10 blur-3xl rounded-full"></div>
+        <div class="flex flex-col md:flex-row items-center gap-8 relative">
+            <div class="shrink-0 flex flex-col items-center">
+                <div class="relative">
+                    <div class="size-20 rounded-[2rem] bg-indigo-600 flex items-center justify-center shadow-xl shadow-indigo-500/20 border-4 border-white dark:border-zinc-900 text-white">
+                        <span class="text-3xl font-black">{{ $levelProgress['level'] }}</span>
+                    </div>
+                    <div class="absolute -top-2 -right-2 bg-amber-500 text-white text-[10px] font-black px-2 py-0.5 rounded-lg shadow-lg uppercase tracking-widest">Lvl</div>
+                </div>
+            </div>
+
+            <div class="flex-1 w-full space-y-4 text-center md:text-left">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <flux:heading size="lg" class="font-black italic uppercase tracking-tighter">Reputation Score</flux:heading>
+                        <flux:text size="sm" class="text-zinc-500">Your total influence and trust in the community.</flux:text>
+                    </div>
+                    <div class="text-center md:text-right">
+                        <div class="text-xs font-black text-zinc-400 uppercase tracking-widest leading-none mb-1">Global Rank</div>
+                        <div class="text-3xl font-black text-indigo-600 dark:text-indigo-400 leading-none">#{{ number_format($globalRank) }}</div>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <div class="flex justify-between items-end">
+                        <span class="text-xs font-bold text-zinc-500 uppercase tracking-widest">{{ number_format($levelProgress['xp']) }} XP</span>
+                        <span class="text-xs font-bold text-zinc-900 dark:text-white uppercase tracking-widest">Goal: {{ number_format($levelProgress['next_level_xp']) }} XP</span>
+                    </div>
+                    <div class="w-full h-3 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden border border-zinc-200 dark:border-zinc-700">
+                        <div class="h-full bg-indigo-600 transition-all duration-1000 shadow-[0_0_10px_rgba(79,70,229,0.5)]" style="width: {{ $levelProgress['percentage'] }}%"></div>
+                    </div>
+                    <div class="text-[10px] text-zinc-400 font-medium">
+                        Tips: Reach Level {{ $levelProgress['level'] + (5 - ($levelProgress['level'] % 5 == 0 ? 5 : $levelProgress['level'] % 5)) }} to unlock a **{{ $levelProgress['discount'] + 0.5 }}%** platform fee discount!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </flux:card>
+
     {{-- Stats Grid --}}
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         <flux:card class="p-4 space-y-2">
@@ -147,8 +188,55 @@
                     </div>
                 </flux:card>
             </div>
+                </flux:card>
+            </div>
         </div>
     </div>
+
+    {{-- XP Guide Disclosure --}}
+    <flux:card class="p-6 bg-zinc-900 border-none shadow-2xl relative overflow-hidden group">
+        <div class="absolute inset-0 bg-gradient-to-r from-emerald-500/10 via-indigo-500/10 to-amber-500/10 opacity-50"></div>
+        <div class="relative flex flex-col md:flex-row items-center gap-8">
+            <div class="size-20 shrink-0 bg-white/10 backdrop-blur-xl rounded-2xl flex items-center justify-center text-white">
+                <flux:icon.information-circle class="size-10" />
+            </div>
+            <div class="flex-1 space-y-4">
+                <div>
+                    <flux:heading size="xl" class="text-white font-black uppercase">How Smart XP Works?</flux:heading>
+                    <flux:text class="text-zinc-400">Nexacode rewarding quality, activity, and expertise. Here's how to level up your reputation.</flux:text>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="flex gap-3">
+                        <div class="size-8 rounded-lg bg-emerald-500/20 flex items-center justify-center shrink-0">
+                            <flux:icon.shopping-cart class="size-4 text-emerald-500" />
+                        </div>
+                        <div>
+                            <div class="text-xs font-black text-white uppercase tracking-widest">Sales (Volume)</div>
+                            <p class="text-[10px] text-zinc-500 leading-tight mt-1">Earn **1 XP** for every Rp 1.000 earned from product sales.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-3">
+                        <div class="size-8 rounded-lg bg-amber-500/20 flex items-center justify-center shrink-0">
+                            <flux:icon.star class="size-4 text-amber-500" />
+                        </div>
+                        <div>
+                            <div class="text-xs font-black text-white uppercase tracking-widest">Quality (Rating)</div>
+                            <p class="text-[10px] text-zinc-500 leading-tight mt-1">Get massive bonuses: **50 XP** for 5-star reviews, **20 XP** for 4-stars.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-3">
+                        <div class="size-8 rounded-lg bg-indigo-500/20 flex items-center justify-center shrink-0">
+                            <flux:icon.bolt class="size-4 text-indigo-500" />
+                        </div>
+                        <div>
+                            <div class="text-xs font-black text-white uppercase tracking-widest">Smart Rank</div>
+                            <p class="text-[10px] text-zinc-500 leading-tight mt-1">Ranking considers Revenue Impact, average rating, and account loyalty.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </flux:card>
 </div>
 
 @push('scripts')

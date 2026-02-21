@@ -10,6 +10,29 @@ class HelpIndex extends Component
 {
     public $search = '';
 
+    public function contactSupport()
+    {
+        if (!auth()->check()) {
+            return redirect()->route('login');
+        }
+
+        $user = auth()->user();
+
+        // Find or create a conversation with Nexa Support (author_id = null)
+        $conversation = \App\Models\Conversation::firstOrCreate(
+            [
+                'user_id' => $user->id,
+                'author_id' => null,
+            ],
+            [
+                'status' => \App\Enums\SupportStatus::OPEN,
+                'last_message_at' => now(),
+            ]
+        );
+
+        return redirect()->route('inbox', ['id' => $conversation->id]);
+    }
+
     protected $queryString = [
         'search' => ['except' => ''],
     ];

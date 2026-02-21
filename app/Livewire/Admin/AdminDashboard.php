@@ -41,6 +41,7 @@ class AdminDashboard extends Component
                     'total_products' => Product::count(),
                     'pending_products' => Product::where('status', 'pending')->count(),
                     'total_revenue' => Order::where('status', 'completed')->sum('total_amount'),
+                    'net_platform_profit' => \App\Models\PlatformEarning::sum('net_profit'),
                 ],
                 'recentOrders' => Order::with('buyer')->latest()->take(5)->get(),
                 'top_authors' => User::whereHas('roles', function($q) {

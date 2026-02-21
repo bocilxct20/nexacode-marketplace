@@ -115,7 +115,7 @@ class EarningsManager extends Component
         $user = auth()->user();
 
         // 0. Security: Anti-spam Rate Limit (Throttle)
-        $recentPayout = \App\Models\Payout::where('author_id', $authorId ?? $user->id)
+        $recentPayout = \App\Models\Payout::where('author_id', $user->id)
             ->where('created_at', '>', now()->subMinutes(5))
             ->exists();
 
@@ -158,10 +158,11 @@ class EarningsManager extends Component
                 // Notify Author
                 \Illuminate\Support\Facades\Mail::to($user->email)->queue(new \App\Mail\WithdrawalRequested($payout));
                 
-                // Notify Admin (Finance)
+                // Notify Admin (Finance) via system notification
                 try {
-                    \Illuminate\Support\Facades\Mail::to(config('mail.aliases.finance'))
-                        ->queue(new \App\Notifications\SystemNotification([
+                    $adminEmail = config('mail.aliases.finance', config('mail.from.address'));
+                    \Illuminate\Support\Facades\Notification::route('mail', $adminEmail)
+                        ->notify(new \App\Notifications\SystemNotification([
                             'title' => 'Permintaan Penarikan Dana Baru 💰',
                             'message' => "Author {$user->name} mengajukan penarikan dana sebesar Rp " . number_format($this->withdrawalAmount, 0, ',', '.') . ".",
                             'type' => 'payout',

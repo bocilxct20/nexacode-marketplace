@@ -175,13 +175,15 @@ class CheckoutController extends Controller
         $order->uploadPaymentProof($request->file('payment_proof'));
         
         try {
-            Mail::to(config('mail.aliases.admin'))->queue(new \App\Notifications\SystemNotification([
-                'title' => 'Bukti Bayar Baru 📄',
-                'message' => "User {$order->buyer->name} mengupload bukti bayar untuk Order #{$order->transaction_id}.",
-                'type' => 'payment',
-                'action_text' => 'Buka Moderasi',
-                'action_url' => route('admin.moderation'),
-            ]));
+            $adminEmail = config('mail.aliases.admin', config('mail.from.address'));
+            \Illuminate\Support\Facades\Notification::route('mail', $adminEmail)
+                ->notify(new \App\Notifications\SystemNotification([
+                    'title' => 'Bukti Bayar Baru 📄',
+                    'message' => "User {$order->buyer->name} mengupload bukti bayar untuk Order #{$order->transaction_id}.",
+                    'type' => 'payment',
+                    'action_text' => 'Buka Moderasi',
+                    'action_url' => route('admin.moderation'),
+                ]));
         } catch (\Exception $e) {
             Log::error('Admin notify failed: ' . $e->getMessage());
         }

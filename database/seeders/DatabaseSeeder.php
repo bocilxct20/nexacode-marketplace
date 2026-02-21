@@ -32,10 +32,10 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // 2. Create Admin User
-        $admin = User::firstOrCreate(['email' => 'admin@nexacode.id'], [
+        $admin = User::firstOrCreate(['email' => env('ADMIN_EMAIL', 'admin@nexacode.id')], [
             'name' => 'Nexacode Admin',
             'username' => 'admin',
-            'password' => bcrypt('password123'),
+            'password' => bcrypt(env('ADMIN_PASSWORD', 'ChangeMe_AtFirstLogin!')),
         ]);
 
         if (!$admin->roles()->where('slug', 'admin')->exists()) {
@@ -48,33 +48,36 @@ class DatabaseSeeder extends Seeder
             $admin->roles()->attach($buyerRole);
         }
 
-        // 3. Create Test Buyer
-        $buyer = User::firstOrCreate(['email' => 'buyer@nexacode.id'], [
-            'name' => 'Test Buyer',
-            'username' => 'testbuyer',
-            'password' => bcrypt('password'),
-        ]);
-        if (!$buyer->roles()->where('slug', 'buyer')->exists()) {
-            $buyer->roles()->attach($buyerRole);
+        // Test Buyer & Author — Skip in production
+        if (app()->environment('local', 'staging')) {
+            $buyer = User::firstOrCreate(['email' => 'buyer@nexacode.id'], [
+                'name' => 'Test Buyer',
+                'username' => 'testbuyer',
+                'password' => bcrypt('password'),
+            ]);
+            if (!$buyer->roles()->where('slug', 'buyer')->exists()) {
+                $buyer->roles()->attach($buyerRole);
+            }
+
+            $author = User::firstOrCreate(['email' => 'author@nexacode.id'], [
+                'name' => 'Test Author',
+                'username' => 'testauthor',
+                'password' => bcrypt('password'),
+            ]);
+            if (!$author->roles()->where('slug', 'author')->exists()) {
+                $author->roles()->attach($authorRole);
+            }
+            if (!$author->roles()->where('slug', 'buyer')->exists()) {
+                $author->roles()->attach($buyerRole);
+            }
         }
 
-        // 4. Create Test Author
-        $author = User::firstOrCreate(['email' => 'author@nexacode.id'], [
-            'name' => 'Test Author',
-            'username' => 'testauthor',
-            'password' => bcrypt('password'),
-        ]);
-        if (!$author->roles()->where('slug', 'author')->exists()) {
-            $author->roles()->attach($authorRole);
-        }
-        if (!$author->roles()->where('slug', 'buyer')->exists()) {
-            $author->roles()->attach($buyerRole);
-        }
-
-        // 5. Plans & Payment Methods
+        // 5. Plans, Payment Methods & Platform Settings
         $this->call([
             SubscriptionPlanSeeder::class,
             PaymentMethodSeeder::class,
+            CategorySeeder::class,
+            PlatformSettingSeeder::class,
         ]);
 
         // 6. Marketplace Seeding (Products, Sales, etc.)

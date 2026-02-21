@@ -75,6 +75,7 @@
                 <flux:navbar.item icon:trailing="chevron-down" :current="request()->routeIs('admin.products', 'admin.orders', 'admin.moderation', 'admin.payment-methods.*')">Commerce</flux:navbar.item>
                 <flux:menu>
                     <flux:menu.item icon="shopping-bag" href="{{ route('admin.products') }}" :current="request()->routeIs('admin.products')">Products</flux:menu.item>
+                    <flux:menu.item icon="folder" href="{{ route('admin.categories') }}" :current="request()->routeIs('admin.categories')">Product Categories</flux:menu.item>
                     <flux:menu.item icon="shopping-cart" href="{{ route('admin.orders') }}" :current="request()->routeIs('admin.orders')">Orders</flux:menu.item>
                     <flux:menu.item icon="banknotes" href="{{ route('admin.payouts') }}" :current="request()->routeIs('admin.payouts')">Payouts</flux:menu.item>
                     <flux:menu.item icon="chat-bubble-left-right" href="{{ route('admin.chat') }}" :current="request()->routeIs('admin.chat')">Live Chat</flux:menu.item>

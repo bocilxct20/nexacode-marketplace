@@ -127,4 +127,23 @@ class SupportController extends Controller
 
         return view('dashboard.support.show', compact('ticket', 'layout'));
     }
+
+    public function chat()
+    {
+        $user = Auth::user();
+
+        // Find or create a conversation with Nexa Support (author_id = null)
+        $conversation = \App\Models\Conversation::firstOrCreate(
+            [
+                'user_id' => $user->id,
+                'author_id' => null,
+            ],
+            [
+                'status' => \App\Enums\SupportStatus::OPEN,
+                'last_message_at' => now(),
+            ]
+        );
+
+        return redirect()->route('inbox', ['id' => $conversation->id]);
+    }
 }

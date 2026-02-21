@@ -225,8 +225,8 @@
                     <flux:label>Kategori</flux:label>
                     <flux:select wire:model="category_id" required>
                         <option value="">Pilih Kategori</option>
-                        @foreach(\App\Models\ProductTag::orderBy('name')->get() as $tag)
-                            <option value="{{ $tag->id }}">{{ $tag->name }}</option>
+                        @foreach(\App\Models\Category::orderBy('sort_order')->get() as $category)
+                            <option value="{{ $category->id }}">{{ $category->name }}</option>
                         @endforeach
                     </flux:select>
                     <flux:error name="category_id" />
