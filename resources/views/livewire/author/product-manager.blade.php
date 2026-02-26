@@ -304,17 +304,19 @@
                 </flux:file-upload>
 
                 {{-- Existing & New Screenshots Preview --}}
-                @if (count($existingScreenshots) > 0 || count($screenshot_uploads) > 0)
+                @if (count($existingScreenshots ?? []) > 0 || count($screenshot_uploads ?? []) > 0)
                     <div class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
                         {{-- Existing Screenshots --}}
-                        @foreach ($existingScreenshots as $index => $path)
-                            <div class="relative group aspect-video rounded-lg overflow-hidden border border-zinc-200 dark:border-zinc-800">
-                                <img src="{{ str_starts_with($path, 'http') ? $path : Storage::url($path) }}" class="w-full h-full object-cover">
-                                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                    <flux:button variant="danger" size="sm" icon="trash" wire:click="removeScreenshot({{ $index }})" class="!p-1.5" />
+                        @if (is_array($existingScreenshots))
+                            @foreach ($existingScreenshots as $index => $path)
+                                <div class="relative group aspect-video rounded-lg overflow-hidden border border-zinc-200 dark:border-zinc-800">
+                                    <img src="{{ str_starts_with($path, 'http') ? $path : Storage::url($path) }}" class="w-full h-full object-cover">
+                                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                        <flux:button variant="danger" size="sm" icon="trash" wire:click="removeScreenshot({{ $index }})" class="!p-1.5" />
+                                    </div>
                                 </div>
-                            </div>
-                        @endforeach
+                            @endforeach
+                        @endif
 
                         {{-- New Uploads Preview --}}
                         @foreach ($screenshot_uploads as $index => $file)
