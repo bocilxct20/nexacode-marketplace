@@ -153,6 +153,8 @@ composer install --no-dev --optimize-autoloader --no-interaction
 echo "🧼 Cleaning configuration and running migrations..."
 CACHE_STORE=array SESSION_DRIVER=array php artisan config:clear
 CACHE_STORE=array SESSION_DRIVER=array php artisan key:generate --force
+# Publish Laravel core mail views
+CACHE_STORE=array SESSION_DRIVER=array php artisan vendor:publish --tag=laravel-mail --force
 CACHE_STORE=array SESSION_DRIVER=array php artisan migrate --force
 # CRITICAL: Seed Subscription Plans (Basic, Pro, Elite) and other essential data
 CACHE_STORE=array SESSION_DRIVER=array php artisan db:seed --force
