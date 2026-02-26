@@ -7,23 +7,13 @@ export default defineConfig({
         laravel({
             input: [
                 'resources/css/app.css',
-                'resources/js/app.js',
-                'resources/js/monaco-init.js'
+                'resources/js/app.js'
             ],
             refresh: true,
         }),
         tailwindcss(),
     ],
     build: {
-        rollupOptions: {
-            output: {
-                manualChunks(id) {
-                    if (id.includes('monaco-editor')) {
-                        return 'monaco';
-                    }
-                }
-            },
-        },
         minify: 'esbuild',
         cssMinify: true,
         chunkSizeWarningLimit: 5000,
