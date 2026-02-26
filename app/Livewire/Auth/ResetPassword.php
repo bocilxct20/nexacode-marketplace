@@ -40,9 +40,9 @@ class ResetPassword extends Component
                 'password_confirmation' => $this->password_confirmation,
             ],
             function ($user, $password) {
-                $user->forceFill([
-                    'password' => Hash::make($password)
-                ])->setRememberToken(Str::random(60))->save();
+                $user->password = Hash::make($password);
+                $user->setRememberToken(Str::random(60));
+                $user->save();
 
                 event(new PasswordReset($user));
             }
