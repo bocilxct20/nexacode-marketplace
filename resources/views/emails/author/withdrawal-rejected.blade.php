@@ -5,7 +5,7 @@
     'actionColor' => 'primary'
 ])
 
-Permintaan penarikan dana Anda tidak dapat diproses karena alasan berikut:
+Permintaan penarikan dana kamu tidak dapat diproses karena alasan berikut:
 
 ---
 
@@ -20,8 +20,8 @@ Permintaan penarikan dana Anda tidak dapat diproses karena alasan berikut:
 ---
 
 ### Langkah Selanjutnya
-Pastikan informasi rekening bank Anda sudah benar dan lengkap di pengaturan profil. Setelah memperbarui informasi, Anda dapat mengajukan penarikan dana kembali.
+Pastikan informasi rekening bank kamu sudah benar dan lengkap di pengaturan profil. Setelah memperbarui informasi, kamu dapat mengajukan penarikan dana kembali.
 
-Jika Anda yakin terjadi kesalahan, silakan hubungi tim support kami untuk bantuan lebih lanjut.
+Jika kamu yakin terjadi kesalahan, silakan hubungi tim support kami untuk bantuan lebih lanjut.
 
 @endcomponent

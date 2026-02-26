@@ -37,9 +37,24 @@ class MarketplaceSeeder extends Seeder
 
         // Create Authors with Tiers
         $plans = \App\Models\SubscriptionPlan::all();
-        $authors = User::factory(6)->create(); // Create 6 authors for better leaderboard variety
         
-        foreach ($authors as $index => $author) {
+        $authorData = [
+            ['name' => 'NexaLabs Studio', 'username' => 'nexalabs', 'email' => 'team@nexalabs.dev'],
+            ['name' => 'PixelForge UI', 'username' => 'pixelforge', 'email' => 'hello@pixelforge.io'],
+            ['name' => 'Ahmad Dani', 'username' => 'ahmaddani', 'email' => 'dani@nexacode.id'],
+            ['name' => 'WebArtisan ID', 'username' => 'webartisan', 'email' => 'contact@webartisan.co.id'],
+            ['name' => 'CodeCrafters', 'username' => 'codecrafters', 'email' => 'support@codecrafters.com'],
+            ['name' => 'SaaS Mastery', 'username' => 'saasmastery', 'email' => 'admin@saasmastery.tech']
+        ];
+
+        $authors = collect();
+        foreach ($authorData as $index => $data) {
+            $author = User::firstOrCreate(['email' => $data['email']], [
+                'name' => $data['name'],
+                'username' => $data['username'],
+                'password' => bcrypt('Password123!'),
+                'email_verified_at' => now(),
+            ]);
             $author->roles()->attach($authorRole);
             
             // Assign varying plans
@@ -57,16 +72,32 @@ class MarketplaceSeeder extends Seeder
             $author->update([
                 'subscription_plan_id' => $plan->id,
                 'subscription_ends_at' => now()->addMonths(1),
-                'xp' => rand(100, 5000),
-                'level' => rand(1, 15),
-                'username' => 'author_' . Str::random(5),
+                'xp' => rand(1000, 10000),
+                'level' => rand(5, 20),
             ]);
+
+            $authors->push($author);
         }
 
         // Create Buyers
-        $buyers = User::factory(5)->create();
-        foreach ($buyers as $buyer) {
+        $buyerData = [
+            ['name' => 'Budi Santoso', 'username' => 'budisantoso', 'email' => 'budi.santoso@gmail.com'],
+            ['name' => 'Reza Pratama', 'username' => 'rezapratama', 'email' => 'reza.p@yahoo.com'],
+            ['name' => 'Sarah Wijaya', 'username' => 'sarahwijaya', 'email' => 'sarah.w@outlook.com'],
+            ['name' => 'Digital Agency JKT', 'username' => 'digitaljkt', 'email' => 'hello@digitaljkt.co.id'],
+            ['name' => 'Global Tech Solusi', 'username' => 'globaltech', 'email' => 'info@globaltech.id']
+        ];
+
+        $buyers = collect();
+        foreach ($buyerData as $data) {
+            $buyer = User::firstOrCreate(['email' => $data['email']], [
+                'name' => $data['name'],
+                'username' => $data['username'],
+                'password' => bcrypt('Password123!'),
+                'email_verified_at' => now(),
+            ]);
             $buyer->roles()->attach($buyerRole);
+            $buyers->push($buyer);
         }
 
         // Create Tags
@@ -105,10 +136,10 @@ class MarketplaceSeeder extends Seeder
             $product = Product::firstOrCreate(['slug' => Str::slug($name)], [
                 'author_id' => $authors->random()->id,
                 'name' => $name,
-                'description' => 'A high-quality ' . $name . ' built with modern technologies. Includes full documentation and lifetime updates.',
+                'description' => 'Source code premium untuk ' . $name . '. Dibangun menggunakan stack teknologi teringan dan paling modern. Dilengkapi dengan dokumentasi instalasi lengkap, panduan deployment, dan dukungan update versi gratis selamanya. Sangat cocok digunakan untuk mempercepat proses development project klien atau startup Anda.',
                 'thumbnail' => 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=800&auto=format&fit=crop',
                 'demo_url' => 'https://example.com/demo',
-                'price' => rand(29000, 99000),
+                'price' => rand(50000, 499000),
                 'status' => 'approved',
                 'avg_rating' => rand(40, 50) / 10,
                 'sales_count' => rand(10, 500),
@@ -180,7 +211,7 @@ class MarketplaceSeeder extends Seeder
                     SupportReply::create([
                         'support_ticket_id' => $ticket->id,
                         'user_id' => $buyer->id,
-                        'message' => 'Hi, I need help with the installation of this script.',
+                        'message' => 'Halo min, saya butuh panduan untuk proses instalasi script ini di VPS Ubuntu. Apakah ada dokumentasinya?',
                     ]);
                 }
             }

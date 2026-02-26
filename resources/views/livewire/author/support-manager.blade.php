@@ -66,7 +66,12 @@
                     @forelse ($tickets as $ticket)
                         <flux:table.row :key="$ticket->id">
                             <flux:table.cell variant="strong">{{ $ticket->subject }}</flux:table.cell>
-                            <flux:table.cell>{{ $ticket->user->name }}</flux:table.cell>
+                            <flux:table.cell>
+                                <div class="flex items-center gap-2">
+                                    {{ $ticket->user->name }}
+                                    <x-community-badge :user="$ticket->user" />
+                                </div>
+                            </flux:table.cell>
                             <flux:table.cell>
                                 <flux:badge size="sm" :color="match($ticket->status) {
                                     'open' => 'amber',

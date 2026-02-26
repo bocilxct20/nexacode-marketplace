@@ -22,25 +22,20 @@
             @endif
             @php $currentPlan = $user->currentPlan(); @endphp
             <flux:button variant="ghost" icon="calendar">30 Hari Terakhir</flux:button>
-            <div class="flex items-center gap-2 px-4 py-2 bg-emerald-500/10 dark:bg-emerald-500/20 border border-emerald-500/20 rounded-xl">
-                <flux:icon.shield-check variant="mini" class="text-emerald-600 dark:text-emerald-500" />
-                <div class="flex flex-col">
+            <div class="flex items-center gap-3 px-4 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl">
+                <x-community-badge :user="$user" size="sm" />
+                <div class="flex flex-col min-w-[100px]">
                     <div class="flex items-center gap-2">
-                        <flux:text size="xs" class="uppercase font-black tracking-widest text-emerald-600 dark:text-emerald-500 leading-none">Tier {{ $currentPlan->name }}</flux:text>
                         @if($levelInfo['discount'] > 0)
                             <flux:badge color="indigo" size="sm" class="py-0 px-1 text-[8px] uppercase font-black" icon="sparkles" tooltip="Bonus Level: -{{ $levelInfo['discount'] }}% Fee">Level Advantage</flux:badge>
                         @endif
-                        @if(!$currentPlan->is_default)
-                            @if($subscriptionDaysLeft !== null)
-                                @if($subscriptionDaysLeft <= 5)
-                                    <flux:badge color="red" size="sm" class="py-0 px-1 text-[8px] uppercase font-black animate-pulse">Habis dalam {{ $subscriptionDaysLeft }} hari</flux:badge>
-                                @else
-                                    <flux:badge color="emerald" size="sm" class="py-0 px-1 text-[8px] uppercase font-black">{{ $subscriptionDaysLeft }} Hari Tersisa</flux:badge>
-                                @endif
-                            @endif
+                        @if(!$currentPlan->is_default && $subscriptionDaysLeft !== null)
+                            <flux:badge :color="$subscriptionDaysLeft <= 5 ? 'red' : 'emerald'" size="sm" class="py-0 px-1 text-[8px] uppercase font-black">
+                                {{ $subscriptionDaysLeft }} Hari Tersisa
+                            </flux:badge>
                         @endif
                     </div>
-                    <flux:text size="xs" class="text-emerald-600/60 dark:text-emerald-400/60 font-bold tabular-nums">Bagi Hasil {{ 100 - ($finalCommissionRate) }}%</flux:text>
+                    <flux:text size="xs" class="font-bold tabular-nums text-zinc-500">Bagi Hasil {{ 100 - ($finalCommissionRate) }}%</flux:text>
                 </div>
             </div>
             <flux:button variant="primary" icon="wallet">Tarik Pendapatan</flux:button>

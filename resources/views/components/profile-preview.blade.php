@@ -10,32 +10,18 @@
         {{-- Header --}}
         <div class="relative px-5 pt-6 pb-5 flex items-start justify-between gap-3">
             <div class="flex items-center gap-3.5 min-w-0">
-                <flux:avatar
-                    size="lg"
-                    :name="$user->name"
-                    :src="$user->avatar ? asset('storage/' . $user->avatar) : null"
-                    :initials="$user->initials"
-                    class="rounded-xl shrink-0"
-                />
+                <x-user-avatar :user="$user" size="lg" class="rounded-xl shrink-0" />
                 <div class="min-w-0">
                     <div class="flex items-center gap-1.5 flex-wrap">
                         <span class="font-black text-sm text-zinc-900 dark:text-white truncate leading-snug">{{ $user->name }}</span>
-                        @if($user->isAuthor())
-                            <flux:badge
-                                color="{{ $user->tier_badge->color }}"
-                                size="sm"
-                                variant="solid"
-                                class="text-[9px] uppercase font-black tracking-widest px-1.5 py-0.5 rounded-md shrink-0 leading-none flex items-center gap-0.5"
-                            >
-                                <flux:icon :icon="$user->tier_badge->icon" variant="mini" class="w-2.5 h-2.5" />
-                                {{ $user->tier_badge->label }}
-                            </flux:badge>
-                        @endif
+                        <x-community-badge :user="$user" size="sm" />
                     </div>
                     <div class="flex items-center gap-1 mt-1.5">
                         <span class="text-xs text-zinc-400 font-medium truncate">{{ $user->username ?? $user->id }}</span>
-                        @if($user->isAuthor())
-                            <flux:icon.check-badge variant="mini" class="text-indigo-500 w-3.5 h-3.5 shrink-0" />
+                        @if($user->isAdmin())
+                            <flux:icon.shield-check variant="mini" class="text-rose-500 w-3.5 h-3.5 shrink-0" />
+                        @elseif($user->isAuthor())
+                            <flux:icon.check-badge variant="mini" class="{{ $user->isElite() ? 'text-amber-500' : 'text-indigo-500' }} w-3.5 h-3.5 shrink-0" />
                         @endif
                         @if(auth()->check() && $user->followers->contains(auth()->user()))
                             <flux:badge size="sm" color="zinc" variant="outline" class="text-[9px] uppercase font-black tracking-tighter ml-1 shrink-0">Follows you</flux:badge>

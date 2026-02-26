@@ -1,21 +1,18 @@
-@php
-    $layout = 'layouts.app';
-    if (auth()->check()) {
-        if (auth()->user()->isAdmin()) {
-            $layout = 'layouts.admin';
-        } elseif (auth()->user()->isAuthor()) {
-            $layout = 'layouts.author';
-        }
-    }
-@endphp
+@extends('layouts.auth')
 
-@extends($layout)
+@section('title', 'Two-Factor Authentication')
+
+@section('side-testimonial')
+    "Two-factor authentication adds an extra layer of security to your account. Your digital assets deserve the best protection."
+@endsection
+
+@section('side-author', 'Ahmad Dani Saputra')
+@section('side-role', 'Creator of NEXACODE')
 
 @section('content')
-<div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8">
+    <div class="w-full max-w-sm space-y-8">
         <div>
-            <flux:heading size="xl" class="text-center">Two-Factor Authentication</flux:heading>
+            <flux:heading size="xl" class="text-center">2FA Security</flux:heading>
             <flux:subheading class="text-center mt-2">
                 Enter your authentication code to continue
             </flux:subheading>
@@ -37,8 +34,8 @@
                             autofocus
                             class="text-center text-2xl tracking-widest"
                         />
-                        <flux:description>
-                            Enter the 6-digit code from your authenticator app or an 8-character backup code
+                        <flux:description class="text-center">
+                            Enter the 6-digit code from your app or a backup code.
                         </flux:description>
 
                         @error('code')
@@ -50,21 +47,17 @@
                         <flux:checkbox name="remember" label="Remember this device for 30 days" />
                     </div>
 
-                    <flux:button type="submit" variant="primary" class="w-full">
-                        Verify
+                    <flux:button type="submit" variant="primary" class="w-full font-bold shadow-lg">
+                        Verify Identity
                     </flux:button>
                 </div>
             </form>
 
-            <div class="mt-6 text-center">
-                <flux:subheading>
-                    Lost your authenticator device?
-                </flux:subheading>
-                <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-                    Use one of your backup codes to login, then disable and re-enable 2FA.
+            <div class="mt-8 pt-6 border-t border-zinc-100 dark:border-zinc-800 text-center">
+                <p class="text-xs text-zinc-500 dark:text-zinc-600 leading-relaxed font-medium">
+                    Lost your device? Use a backup code to login, then disable and re-enable 2FA.
                 </p>
             </div>
         </flux:card>
     </div>
-</div>
 @endsection

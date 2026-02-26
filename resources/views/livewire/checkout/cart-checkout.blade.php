@@ -16,7 +16,10 @@
                         </div>
                         <div class="flex-1 min-w-0 flex flex-col justify-center">
                             <div class="font-bold text-lg truncate">{{ $item->product->name }}</div>
-                            <div class="text-xs text-zinc-500">Oleh <span class="font-bold text-zinc-900 dark:text-white">{{ $item->product->author->name }}</span></div>
+                            <div class="text-xs text-zinc-500 flex items-center gap-1.5">
+                                Oleh <span class="font-bold text-zinc-900 dark:text-white">{{ $item->product->author->name }}</span>
+                                <x-community-badge :user="$item->product->author" size="sm" class="scale-75 origin-left" />
+                            </div>
                         </div>
                         <div class="text-right flex flex-col justify-center">
                             <div class="text-xl font-black text-emerald-600 dark:text-emerald-400">
@@ -126,7 +129,7 @@
                     </flux:button>
                     
                     <p class="text-[10px] text-center text-zinc-400 uppercase font-bold tracking-widest leading-relaxed">
-                        Dengan membayar, Anda menyetujui <br> Syarat & Ketentuan NexaCode.
+                        Dengan membayar, kamu menyetujui <br> Syarat & Ketentuan NexaCode.
                     </p>
                 </div>
             </flux:card>

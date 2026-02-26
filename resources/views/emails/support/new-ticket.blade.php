@@ -4,7 +4,7 @@
     'actionUrl' => route('support.show', $ticket->id)
 ])
 
-Anda menerima tiket support baru untuk produk **{{ $ticket->product->name }}**.
+kamu menerima tiket support baru untuk produk **{{ $ticket->product->name }}**.
 
 ### Detail Tiket
 - **Subjek:** {{ $ticket->subject }}

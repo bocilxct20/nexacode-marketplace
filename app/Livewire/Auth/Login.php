@@ -17,6 +17,8 @@ class Login extends Component
     public string $email = '';
     public string $password = '';
     public bool $remember = false;
+    public string $deviceId = '';
+    public array $deviceMeta = [];
 
     public function login()
     {
@@ -66,15 +68,16 @@ class Login extends Component
                 ]);
             }
 
-            // ── Feature #2: Deteksi login dari IP/Device baru ─────────────────
+            // ── Device Fingerprinting & Security Check ─────────────────
+            $securityService = app(\App\Services\SecurityService::class);
+            if ($this->deviceId) {
+                $securityService->verifyDevice($user, $this->deviceId, $this->deviceMeta);
+            }
+
+            // ── Feature #2: Deteksi login dari IP/Device baru (Legacy fallback) ──
             $currentIp       = request()->ip();
             $currentDevice   = request()->userAgent();
-            $isNewDevice     = $user->last_login_ip !== $currentIp ||
-                               $user->last_login_device !== $currentDevice;
-            // Simpan sebelum update() menimpa nilainya
-            $originalLastLogin = $user->last_login_at;
-
-            // Catat aktivitas login
+            // ... (keep the rest of the existing logic for logging and redirect)
             $user->update([
                 'last_login_at'     => now(),
                 'last_login_ip'     => $currentIp,
@@ -83,16 +86,8 @@ class Login extends Component
 
             \App\Models\SecurityLog::log('login_success', $user->id);
 
-            // Kirim email notifikasi jika login dari tempat baru
-            // Hanya jika user pernah login sebelumnya (cek $originalLastLogin, BUKAN $user->last_login_at yang sudah diupdate)
-            if ($isNewDevice && $originalLastLogin !== null) {
-                Mail::to($user->email)->queue(new NewLoginAlert(
-                    user    : $user,
-                    ip      : $currentIp,
-                    device  : $currentDevice,
-                    loginAt : now()->setTimezone('Asia/Jakarta')->format('d M Y, H:i') . ' WIB',
-                ));
-            }
+            // ── Gamification: Process Login Streak ──────────────────────────
+            app(\App\Services\GamificationService::class)->processLoginStreak($user);
 
             Flux::toast(
                 variant: 'success',

@@ -36,8 +36,6 @@ class ProductManager extends Component
 
     public $existingThumbnail = null;
     public $screenshot_uploads = []; // For new uploads
-    public $existingScreenshots = []; // For display/deletion
-    public $version_number = '1.0.0';
     public $readyToLoad = false;
 
     public function loadData()
@@ -248,6 +246,7 @@ class ProductManager extends Component
         $this->showModal = false;
         $this->resetForm();
     }
+
 
     public function closeModal()
     {

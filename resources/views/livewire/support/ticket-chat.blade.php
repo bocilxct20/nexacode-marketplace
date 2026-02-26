@@ -22,13 +22,33 @@
                 $isStaff = $reply->user->isAdmin() || ($ticket->product->author_id === $reply->user_id);
             @endphp
             
-            <div class="flex {{ $isMe ? 'justify-end' : 'justify-start' }}">
+            <div class="flex {{ $isMe ? 'justify-end' : 'justify-start' }} gap-3">
+                @if(!$isMe)
+                    <div class="shrink-0 pt-1">
+                        <div class="relative">
+                            <flux:avatar 
+                                :src="$reply->user->avatar" 
+                                class="size-8 rounded-lg {{ $reply->user->isElite() ? 'border-2 border-amber-400 elite-glow-gold' : ($reply->user->isPro() ? 'border-2 border-indigo-400 pro-glow-indigo' : '') }}" 
+                            />
+                            @if($reply->user->isElite())
+                                <div class="absolute -inset-1 bg-amber-400/20 blur-sm rounded-lg -z-10 animate-pulse"></div>
+                            @endif
+                        </div>
+                    </div>
+                @endif
                 <div class="max-w-[85%] md:max-w-[70%] space-y-1">
                     <div class="flex items-center gap-2 px-1 {{ $isMe ? 'flex-row-reverse' : '' }}">
-                        <span class="text-[10px] font-bold uppercase tracking-widest text-zinc-500">{{ $reply->user->name }}</span>
-                        @if($isStaff)
-                            <flux:badge size="sm" variant="ghost" color="indigo" class="text-[8px] py-0 px-1">STAFF</flux:badge>
-                        @endif
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] font-bold uppercase tracking-widest text-zinc-500">{{ $reply->user->name }}</span>
+                            @if($isStaff)
+                                <div class="flex items-center gap-1.5">
+                                    <flux:badge size="sm" variant="ghost" color="indigo" class="text-[8px] py-0 px-1 border-indigo-500/30">STAFF</flux:badge>
+                                    <x-community-badge :user="$reply->user" />
+                                </div>
+                            @else
+                                <x-community-badge :user="$reply->user" />
+                            @endif
+                        </div>
                     </div>
                     
                     <div class="p-4 rounded-2xl shadow-sm {{ $isMe ? 'bg-indigo-600 text-white rounded-tr-none' : 'bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 rounded-tl-none border border-zinc-100 dark:border-zinc-700' }}">

@@ -105,16 +105,10 @@
                     <div class="mt-auto pt-6 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
                         <x-profile-preview :user="$product->author">
                             <div class="flex items-center gap-2 group/author cursor-pointer">
-                                <flux:avatar size="xs" :src="$product->author->avatar ? asset('storage/' . $product->author->avatar) : null" :initials="$product->author->initials" class="ring-2 ring-transparent group-hover/author:ring-emerald-500/30 transition-all shadow-sm" />
+                                <x-user-avatar :user="$product->author" size="xs" class="shadow-sm transition-all group-hover/author:ring-emerald-500/30" />
                                 <div class="flex items-center gap-1.5">
                                     <flux:text size="xs" class="font-bold group-hover/author:text-emerald-600 transition-colors text-zinc-900 dark:text-white">@ {{ $product->author->name }}</flux:text>
-                                    @if($product->author->isElite())
-                                        <flux:icon.check-badge variant="mini" class="text-amber-500 w-3.5 h-3.5 animate-pulse" />
-                                    @elseif($product->author->isPro())
-                                        <flux:icon.check-badge variant="mini" class="text-indigo-500 w-3.5 h-3.5" />
-                                    @else
-                                        <flux:icon.check-badge variant="mini" class="text-zinc-400 w-3.5 h-3.5" />
-                                    @endif
+                                        <x-community-badge :user="$product->author" size="sm" class="scale-75 origin-left" />
                                 </div>
                             </div>
                         </x-profile-preview>

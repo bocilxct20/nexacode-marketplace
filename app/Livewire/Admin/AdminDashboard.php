@@ -26,6 +26,8 @@ class AdminDashboard extends Component
                 'total_products' => 0,
                 'pending_products' => 0,
                 'total_revenue' => 0,
+                'community_active_threads' => 0,
+                'help_helpful_rate' => 0,
             ],
             'recentOrders' => collect(),
             'top_authors' => collect(),
@@ -42,6 +44,9 @@ class AdminDashboard extends Component
                     'pending_products' => Product::where('status', 'pending')->count(),
                     'total_revenue' => Order::where('status', 'completed')->sum('total_amount'),
                     'net_platform_profit' => \App\Models\PlatformEarning::sum('net_profit'),
+
+                    'help_articles' => \App\Models\HelpArticle::count(),
+                    'help_feedback_count' => \App\Models\HelpArticleFeedback::count(),
                 ],
                 'recentOrders' => Order::with('buyer')->latest()->take(5)->get(),
                 'top_authors' => User::whereHas('roles', function($q) {

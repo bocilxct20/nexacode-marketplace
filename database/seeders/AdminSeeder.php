@@ -17,7 +17,7 @@ class AdminSeeder extends Seeder
         // Pastikan role admin tersedia
         $adminRole = Role::firstOrCreate(['slug' => 'admin'], [
             'name' => 'Administrator',
-            'description' => 'System administrator with full access.',
+            'description' => 'Administrator sistem dengan akses penuh ke seluruh fitur dan pengaturan.',
         ]);
 
         // Ambil data dari .env atau gunakan default

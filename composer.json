@@ -12,6 +12,7 @@
         "php": "^8.2",
         "bacon/bacon-qr-code": "^3.0",
         "barryvdh/laravel-dompdf": "^3.1",
+        "fakerphp/faker": "^1.23",
         "laravel/framework": "^12.0",
         "laravel/reverb": "^1.7",
         "laravel/sanctum": "^4.3",
@@ -24,8 +25,7 @@
         "midtrans/midtrans-php": "^2.6",
         "pragmarx/google2fa": "^8.0",
         "pragmarx/google2fa-laravel": "^2.3",
-        "predis/predis": "^3.4",
-        "fakerphp/faker": "^1.23"
+        "predis/predis": "^3.4"
     },
     "require-dev": {
         "laravel/pail": "^1.2.2",

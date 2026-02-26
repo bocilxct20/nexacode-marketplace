@@ -35,7 +35,7 @@
         </div>
     @else
         {{-- Actual Content --}}
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             <flux:card>
                 <flux:subheading class="text-xs uppercase tracking-wider text-zinc-500">Gross Volume</flux:subheading>
                 <div class="text-2xl font-bold mt-1">Rp {{ number_format($stats['total_revenue'], 0, ',', '.') }}</div>
@@ -52,13 +52,43 @@
             </flux:card>
 
             <flux:card>
-                <flux:subheading class="text-xs uppercase tracking-wider text-zinc-500">Total Products</flux:subheading>
-                <div class="text-2xl font-bold mt-1">{{ number_format($stats['total_products']) }}</div>
-            </flux:card>
-
-            <flux:card>
                 <flux:subheading class="text-xs uppercase tracking-wider text-zinc-500">Pending Review</flux:subheading>
                 <div class="text-2xl font-bold mt-1 text-amber-500">{{ number_format($stats['pending_products']) }}</div>
+            </flux:card>
+        </div>
+
+        {{-- NEW: Ecosystem Vitality --}}
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <flux:card class="bg-indigo-50/50 dark:bg-indigo-500/5 border-indigo-100 dark:border-indigo-500/20">
+                <div class="flex items-center gap-2 mb-1">
+                    <flux:icon.chat-bubble-left-right variant="mini" class="size-3 text-indigo-500" />
+                    <flux:subheading class="text-[10px] uppercase tracking-widest text-indigo-600 dark:text-indigo-400 font-black">Community Threads</flux:subheading>
+                </div>
+                <div class="text-xl font-black text-indigo-700 dark:text-indigo-300">{{ number_format($stats['community_threads'] ?? 0) }}</div>
+            </flux:card>
+
+            <flux:card class="bg-emerald-50/50 dark:bg-emerald-500/5 border-emerald-100 dark:border-emerald-500/20">
+                <div class="flex items-center gap-2 mb-1">
+                    <flux:icon.code-bracket variant="mini" class="size-3 text-emerald-500" />
+                    <flux:subheading class="text-[10px] uppercase tracking-widest text-emerald-600 dark:text-emerald-400 font-black">Shared Snippets</flux:subheading>
+                </div>
+                <div class="text-xl font-black text-emerald-700 dark:text-emerald-300">{{ number_format($stats['community_snippets'] ?? 0) }}</div>
+            </flux:card>
+
+            <flux:card class="bg-amber-50/50 dark:bg-amber-500/5 border-amber-100 dark:border-amber-500/20">
+                <div class="flex items-center gap-2 mb-1">
+                    <flux:icon.academic-cap variant="mini" class="size-3 text-amber-500" />
+                    <flux:subheading class="text-[10px] uppercase tracking-widest text-amber-600 dark:text-amber-400 font-black">Knowledge Articles</flux:subheading>
+                </div>
+                <div class="text-xl font-black text-amber-700 dark:text-amber-300">{{ number_format($stats['help_articles'] ?? 0) }}</div>
+            </flux:card>
+
+            <flux:card class="bg-rose-50/50 dark:bg-rose-500/5 border-rose-100 dark:border-rose-500/20">
+                <div class="flex items-center gap-2 mb-1">
+                    <flux:icon.hand-thumb-up variant="mini" class="size-3 text-rose-500" />
+                    <flux:subheading class="text-[10px] uppercase tracking-widest text-rose-600 dark:text-rose-400 font-black">Help Feedbacks</flux:subheading>
+                </div>
+                <div class="text-xl font-black text-rose-700 dark:text-rose-300">{{ number_format($stats['help_feedback_count'] ?? 0) }}</div>
             </flux:card>
         </div>
 

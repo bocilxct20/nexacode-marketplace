@@ -5,8 +5,10 @@ namespace App\Livewire\Customer;
 use Livewire\Component;
 use App\Models\Order;
 use App\Models\SupportTicket;
-use App\Models\Product; // Added for recommendations
-use Illuminate\Support\Facades\Auth; // Added for Auth::user()
+use App\Models\Product;
+
+use App\Models\HelpArticle;
+use Illuminate\Support\Facades\Auth;
 use Flux;
 
 class DashboardOverview extends Component
@@ -30,6 +32,7 @@ class DashboardOverview extends Component
         $recentPurchases = collect();
         $recentSupportTickets = collect();
         $recommendations = collect();
+        $suggestedDocs = collect();
 
         if ($this->readyToLoad) {
             $stats = [
@@ -61,6 +64,26 @@ class DashboardOverview extends Component
                 ->inRandomOrder()
                 ->take(4)
                 ->get();
+
+
+
+            // Aggregation: Help Center (Interconnected Docs)
+            $purchasedCategoryIds = Order::where('buyer_id', $user->id)
+                ->where('status', 'completed')
+                ->join('order_items', 'orders.id', '=', 'order_items.order_id')
+                ->join('products', 'order_items.product_id', '=', 'products.id')
+                ->pluck('products.category_id')
+                ->unique();
+
+            $suggestedDocs = HelpArticle::with('category')->where('is_published', true)
+                ->whereIn('help_category_id', $purchasedCategoryIds)
+                ->latest()
+                ->take(4)
+                ->get();
+            
+            if ($suggestedDocs->isEmpty()) {
+                $suggestedDocs = HelpArticle::with('category')->where('is_published', true)->latest()->take(4)->get();
+            }
         }
 
         return view('livewire.customer.dashboard-overview', [
@@ -69,6 +92,7 @@ class DashboardOverview extends Component
             'recentPurchases' => $recentPurchases,
             'recentSupportTickets' => $recentSupportTickets,
             'recommendations' => $recommendations,
+            'suggestedDocs' => $suggestedDocs,
         ]);
     }
 

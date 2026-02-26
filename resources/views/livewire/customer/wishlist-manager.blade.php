@@ -56,6 +56,13 @@
                     <div class="aspect-video bg-zinc-100 dark:bg-zinc-800 rounded-lg mb-4 overflow-hidden relative group">
                         <img src="{{ Storage::url($item->product->thumbnail) }}" alt="{{ $item->product->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                         <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        
+                        @if($item->product->author->isElite())
+                            <div class="absolute top-3 right-3 px-2 py-0.5 bg-amber-500 rounded-full border border-white/30 shadow-lg flex items-center gap-1.5 transition-transform group-hover:scale-105">
+                                <flux:icon.shield-check variant="mini" class="w-3.5 h-3.5 text-white" />
+                                <span class="text-[9px] font-black text-white uppercase tracking-widest">Elite Item</span>
+                            </div>
+                        @endif
                     </div>
 
                     {{-- Product Info --}}

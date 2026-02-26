@@ -62,7 +62,12 @@
                     @forelse ($reviews as $review)
                         <flux:table.row :key="$review->id">
                             <flux:table.cell variant="strong" class="truncate max-w-[200px]">{{ $review->product->name }}</flux:table.cell>
-                            <flux:table.cell>{{ $review->user->name }}</flux:table.cell>
+                            <flux:table.cell>
+                                <div class="flex items-center gap-2">
+                                    {{ $review->user->name }}
+                                    <x-community-badge :user="$review->user" />
+                                </div>
+                            </flux:table.cell>
                             <flux:table.cell>
                                 <div class="flex items-center gap-1">
                                     <span class="font-bold tabular-nums">{{ $review->rating }}</span>

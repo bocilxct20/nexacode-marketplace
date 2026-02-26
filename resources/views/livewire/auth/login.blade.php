@@ -1,116 +1,89 @@
-<div class="flex min-h-screen">
-    @section('title', 'Login')
-    <div class="flex-1 flex justify-center items-center p-8 relative">
-        {{-- Loading Overlay --}}
-        <div wire:loading.delay wire:target="login" class="absolute inset-0 z-50 bg-white/40 dark:bg-zinc-950/40 backdrop-blur-sm flex items-center justify-center animate-in fade-in duration-300">
-            <div class="flex flex-col items-center gap-4">
-                <div class="relative">
-                    <div class="w-12 h-12 rounded-full border-2 border-indigo-500/20 border-t-indigo-500 animate-spin"></div>
-                    <flux:icon name="rocket-launch" class="absolute inset-0 m-auto w-5 h-5 text-indigo-500" />
-                </div>
-                <flux:text size="sm" class="font-medium animate-pulse">Authenticating...</flux:text>
+@section('title', 'Login')
+
+<div class="space-y-8 relative">
+    {{-- Loading Overlay --}}
+    <div wire:loading.delay wire:target="login" class="absolute -inset-8 z-50 bg-white/40 dark:bg-zinc-950/40 backdrop-blur-sm flex items-center justify-center animate-in fade-in duration-300 rounded-[2rem]">
+        <div class="flex flex-col items-center gap-4">
+            <div class="relative">
+                <div class="w-12 h-12 rounded-full border-2 border-indigo-500/20 border-t-indigo-500 animate-spin"></div>
+                <flux:icon name="rocket-launch" class="absolute inset-0 m-auto w-5 h-5 text-indigo-500" />
             </div>
-        </div>
-
-        <div class="w-full max-w-sm space-y-8">
-            <div class="flex justify-center opacity-80">
-                <flux:brand href="/" name="NEXACODE" class="font-bold text-2xl">
-                    <x-slot name="logo" class="size-6 rounded-full bg-cyan-500 text-white text-xs font-bold">
-                        <flux:icon name="rocket-launch" variant="micro" />
-                    </x-slot>
-                </flux:brand>
-            </div>
-
-            <div class="text-center space-y-2">
-                <flux:heading size="xl">Welcome back</flux:heading>
-                <flux:subheading>Log in to your author account</flux:subheading>
-            </div>
-
-            <div class="space-y-4">
-                <flux:button href="{{ route('social.redirect', 'google') }}" class="w-full h-11">
-                    <x-slot name="icon">
-                        <svg width="20" height="20" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M23.06 12.25C23.06 11.47 22.99 10.72 22.86 10H12.5V14.26H18.42C18.16 15.63 17.38 16.79 16.21 17.57V20.34H19.78C21.86 18.42 23.06 15.6 23.06 12.25Z" fill="#4285F4"/>
-                            <path d="M12.4997 23C15.4697 23 17.9597 22.02 19.7797 20.34L16.2097 17.57C15.2297 18.23 13.9797 18.63 12.4997 18.63C9.63969 18.63 7.20969 16.7 6.33969 14.1H2.67969V16.94C4.48969 20.53 8.19969 23 12.4997 23Z" fill="#34A853"/>
-                            <path d="M6.34 14.0899C6.12 13.4299 5.99 12.7299 5.99 11.9999C5.99 11.2699 6.12 10.5699 6.34 9.90995V7.06995H2.68C1.93 8.54995 1.5 10.2199 1.5 11.9999C1.5 13.7799 1.93 15.4499 2.68 16.9299L5.53 14.7099L6.34 14.0899Z" fill="#FBBC05"/>
-                            <path d="M12.4997 5.38C14.1197 5.38 15.5597 5.94 16.7097 7.02L19.8597 3.87C17.9497 2.09 15.4697 1 12.4997 1C8.19969 1 4.48969 3.47 2.67969 7.07L6.33969 9.91C7.20969 7.31 9.63969 5.38 12.4997 5.38Z" fill="#EA4335"/>
-                        </svg>
-                    </x-slot>
-                    Continue with Google
-                </flux:button>
-
-                <flux:button href="{{ route('social.redirect', 'github') }}" class="w-full h-11">
-                    <x-slot name="icon">
-                        <x-lucide-github class="w-5 h-5" />
-                    </x-slot>
-                    Continue with GitHub
-                </flux:button>
-            </div>
-
-            <flux:separator text="or" />
-
-            <form wire:submit="login" class="flex flex-col gap-6">
-                <flux:field>
-                    <flux:label>Email</flux:label>
-                    <flux:input wire:model="email" type="email" placeholder="email@example.com" required autofocus />
-                    <flux:error name="email" />
-                </flux:field>
-
-                <flux:field x-data="{ show: false }">
-                    <div class="mb-3 flex justify-between items-center">
-                        <flux:label>Password</flux:label>
-                        <flux:link href="{{ route('password.request') }}" variant="subtle" class="text-sm" wire:navigate>Forgot password?</flux:link>
-                    </div>
-
-                    <div class="relative">
-                        <flux:input wire:model="password" x-bind:type="show ? 'text' : 'password'" placeholder="Your password" required />
-                        
-                        <button type="button" @click="show = !show" class="absolute inset-y-0 right-0 flex items-center pr-3 text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200">
-                            <flux:icon x-show="!show" name="eye" variant="micro" />
-                            <flux:icon x-show="show" name="eye-slash" variant="micro" />
-                        </button>
-                    </div>
-
-                    <flux:error name="password" />
-                </flux:field>
-
-                <flux:checkbox wire:model="remember" label="Remember me for 30 days" />
-
-                <flux:button type="submit" variant="primary" class="w-full h-11 font-bold shadow-lg">Log in</flux:button>
-            </form>
-
-            <flux:subheading class="text-center">
-                First time around here? <flux:link href="{{ route('register') }}" wire:navigate>Sign up for free</flux:link>
-            </flux:subheading>
+            <flux:text size="sm" class="font-medium animate-pulse">Authenticating...</flux:text>
         </div>
     </div>
 
-    <div class="flex-1 p-4 max-lg:hidden">
-        <div class="text-white relative rounded-2xl h-full w-full bg-aurora flex flex-col items-start justify-end p-16 overflow-hidden">
-            <div class="absolute inset-0 bg-black/20"></div>
-            
-            <div class="relative z-10 w-full max-w-2xl">
-                <div class="flex gap-1 mb-6 text-amber-400">
-                    <flux:icon.star variant="solid" size="sm" />
-                    <flux:icon.star variant="solid" size="sm" />
-                    <flux:icon.star variant="solid" size="sm" />
-                    <flux:icon.star variant="solid" size="sm" />
-                    <flux:icon.star variant="solid" size="sm" />
-                </div>
-
-                <div class="mb-8 italic font-medium text-3xl xl:text-4xl leading-tight">
-                    "Welcome back to NEXACODE. We've missed your creative energy. Ready to build something extraordinary today?"
-                </div>
-
-                <div class="flex gap-4 items-center">
-                    <x-nexacode-brand-n class="size-16" />
-
-                    <div class="flex flex-col justify-center">
-                        <div class="text-lg font-bold">Ahmad Dani Saputra</div>
-                        <div class="text-zinc-300">Creator of NEXACODE</div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="text-center space-y-2">
+        <div class="font-black uppercase tracking-tight text-3xl text-zinc-900 dark:text-white">Welcome back</div>
+        <p class="text-[10px] font-black uppercase tracking-widest text-zinc-500">Log in to your account</p>
     </div>
+
+    <div class="space-y-4">
+        <flux:button href="{{ route('social.redirect', 'google') }}" variant="outline" class="w-full h-12 text-xs font-bold shadow-sm transition-transform hover:-translate-y-0.5 rounded-2xl">
+            <x-slot name="icon">
+                <x-lucide-chrome class="w-5 h-5 text-zinc-600 dark:text-zinc-400" />
+            </x-slot>
+            Continue with Google
+        </flux:button>
+
+        <flux:button href="{{ route('social.redirect', 'github') }}" variant="outline" class="w-full h-12 text-xs font-bold shadow-sm transition-transform hover:-translate-y-0.5 rounded-2xl">
+            <x-slot name="icon">
+                <x-lucide-github class="w-5 h-5 text-zinc-600 dark:text-zinc-400" />
+            </x-slot>
+            Continue with GitHub
+        </flux:button>
+    </div>
+
+    <flux:separator text="or" />
+
+    <form wire:submit="login" class="flex flex-col gap-6">
+        <flux:field>
+            <flux:label class="text-[10px] font-black uppercase tracking-widest text-zinc-600 dark:text-zinc-400 mb-2">Email Address</flux:label>
+            <flux:input wire:model="email" type="email" placeholder="email@example.com" class="h-12 rounded-2xl" required autofocus />
+            <flux:error name="email" />
+        </flux:field>
+
+        <flux:field x-data="{ show: false }">
+            <div class="mb-2 flex justify-between items-center">
+                <flux:label class="text-[10px] font-black uppercase tracking-widest text-zinc-600 dark:text-zinc-400">Password</flux:label>
+                <flux:link href="{{ route('password.request') }}" class="text-[10px] font-bold text-indigo-500 hover:text-indigo-600" wire:navigate>Lupa password?</flux:link>
+            </div>
+
+            <div class="relative">
+                <flux:input wire:model="password" x-bind:type="show ? 'text' : 'password'" placeholder="Your password" class="h-12 rounded-2xl" required />
+                
+                <button type="button" @click="show = !show" class="absolute inset-y-0 right-0 flex items-center pr-4 text-zinc-400 hover:text-indigo-500 transition-colors">
+                    <flux:icon x-show="!show" name="eye" variant="micro" class="w-5 h-5" />
+                    <flux:icon x-show="show" name="eye-slash" variant="micro" class="w-5 h-5" />
+                </button>
+            </div>
+
+            <flux:error name="password" />
+        </flux:field>
+
+        <div class="flex items-center">
+            <flux:checkbox wire:model="remember" label="Remember me for 30 days" class="text-xs font-medium" />
+        </div>
+
+        <flux:button type="submit" variant="primary" class="bg-indigo-600 hover:bg-indigo-500 w-full h-12 text-[10px] font-black uppercase tracking-widest shadow-sm rounded-2xl transition-transform hover:-translate-y-0.5 mt-2">Log in</flux:button>
+    </form>
 </div>
+@push('scripts')
+<script src="https://openfpcdn.io/fingerprintjs/v4"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        const fpPromise = FingerprintJS.load();
+        const fp = await fpPromise;
+        const result = await fp.get();
+
+        const deviceId = result.visitorId;
+        const meta = {
+            device_name: result.components?.platform?.value || 'Unknown Device',
+            browser: result.components?.vendor?.value || 'Unknown Browser',
+            platform: result.components?.platform?.value || 'Unknown Platform'
+        };
+
+        @this.set('deviceId', deviceId);
+        @this.set('deviceMeta', meta);
+    });
+</script>
+@endpush

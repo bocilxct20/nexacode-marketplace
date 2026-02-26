@@ -41,11 +41,12 @@
                     <flux:label>Profile Picture</flux:label>
                     <div class="flex items-center gap-6">
                         <div class="relative group">
-                            <flux:avatar 
+                            <x-user-avatar 
+                                :user="$user"
                                 :src="$avatar ? $avatar->temporaryUrl() : ($currentAvatar ? asset('storage/' . $currentAvatar) : null)" 
-                                :initials="$user->initials" 
                                 size="xl" 
-                                class="rounded-[2.5rem] border-4 border-white dark:border-zinc-900 shadow-xl"
+                                thickness="4"
+                                class="rounded-[2.5rem] shadow-xl"
                             />
                             <div wire:loading wire:target="avatar" class="absolute inset-0 bg-black/40 rounded-[2.5rem] flex items-center justify-center">
                                 <flux:icon.loading class="w-8 h-8 text-white animate-spin" />
@@ -90,13 +91,13 @@
                     <flux:separator variant="subtle" />
 
                     <div class="space-y-6">
-                        <div class="flex items-center gap-3">
-                            <div class="p-2 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
-                                <flux:icon.sparkles class="w-6 h-6 text-amber-600 dark:text-amber-400" />
+                        <div class="p-6 bg-amber-500 rounded-2xl border border-white dark:border-zinc-900 shadow-xl flex items-center gap-4 relative overflow-hidden group">
+                            <div class="p-3 bg-white/20 rounded-xl border border-white/30">
+                                <flux:icon.sparkles class="w-8 h-8 text-white" />
                             </div>
                             <div>
-                                <flux:heading size="lg">Elite Storefront Branding</flux:heading>
-                                <flux:subheading>Exclusive perks for Elite authors. Stand out from the crowd.</flux:subheading>
+                                <flux:heading size="lg" class="text-white font-black">Elite Storefront Branding</flux:heading>
+                                <flux:subheading class="text-white/80 font-bold">Exclusive perks for Elite authors. Stand out from the crowd.</flux:subheading>
                             </div>
                         </div>
 

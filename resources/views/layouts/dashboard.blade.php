@@ -60,7 +60,8 @@
                 @endif
             </flux:navlist>
 
-            <div class="px-2 mb-4">
+            <div class="px-2 mb-4 space-y-2">
+                <livewire:global.notification-hub />
                 <flux:dropdown x-data="{ appearance: $flux.appearance }" x-on:flux:appearance-changed.window="appearance = $event.detail" align="start">
                     <flux:button variant="subtle" square class="group w-full justify-start gap-3" aria-label="Preferred color scheme">
                         <div class="relative w-5 h-5 flex items-center justify-center">
@@ -84,6 +85,28 @@
                 <flux:profile :avatar="Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : null" name="{{ Auth::user()->name }}" />
 
                 <flux:menu>
+                    <div class="p-4 bg-zinc-50 dark:bg-zinc-900/50 rounded-2xl mb-2 mx-2 border border-zinc-100 dark:border-zinc-800">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-2">
+                                <div class="size-8 rounded-lg bg-cyan-500/10 flex items-center justify-center text-cyan-600">
+                                    <flux:icon.sparkles variant="mini" class="size-4" />
+                                </div>
+                                <div>
+                                    <div class="text-[10px] font-black uppercase tracking-widest text-zinc-500 leading-none mb-1">Nexus Level</div>
+                                    <div class="text-sm font-black text-zinc-900 dark:text-white leading-none">Level {{ Auth::user()->level }}</div>
+                                </div>
+                            </div>
+                            <div class="text-[10px] font-black uppercase text-zinc-400">{{ number_format(Auth::user()->xp) }} XP</div>
+                        </div>
+                        <div class="h-1.5 w-full bg-zinc-200 dark:bg-zinc-800 rounded-full overflow-hidden">
+                            @php 
+                                $xpInLevel = Auth::user()->xp % 1000; 
+                                $progress = ($xpInLevel / 1000) * 100;
+                            @endphp
+                            <div class="h-full bg-cyan-500 rounded-full" style="width: {{ $progress }}%"></div>
+                        </div>
+                    </div>
+
                     <flux:menu.item icon="user-circle" href="{{ route('profile') }}">Profile Settings</flux:menu.item>
                     <flux:menu.separator />
                     <flux:menu.item icon="arrow-right-start-on-rectangle" href="{{ route('logout') }}" 

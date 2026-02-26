@@ -3,11 +3,18 @@
 namespace App\Livewire\Home;
 
 use App\Models\Product;
+use Livewire\Attributes\Lazy;
 use Livewire\Component;
 
+#[Lazy]
 class ProductCollections extends Component
 {
     public $collection = 'best_sellers';
+
+    public function placeholder()
+    {
+        return view('livewire.home.product-collections-placeholder');
+    }
 
     public function setCollection($name)
     {

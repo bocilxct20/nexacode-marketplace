@@ -5,7 +5,11 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
     plugins: [
         laravel({
-            input: ['resources/css/app.css', 'resources/js/app.js'],
+            input: [
+                'resources/css/app.css',
+                'resources/js/app.js',
+                'resources/js/monaco-init.js'
+            ],
             refresh: true,
         }),
         tailwindcss(),
@@ -13,11 +17,16 @@ export default defineConfig({
     build: {
         rollupOptions: {
             output: {
+                manualChunks(id) {
+                    if (id.includes('monaco-editor')) {
+                        return 'monaco';
+                    }
+                }
             },
         },
         minify: 'esbuild',
         cssMinify: true,
-        chunkSizeWarningLimit: 500,
+        chunkSizeWarningLimit: 5000,
     },
     esbuild: {
         drop: ['console', 'debugger'],

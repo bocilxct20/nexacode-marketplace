@@ -3,20 +3,26 @@
 @section('content')
 <flux:container class="py-12">
     <div class="max-w-2xl mx-auto text-center">
+        @php
+            $hasEliteItem = $order && $order->items->contains(fn($item) => $item->product->author->isElite());
+        @endphp
+
         <div class="mb-8">
-            <div class="w-24 h-24 bg-amber-100 dark:bg-amber-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <div class="w-24 h-24 bg-amber-100 dark:bg-amber-900/20 rounded-full flex items-center justify-center mx-auto mb-6 border border-amber-200 dark:border-amber-800/50">
                 <flux:icon.clock class="w-16 h-16 text-amber-600 dark:text-amber-400" />
             </div>
             
-            <flux:heading size="xl" class="mb-4">Payment Pending</flux:heading>
-            <flux:subheading class="mb-6">Your payment is being processed. This may take a few minutes.</flux:subheading>
+            <flux:heading size="xl" class="mb-4 {{ $hasEliteItem ? 'text-amber-600 dark:text-amber-500 font-extrabold' : '' }}">Payment Pending</flux:heading>
+            <flux:subheading class="mb-6">
+                {{ $hasEliteItem ? 'Your Elite assets are almost ready. Your payment is being processed.' : 'Your payment is being processed. This may take a few minutes.' }}
+            </flux:subheading>
         </div>
 
-        <flux:card class="mb-8">
+        <flux:card class="mb-8 {{ $hasEliteItem ? 'border-amber-500/30 bg-amber-500/5 shadow-inner' : '' }}">
             <div class="space-y-4">
                 <div class="flex items-center justify-between py-3 border-b border-zinc-200 dark:border-zinc-800">
                     <span class="text-zinc-600 dark:text-zinc-400">Order ID</span>
-                    <span class="font-semibold">#{{ request('order_id') }}</span>
+                    <span class="font-semibold">#{{ $order ? $order->id : request('order_id') }}</span>
                 </div>
                 <div class="flex items-center justify-between py-3">
                     <span class="text-zinc-600 dark:text-zinc-400">Status</span>

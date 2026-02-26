@@ -256,6 +256,14 @@
                                     @else
                                         <span class="text-[10px] text-zinc-400 uppercase font-bold tracking-wider">Offline</span>
                                     @endif
+
+                                    @if($activeConversation->author->isElite())
+                                        <flux:separator vertical class="h-2 mx-1 opacity-50" />
+                                        <div class="flex items-center gap-1">
+                                            <flux:icon.shield-check variant="mini" class="w-3 h-3 text-amber-500" />
+                                            <span class="text-[9px] text-amber-600 font-black uppercase tracking-widest">Elite Chat Active</span>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -401,7 +409,7 @@
                                     {{ $msg->type === 'quote' 
                                         ? '' 
                                         : ($msg->is_admin 
-                                            ? 'bg-emerald-500 text-white rounded-tr-none shadow-emerald-500/10' 
+                                            ? ($activeConversation->author->isElite() ? 'bg-amber-50 dark:bg-amber-400/10 text-amber-900 dark:text-amber-300 rounded-tr-none border border-amber-200 dark:border-amber-400/20' : 'bg-emerald-500 text-white rounded-tr-none shadow-emerald-500/10') 
                                             : 'bg-white dark:bg-zinc-800 border border-zinc-100 dark:border-zinc-700 text-zinc-800 dark:text-zinc-200 rounded-tl-none') 
                                     }}
                                     {{ $msg->is_pinned ? 'ring-2 ring-amber-400/50' : '' }}
@@ -427,7 +435,7 @@
                                             </div>
                                         @endif
 
-                                        <div class="prose dark:prose-invert prose-sm max-w-none {{ $msg->is_admin ? 'text-white' : '' }}">
+                                        <div class="prose dark:prose-invert prose-sm max-w-none {{ $msg->is_admin ? ($activeConversation->author->isElite() ? 'text-[#451a03] font-medium' : 'text-white') : '' }}">
                                             @if($msg->voice_path)
                                                 <div class="flex items-center gap-3 py-2 min-w-[200px]" x-data="{ 
                                                     audio: null, 

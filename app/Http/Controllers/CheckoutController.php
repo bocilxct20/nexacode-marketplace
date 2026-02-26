@@ -148,21 +148,24 @@ class CheckoutController extends Controller
         return redirect()->route('checkout.index', ['product_id' => $request->product_id]);
     }
 
-    public function paymentSuccess()
+    public function paymentSuccess(Request $request)
     {
+        $order = \App\Models\Order::where('id', $request->order_id)->first();
         Flux::toast(variant: 'success', heading: 'Payment Successful', text: 'Thank you for your purchase!');
-        return view('checkout.success');
+        return view('checkout.success', compact('order'));
     }
 
-    public function paymentPending()
+    public function paymentPending(Request $request)
     {
-        return view('checkout.pending');
+        $order = \App\Models\Order::where('id', $request->order_id)->first();
+        return view('checkout.pending', compact('order'));
     }
 
-    public function paymentFailed()
+    public function paymentFailed(Request $request)
     {
+        $order = \App\Models\Order::where('id', $request->order_id)->first();
         Flux::toast(variant: 'danger', heading: 'Payment Failed', text: 'Payment could not be processed.');
-        return view('checkout.failed');
+        return view('checkout.failed', compact('order'));
     }
 
     public function buy(Product $product)

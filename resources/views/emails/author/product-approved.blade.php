@@ -5,7 +5,7 @@
     'actionColor' => 'success'
 ])
 
-Produk Anda telah berhasil melewati proses moderasi dan sekarang tersedia untuk dibeli di NexaCode Marketplace.
+Produk kamu telah berhasil melewati proses moderasi dan sekarang tersedia untuk dibeli di NexaCode Marketplace.
 
 ---
 
@@ -18,7 +18,7 @@ Produk Anda telah berhasil melewati proses moderasi dan sekarang tersedia untuk 
 ---
 
 ### Langkah Selanjutnya
-Produk Anda sekarang dapat ditemukan oleh pembeli melalui pencarian dan kategori. Anda dapat memantau performa penjualan melalui Author Dashboard.
+Produk kamu sekarang dapat ditemukan oleh pembeli melalui pencarian dan kategori. kamu dapat memantau performa penjualan melalui Author Dashboard.
 
 Pastikan untuk merespons pertanyaan pembeli dan memperbarui produk secara berkala untuk mempertahankan kualitas.
 

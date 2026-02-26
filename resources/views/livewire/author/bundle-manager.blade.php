@@ -60,7 +60,19 @@
                             @endif
                         </flux:table.cell>
                         <flux:table.cell>
-                            <x-status-badge :status="$bundle->status" />
+                            <flux:badge size="sm" :color="match($bundle->status) {
+                                'active' => 'emerald',
+                                'draft' => 'zinc',
+                                'inactive' => 'red',
+                                default => 'zinc'
+                            }" class="uppercase text-[10px] font-bold">
+                                {{ match($bundle->status) {
+                                    'active' => 'Aktif',
+                                    'draft' => 'Draft',
+                                    'inactive' => 'Non-aktif',
+                                    default => $bundle->status
+                                } }}
+                            </flux:badge>
                         </flux:table.cell>
                         <flux:table.cell>
                             {{ $bundle->sales_count }}
@@ -97,7 +109,7 @@
         <div class="space-y-6">
             <div>
                 <flux:heading size="lg">{{ $editingId ? 'Edit Bundle' : 'Create New Bundle' }}</flux:heading>
-                <flux:text>Atur rincian paket produk hemat Anda.</flux:text>
+                <flux:text>Atur rincian paket produk hemat kamu.</flux:text>
             </div>
 
             <form wire:submit.prevent="save" class="space-y-4">

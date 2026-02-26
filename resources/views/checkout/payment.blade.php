@@ -1,68 +1,71 @@
 @extends('layouts.app')
 
 @section('content')
-<flux:container class="py-12">
-    <div class="max-w-2xl mx-auto">
-        <flux:card>
-            <div class="text-center mb-8">
-                <flux:heading size="xl" class="mb-4">Complete Your Payment</flux:heading>
-                <flux:subheading>Transaction ID: {{ $order->transaction_id }}</flux:subheading>
+<div class="relative bg-aurora overflow-hidden min-h-screen">
+    <div class="absolute inset-0 bg-white/40 dark:bg-zinc-950/60 backdrop-blur-3xl"></div>
+    
+    <flux:container class="relative z-10 py-12">
+    <div class="max-w-xl mx-auto">
+        <div class="p-8 md:p-10 bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-[2rem] shadow-sm">
+            <div class="text-center mb-10">
+                <flux:heading size="lg" class="mb-2 font-black uppercase tracking-tight">Complete Your Payment</flux:heading>
+                <div class="text-xs uppercase tracking-widest font-bold text-zinc-500">Transaction ID: {{ $order->transaction_id }}</div>
             </div>
 
             {{-- Professional Checkout Stepper --}}
-            <div class="relative mb-8">
-                <div class="flex items-center justify-between max-w-xl mx-auto">
+            <div class="relative mb-10">
+                <div class="flex items-center justify-between max-w-sm mx-auto">
                     {{-- Step 1: Select Payment (Always Completed on this page) --}}
                     <div class="flex flex-col items-center flex-1">
-                        <div class="relative z-10 flex items-center justify-center w-10 h-10 rounded-full bg-emerald-600 text-white font-bold shadow-md">
-                            <flux:icon.check class="w-5 h-5" />
+                        <div class="relative z-10 flex items-center justify-center w-8 h-8 rounded-full bg-emerald-500 text-white font-bold shadow-sm">
+                            <flux:icon.check class="w-4 h-4" />
                         </div>
-                        <div class="mt-2 text-center">
-                            <div class="text-[10px] uppercase tracking-wider font-bold text-emerald-600 dark:text-emerald-500">Payment Selected</div>
+                        <div class="mt-3 text-center">
+                            <div class="text-[9px] uppercase tracking-widest font-black text-emerald-600 dark:text-emerald-500">Payment Selected</div>
                         </div>
                     </div>
 
                     {{-- Connector Line 1 (Completed) --}}
-                    <div class="flex-1 h-0.5 bg-emerald-600 -mx-4 relative" style="top: -20px;"></div>
+                    <div class="flex-1 h-[2px] bg-emerald-500 -mx-6 relative top-[-14px]"></div>
 
                     {{-- Step 2: Complete Payment --}}
                     <div class="flex flex-col items-center flex-1 px-2">
                         @if($order->isProcessing() || $order->isCompleted())
-                            <div class="relative z-10 flex items-center justify-center w-10 h-10 rounded-full bg-emerald-600 text-white font-bold shadow-md">
-                                <flux:icon.check class="w-5 h-5" />
+                            <div class="relative z-10 flex items-center justify-center w-8 h-8 rounded-full bg-emerald-500 text-white font-bold shadow-sm">
+                                <flux:icon.check class="w-4 h-4" />
                             </div>
                         @else
-                            <div class="relative z-10 flex items-center justify-center w-10 h-10 rounded-full border-2 border-indigo-600 bg-white dark:bg-zinc-900 text-indigo-600 font-bold shadow-lg ring-4 ring-indigo-100 dark:ring-indigo-900/30">
-                                2
+                            <div class="relative z-10 flex items-center justify-center w-8 h-8 rounded-full border border-zinc-900 dark:border-white bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-sm ring-4 ring-zinc-50 dark:ring-zinc-900/50">
+                                <span class="text-xs font-bold">2</span>
                             </div>
                         @endif
-                        <div class="mt-2 text-center">
-                            <div class="text-[10px] uppercase tracking-wider font-bold {{ $order->isProcessing() || $order->isCompleted() ? 'text-emerald-600' : 'text-indigo-600' }}">Complete Payment</div>
+                        <div class="mt-3 text-center">
+                            <div class="text-[9px] uppercase tracking-widest font-black {{ $order->isProcessing() || $order->isCompleted() ? 'text-emerald-600' : 'text-zinc-900 dark:text-white' }}">Complete Payment</div>
                         </div>
                     </div>
 
                     {{-- Connector Line 2 --}}
-                    <div class="flex-1 h-0.5 {{ $order->isCompleted() ? 'bg-emerald-600' : 'bg-zinc-200 dark:bg-zinc-800' }} -mx-4 relative" style="top: -20px;"></div>
+                    <div class="flex-1 h-[2px] {{ $order->isCompleted() ? 'bg-emerald-500' : 'bg-zinc-200 dark:bg-zinc-800' }} -mx-6 relative top-[-14px]"></div>
 
                     {{-- Step 3: Instant Access --}}
                     <div class="flex flex-col items-center flex-1">
                         @if($order->isCompleted())
-                            <div class="relative z-10 flex items-center justify-center w-10 h-10 rounded-full bg-emerald-600 text-white font-bold shadow-md ring-4 ring-emerald-100 dark:ring-emerald-900/30">
-                                <flux:icon.check class="w-5 h-5" />
+                            <div class="relative z-10 flex items-center justify-center w-8 h-8 rounded-full bg-emerald-500 text-white font-bold shadow-sm">
+                                <flux:icon.check class="w-4 h-4" />
                             </div>
                         @else
-                            <div class="relative z-10 flex items-center justify-center w-10 h-10 rounded-full border-2 border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-400 font-bold">
-                                3
+                            <div class="relative z-10 flex items-center justify-center w-8 h-8 rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 text-zinc-400 font-bold">
+                                <span class="text-xs">3</span>
                             </div>
                         @endif
-                        <div class="mt-2 text-center">
-                            <div class="text-[10px] uppercase tracking-wider font-bold {{ $order->isCompleted() ? 'text-emerald-600' : 'text-zinc-400' }}">Instant Access</div>
+                        <div class="mt-3 text-center">
+                            <div class="text-[9px] uppercase tracking-widest font-bold {{ $order->isCompleted() ? 'text-emerald-600' : 'text-zinc-400' }}">Instant Access</div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-zinc-50 dark:bg-zinc-900 rounded-2xl p-6 mb-8 border border-zinc-100 dark:border-zinc-800"
+            <div class="bg-zinc-50 dark:bg-zinc-800/30 rounded-3xl p-6 mb-8 border border-zinc-100 dark:border-zinc-800/50"
                  x-data="{ 
                     expiresAt: '{{ $order->expires_at ? $order->expires_at->toIso8601String() : '' }}',
                     remaining: '',
@@ -92,17 +95,17 @@
                  }">
                 <div class="flex flex-col md:flex-row justify-between items-center gap-4">
                     <div class="text-center md:text-left">
-                        <span class="text-xs uppercase tracking-widest font-bold text-zinc-500 mb-1 block">Total Amount</span>
-                        <span class="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
+                        <span class="text-[10px] uppercase tracking-widest font-black text-zinc-500 mb-1 block">Total Amount</span>
+                        <span class="text-3xl font-black tabular-nums text-emerald-600 dark:text-emerald-400 tracking-tight">
                             Rp {{ number_format($order->total_amount, 0, ',', '.') }}
                         </span>
                     </div>
 
                     @if($order->expires_at && ($order->isPending() || $order->isPendingPayment()))
                         <div class="flex flex-col items-center md:items-end">
-                            <span class="text-xs uppercase tracking-widest font-bold text-zinc-500 mb-1 block">Time Remaining</span>
-                            <div class="flex items-center gap-2 font-mono text-xl" :class="isExpired ? 'text-red-600' : 'text-indigo-600 dark:text-indigo-400'">
-                                <flux:icon.clock class="w-5 h-5" />
+                            <span class="text-[10px] uppercase tracking-widest font-black text-zinc-500 mb-1 block">Time Remaining</span>
+                            <div class="flex items-center gap-2 font-mono text-lg font-bold" :class="isExpired ? 'text-rose-600' : 'text-indigo-600 dark:text-indigo-400'">
+                                <flux:icon.clock variant="mini" class="w-4 h-4" />
                                 <span x-text="remaining">--:--:--</span>
                             </div>
                         </div>
@@ -145,17 +148,17 @@
             </div>
 
             @if($order->payment_method_id)
-                <div class="mt-8 p-6 bg-zinc-50 dark:bg-zinc-900 rounded-2xl border border-zinc-100 dark:border-zinc-800">
+                <div class="mt-8 p-6 bg-zinc-50 dark:bg-zinc-800/50 rounded-3xl border border-zinc-100 dark:border-zinc-800/50">
                     <div class="text-center">
-                        <div class="font-bold text-lg text-zinc-900 dark:text-white mb-2">{{ $order->payment_method }}</div>
+                        <div class="text-[10px] font-black uppercase tracking-widest text-zinc-600 dark:text-zinc-400 mb-2">{{ $order->payment_method }}</div>
                         <div class="text-sm text-zinc-500 mb-6">
                             @if($order->paymentMethod?->type === 'bank_transfer')
-                                Transfer to: <span class="font-mono font-bold text-zinc-900 dark:text-white">{{ $order->paymentMethod->account_number }}</span>
-                                <div class="mt-1 text-xs">a/n {{ $order->paymentMethod->account_name }}</div>
+                                Transfer to: <span class="font-mono font-bold text-base text-zinc-900 dark:text-white block mt-1">{{ $order->paymentMethod->account_number }}</span>
+                                <div class="mt-1 text-[10px] font-black uppercase tracking-widest">a/n {{ $order->paymentMethod->account_name }}</div>
                             @elseif($order->paymentMethod?->type === 'qris')
                                 @if($order->qris_dynamic)
                                     <div class="mb-4">
-                                        <div class="inline-block p-6 bg-white rounded-2xl border-2 border-zinc-200 shadow-lg">
+                                        <div class="inline-block p-4 bg-white rounded-3xl border border-zinc-200 shadow-sm">
                                             <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data={{ urlencode($order->qris_dynamic) }}" 
                                                  class="w-64 h-64 mx-auto" 
                                                  alt="QRIS Code">
@@ -167,7 +170,7 @@
                             
                             {{-- Display payment instructions from database --}}
                             @if($order->paymentMethod?->instructions)
-                                <div class="mt-4 text-sm text-zinc-600 dark:text-zinc-400">
+                                <div class="mt-6 p-4 text-xs font-medium text-zinc-600 dark:text-zinc-400 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl text-left shadow-sm">
                                     @if(is_array($order->paymentMethod->instructions))
                                         {!! nl2br(e(implode("\n", $order->paymentMethod->instructions))) !!}
                                     @else
@@ -179,7 +182,7 @@
                     </div>
                 </div>
             @endif
-        </flux:card>
+        </div>
 
         <div class="mt-6 text-center">
             @if($order->isPending() || $order->isPendingPayment())
@@ -242,4 +245,5 @@
         };
     </script>
 @endif
+</div>
 @endsection

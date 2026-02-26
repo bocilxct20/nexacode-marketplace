@@ -11,8 +11,8 @@
             </div>
 
             <div class="text-center space-y-2">
-                <flux:heading size="xl">Level Up Your Profile</flux:heading>
-                <flux:subheading>Just a few more details to get you started</flux:subheading>
+                <div class="font-black uppercase tracking-tight text-3xl text-zinc-900 dark:text-white">Profile Setup</div>
+                <p class="text-[10px] font-black uppercase tracking-widest text-zinc-500">Just a few more details to get you started</p>
             </div>
 
             <form wire:submit="save" class="flex flex-col gap-6">
@@ -44,14 +44,14 @@
 
                 {{-- Username --}}
                 <flux:field>
-                    <flux:label>Choose a Username</flux:label>
+                    <flux:label class="text-[10px] font-black uppercase tracking-widest text-zinc-600 dark:text-zinc-400 mb-2">Username</flux:label>
                     <flux:input.group>
                         <flux:input.group.prefix>@</flux:input.group.prefix>
-                        <flux:input wire:model.live.debounce.500ms="username" placeholder="username" required />
+                        <flux:input wire:model.live.debounce.500ms="username" placeholder="username" class="h-12" required />
                         
                         <x-slot name="append">
                             <div class="flex items-center px-3 border-l border-zinc-200 dark:border-zinc-800">
-                                <div wire:loading wire:target="username" class="w-4 h-4 border-2 border-cyan-500/20 border-t-cyan-500 animate-spin rounded-full"></div>
+                                <div wire:loading wire:target="username" class="w-4 h-4 border-2 border-indigo-500/20 border-t-indigo-500 animate-spin rounded-full"></div>
                                 
                                 <div wire:loading.remove wire:target="username">
                                     @if($username && !$errors->has('username'))
@@ -61,19 +61,18 @@
                             </div>
                         </x-slot>
                     </flux:input.group>
-                    <flux:description>Your unique handle across the marketplace.</flux:description>
                     <flux:error name="username" />
                 </flux:field>
 
                 {{-- Bio --}}
                 <flux:field>
-                    <flux:label>Short Bio</flux:label>
-                    <flux:textarea wire:model="bio" placeholder="Tell us a bit about yourself..." rows="3" />
-                    <flux:description>Maximum 160 characters.</flux:description>
+                    <flux:label class="text-[10px] font-black uppercase tracking-widest text-zinc-600 dark:text-zinc-400 mb-2">Short Bio</flux:label>
+                    <flux:textarea wire:model="bio" placeholder="Tell us a bit about yourself..." rows="3" class="rounded-2xl" />
+                    <flux:description class="text-[10px] font-bold uppercase tracking-widest mt-2">Max 160 chars.</flux:description>
                     <flux:error name="bio" />
                 </flux:field>
 
-                <flux:button type="submit" variant="primary" class="w-full h-11 font-bold shadow-lg" wire:loading.attr="disabled">
+                <flux:button type="submit" variant="primary" class="bg-indigo-600 hover:bg-indigo-500 w-full h-12 text-[10px] font-black uppercase tracking-widest shadow-sm rounded-2xl transition-transform hover:-translate-y-0.5 mt-2 text-white" wire:loading.attr="disabled">
                     <span wire:loading.remove wire:target="save">Complete Setup</span>
                     <span wire:loading wire:target="save">Finalizing...</span>
                 </flux:button>

@@ -3,24 +3,32 @@
 @section('content')
 <flux:container class="py-12">
     <div class="max-w-2xl mx-auto text-center">
+        @php
+            $hasEliteItem = $order && $order->items->contains(fn($item) => $item->product->author->isElite());
+        @endphp
+
         <div class="mb-8">
-            <div class="w-24 h-24 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                <flux:icon.x-circle class="w-16 h-16 text-red-600 dark:text-red-400" />
+            <div class="w-24 h-24 {{ $hasEliteItem ? 'bg-amber-100 dark:bg-amber-900/10' : 'bg-red-100 dark:bg-red-900/20' }} rounded-full flex items-center justify-center mx-auto mb-6 border {{ $hasEliteItem ? 'border-amber-500/30' : 'border-transparent' }}">
+                <flux:icon.x-circle class="w-16 h-16 {{ $hasEliteItem ? 'text-amber-600' : 'text-red-600 dark:text-red-400' }}" />
             </div>
             
-            <flux:heading size="xl" class="mb-4">Payment Failed</flux:heading>
-            <flux:subheading class="mb-6">We couldn't process your payment. Please try again.</flux:subheading>
+            <flux:heading size="xl" class="mb-4 {{ $hasEliteItem ? 'text-amber-600 dark:text-amber-500' : '' }}">
+                {{ $hasEliteItem ? 'Elite Purchase Interrupted' : 'Payment Failed' }}
+            </flux:heading>
+            <flux:subheading class="mb-6">
+                {{ $hasEliteItem ? "We couldn't secure your premium Elite items. Please review your payment details and try again." : "We couldn't process your payment. Please try again." }}
+            </flux:subheading>
         </div>
 
-        <flux:card class="mb-8">
+        <flux:card class="mb-8 {{ $hasEliteItem ? 'border-amber-500/20 bg-amber-500/5' : '' }}">
             <div class="space-y-4">
                 <div class="flex items-center justify-between py-3 border-b border-zinc-200 dark:border-zinc-800">
                     <span class="text-zinc-600 dark:text-zinc-400">Order ID</span>
-                    <span class="font-semibold">#{{ request('order_id') }}</span>
+                    <span class="font-semibold">#{{ $order ? $order->id : request('order_id') }}</span>
                 </div>
                 <div class="flex items-center justify-between py-3">
                     <span class="text-zinc-600 dark:text-zinc-400">Status</span>
-                    <flux:badge color="red">Failed</flux:badge>
+                    <flux:badge color="{{ $hasEliteItem ? 'amber' : 'red' }}">Failed</flux:badge>
                 </div>
             </div>
         </flux:card>

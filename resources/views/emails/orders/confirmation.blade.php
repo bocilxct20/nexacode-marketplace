@@ -5,7 +5,7 @@
     'actionColor' => 'primary'
 ])
 
-Pesanan Anda telah berhasil dikonfirmasi dan sedang diproses. Berikut adalah rincian lengkap transaksi Anda.
+Pesanan kamu telah berhasil dikonfirmasi dan sedang diproses. Berikut adalah rincian lengkap transaksi kamu.
 
 ---
 
@@ -26,8 +26,8 @@ Pesanan Anda telah berhasil dikonfirmasi dan sedang diproses. Berikut adalah rin
 ---
 
 ### Langkah Selanjutnya
-Setelah pembayaran diverifikasi, Anda akan menerima email terpisah berisi link unduhan untuk setiap produk.
+Setelah pembayaran diverifikasi, kamu akan menerima email terpisah berisi link unduhan untuk setiap produk.
 
-Anda dapat mengakses semua unduhan melalui dashboard akun Anda kapan saja. Semua produk yang telah dibeli tersedia untuk diunduh kembali tanpa biaya tambahan.
+kamu dapat mengakses semua unduhan melalui dashboard akun kamu kapan saja. Semua produk yang telah dibeli tersedia untuk diunduh kembali tanpa biaya tambahan.
 
 @endcomponent

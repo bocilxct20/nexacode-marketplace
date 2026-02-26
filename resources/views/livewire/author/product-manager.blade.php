@@ -160,7 +160,7 @@
                                         <flux:menu.item wire:click="edit({{ $product->id }})" icon="pencil-square">Edit Item</flux:menu.item>
                                         <flux:menu.item href="{{ route('products.show', $product->slug) }}" icon="eye" target="_blank">Lihat Etalase</flux:menu.item>
                                         <flux:menu.separator />
-                                        <flux:menu.item wire:click="deleteProduct({{ $product->id }})" wire:confirm="Apakah Anda yakin ingin menghapus produk ini?" icon="trash" variant="danger">
+                                        <flux:menu.item wire:click="deleteProduct({{ $product->id }})" wire:confirm="Apakah kamu yakin ingin menghapus produk ini?" icon="trash" variant="danger">
                                             Hapus Produk
                                         </flux:menu.item>
                                     </flux:menu>
@@ -205,7 +205,9 @@
 
             {{-- Description --}}
             <flux:field>
-                <flux:label>Deskripsi</flux:label>
+                <div class="flex justify-between items-center mb-3">
+                    <flux:label>Deskripsi</flux:label>
+                </div>
                 <flux:textarea wire:model="description" rows="5" placeholder="Jelaskan fitur dan keunggulan produk kamu..." required />
                 <flux:error name="description" />
             </flux:field>

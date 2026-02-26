@@ -5,7 +5,7 @@
     'actionColor' => 'primary'
 ])
 
-Produk Anda tidak dapat disetujui untuk dipublikasikan karena tidak memenuhi standar kualitas NexaCode Marketplace.
+Produk kamu tidak dapat disetujui untuk dipublikasikan karena tidak memenuhi standar kualitas NexaCode Marketplace.
 
 ---
 
@@ -19,8 +19,8 @@ Produk Anda tidak dapat disetujui untuk dipublikasikan karena tidak memenuhi sta
 ---
 
 ### Langkah Selanjutnya
-Silakan perbaiki produk Anda sesuai dengan feedback di atas dan ajukan kembali untuk review. Tim moderasi kami akan meninjau ulang pengajuan Anda.
+Silakan perbaiki produk kamu sesuai dengan feedback di atas dan ajukan kembali untuk review. Tim moderasi kami akan meninjau ulang pengajuan kamu.
 
-Jika Anda memiliki pertanyaan mengenai standar kualitas atau proses moderasi, silakan hubungi tim support kami.
+Jika kamu memiliki pertanyaan mengenai standar kualitas atau proses moderasi, silakan hubungi tim support kami.
 
 @endcomponent

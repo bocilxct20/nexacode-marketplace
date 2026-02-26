@@ -112,7 +112,7 @@
                             <flux:button.group>
                                 <flux:button variant="ghost" square icon="pencil-square" size="sm" wire:click="edit({{ $coupon->id }})" />
                                 <flux:button variant="ghost" square icon="power" size="sm" :class="$coupon->status === 'active' ? 'text-zinc-400' : 'text-emerald-500'" wire:click="toggleStatus({{ $coupon->id }})" />
-                                <flux:button variant="ghost" square icon="trash" size="sm" class="text-red-500" wire:confirm="Apakah Anda yakin ingin menghapus kupon ini?" wire:click="delete({{ $coupon->id }})" />
+                                <flux:button variant="ghost" square icon="trash" size="sm" class="text-red-500" wire:confirm="Apakah kamu yakin ingin menghapus kupon ini?" wire:click="delete({{ $coupon->id }})" />
                             </flux:button.group>
                         </flux:table.cell>
                     </flux:row>

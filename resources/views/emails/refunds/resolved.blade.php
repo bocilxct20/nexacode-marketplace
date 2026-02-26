@@ -5,7 +5,7 @@
     'actionColor' => 'primary'
 ])
 
-Permintaan refund Anda telah ditinjau dan diproses.
+Permintaan refund kamu telah ditinjau dan diproses.
 
 ---
 
@@ -16,7 +16,7 @@ Permintaan refund Anda telah ditinjau dan diproses.
 
 @if($refundRequest->status === 'approved')
 ### Informasi Pengembalian Dana
-Dana akan dikembalikan ke metode pembayaran original Anda dalam 5-7 hari kerja.
+Dana akan dikembalikan ke metode pembayaran original kamu dalam 5-7 hari kerja.
 
 Jika dana belum diterima setelah periode tersebut, silakan hubungi tim support kami.
 @else
@@ -25,7 +25,7 @@ Jika dana belum diterima setelah periode tersebut, silakan hubungi tim support k
 {{ $refundRequest->admin_notes ?? 'Permintaan refund tidak memenuhi syarat kebijakan pengembalian dana.' }}
 @endcomponent
 
-Jika Anda memiliki pertanyaan mengenai keputusan ini, silakan hubungi tim support kami.
+Jika kamu memiliki pertanyaan mengenai keputusan ini, silakan hubungi tim support kami.
 @endif
 
 @endcomponent

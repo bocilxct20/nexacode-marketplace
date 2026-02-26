@@ -19,7 +19,7 @@
     <flux:card class="p-0 overflow-hidden">
         <div class="divide-y divide-zinc-100 dark:divide-zinc-800">
             @forelse($notifications as $notification)
-                <div class="p-6 hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors {{ $notification->read_at ? 'opacity-60' : '' }}">
+                <div class="p-6 hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors {{ $notification->read_at ? 'opacity-60' : '' }} {{ ($notification->data['type'] ?? '') === 'elite' ? 'bg-amber-500/5 border-l-4 border-amber-500' : '' }}">
                     <div class="flex gap-4">
                         <div class="mt-1">
                             @php
@@ -39,6 +39,7 @@
                                     'payment' => 'bg-indigo-100 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-400',
                                     'warning' => 'bg-amber-100 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400',
                                     'price_drop' => 'bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400',
+                                    'elite' => 'bg-amber-100 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400',
                                     default => 'bg-zinc-100 text-zinc-600 dark:bg-zinc-500/20 dark:text-zinc-400',
                                 };
                             @endphp

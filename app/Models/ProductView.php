@@ -59,4 +59,15 @@ class ProductView extends Model
             ->where('created_at', '>=', now()->subDays($days))
             ->count();
     }
+
+    /**
+     * Get recent active viewers (e.g. last 15 mins)
+     */
+    public static function recentViewsCount(int $productId, int $minutes = 15): int
+    {
+        return static::where('product_id', $productId)
+            ->where('created_at', '>=', now()->subMinutes($minutes))
+            ->distinct('ip_address')
+            ->count();
+    }
 }

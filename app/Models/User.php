@@ -60,6 +60,10 @@ class User extends Authenticatable implements \Illuminate\Contracts\Auth\MustVer
         'pending_email',
         'xp',
         'level',
+        'reputation',
+        'current_login_streak',
+        'max_login_streak',
+        'streak_last_updated_at',
     ];
 
     /**
@@ -102,6 +106,7 @@ class User extends Authenticatable implements \Illuminate\Contracts\Auth\MustVer
             'account_locked_until'    => 'datetime',
             'xp'                      => 'integer',
             'level'                   => 'integer',
+            'streak_last_updated_at'  => 'datetime',
         ];
     }
 
@@ -217,11 +222,19 @@ class User extends Authenticatable implements \Illuminate\Contracts\Auth\MustVer
      */
     public function getTierBadgeAttribute(): object
     {
+        if ($this->isAdmin()) {
+            return (object) [
+                'name' => 'ADMIN',
+                'color' => 'red',
+                'icon' => 'shield-check',
+            ];
+        }
+
         $plan = $this->currentPlan();
         
         if ($plan && $plan->is_elite) {
             return (object) [
-                'label' => 'Elite',
+                'name' => 'ELITE',
                 'color' => 'amber',
                 'icon' => 'sparkles',
             ];
@@ -229,14 +242,14 @@ class User extends Authenticatable implements \Illuminate\Contracts\Auth\MustVer
 
         if ($plan && ($plan->slug === 'pro' || $plan->allow_trial)) {
             return (object) [
-                'label' => 'Pro',
+                'name' => 'PRO',
                 'color' => 'indigo',
                 'icon' => 'bolt',
             ];
         }
 
         return (object) [
-            'label' => 'Basic',
+            'name' => 'BASIC',
             'color' => 'zinc',
             'icon' => 'user',
         ];
@@ -252,6 +265,24 @@ class User extends Authenticatable implements \Illuminate\Contracts\Auth\MustVer
         if (!$plan) return false;
         
         return $plan->allow_trial || $plan->is_elite;
+    }
+
+    /**
+     * Check if the user has an Elite achievement badge.
+     */
+    public function hasEliteAchievementBadge(): bool
+    {
+        return $this->communityBadges->contains(fn($badge) => 
+            str_contains(strtolower($badge->name), 'elite')
+        );
+    }
+
+    /**
+     * Check if the user is a "True Elite" (Subscription Elite + Achievement Elite).
+     */
+    public function isTrueElite(): bool
+    {
+        return $this->isElite() && $this->hasEliteAchievementBadge();
     }
 
     /**
@@ -495,4 +526,6 @@ class User extends Authenticatable implements \Illuminate\Contracts\Auth\MustVer
         $prefs = $this->emailPreferences ?: EmailPreference::forUser($this->id);
         return $prefs->{$type} ?? true;
     }
+
+
 }

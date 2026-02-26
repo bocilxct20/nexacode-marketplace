@@ -4,9 +4,9 @@
     'actionUrl' => route('products.show', $review->product->slug)
 ])
 
-Penjual produk **{{ $review->product->name }}** telah membalas review Anda.
+Penjual produk **{{ $review->product->name }}** telah membalas review kamu.
 
-**Review Anda:**
+**Review kamu:**
 > {{ $review->comment }}
 
 **Balasan Penjual:**

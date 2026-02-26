@@ -3,177 +3,70 @@
 namespace App\Services;
 
 use App\Models\User;
-use App\Models\SecurityLog;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Hash;
+use App\Models\UserDevice;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class SecurityService
 {
     /**
-     * Log security activity
+     * Verify the device for a user login.
+     * Returns true if device is known/trusted, false if suspicious.
      */
-    public function logActivity(string $action, ?User $user = null, array $data = [], ?int $status = null): void
+    public function verifyDevice(User $user, string $deviceId, array $meta = []): bool
     {
-        SecurityLog::log($action, $user?->id, $data, $status);
-    }
+        $device = UserDevice::where('user_id', $user->id)
+            ->where('device_id', $deviceId)
+            ->first();
 
-    /**
-     * Check password strength
-     */
-    public function checkPasswordStrength(string $password): array
-    {
-        $errors = [];
-        $config = config('security.password', []);
-
-        $minLength = $config['min_length'] ?? 8;
-        if (strlen($password) < $minLength) {
-            $errors[] = "Password must be at least {$minLength} characters";
-        }
-
-        if (($config['require_uppercase'] ?? true) && !preg_match('/[A-Z]/', $password)) {
-            $errors[] = 'Password must contain at least one uppercase letter';
-        }
-
-        if (($config['require_lowercase'] ?? true) && !preg_match('/[a-z]/', $password)) {
-            $errors[] = 'Password must contain at least one lowercase letter';
-        }
-
-        if (($config['require_numbers'] ?? true) && !preg_match('/[0-9]/', $password)) {
-            $errors[] = 'Password must contain at least one number';
-        }
-
-        if (($config['require_special_chars'] ?? true) && !preg_match('/[^A-Za-z0-9]/', $password)) {
-            $errors[] = 'Password must contain at least one special character';
-        }
-
-        return [
-            'valid' => empty($errors),
-            'errors' => $errors,
-        ];
-    }
-
-    /**
-     * Detect suspicious activity
-     */
-    public function detectSuspiciousActivity(User $user): bool
-    {
-        // Check for multiple failed login attempts
-        $failedAttempts = SecurityLog::where('user_id', $user->id)
-            ->where('action', 'login_failed')
-            ->where('created_at', '>=', now()->subHours(1))
-            ->count();
-
-        if ($failedAttempts >= 5) {
+        if ($device) {
+            $device->update([
+                'last_active_at' => now(),
+                'ip_address' => request()->ip(),
+            ]);
             return true;
         }
 
-        // Check for logins from multiple IPs in short time
-        $recentLogins = SecurityLog::where('user_id', $user->id)
-            ->where('action', 'login_success')
-            ->where('created_at', '>=', now()->subHours(1))
-            ->distinct('ip_address')
-            ->count('ip_address');
-
-        if ($recentLogins >= 3) {
-            return true;
-        }
-
+        // New device detected
+        $this->handleUnrecognizedDevice($user, $deviceId, $meta);
         return false;
     }
 
     /**
-     * Block IP address temporarily
+     * Register a new device for the user.
      */
-    public function blockIpAddress(string $ip, int $minutes = 15): void
+    public function registerDevice(User $user, string $deviceId, array $meta = [])
     {
-        $cacheKey = "blocked_ip:{$ip}";
-        Cache::put($cacheKey, true, now()->addMinutes($minutes));
-
-        $this->logActivity('ip_blocked', null, [
-            'ip' => $ip,
-            'duration_minutes' => $minutes,
+        return UserDevice::create([
+            'user_id' => $user->id,
+            'device_id' => $deviceId,
+            'device_name' => $meta['device_name'] ?? 'Unknown Device',
+            'browser' => $meta['browser'] ?? request()->userAgent(),
+            'platform' => $meta['platform'] ?? null,
+            'ip_address' => request()->ip(),
+            'is_trusted' => $user->devices()->count() === 0, // Trust first device automatically
+            'last_active_at' => now(),
         ]);
     }
 
     /**
-     * Check if IP is blocked
+     * Handle unrecognized device login.
      */
-    public function isIpBlocked(string $ip): bool
+    protected function handleUnrecognizedDevice(User $user, string $deviceId, array $meta)
     {
-        $cacheKey = "blocked_ip:{$ip}";
-        return Cache::has($cacheKey);
-    }
+        Log::warning("Suspicious login detected for user {$user->email} from unrecognized device: {$deviceId}");
 
-    /**
-     * Get failed login attempts for IP
-     */
-    public function getFailedLoginAttempts(string $ip, int $minutes = 15): int
-    {
-        return SecurityLog::getFailedLoginAttempts($ip, $minutes);
-    }
+        // 1. Register but untrusted
+        $this->registerDevice($user, $deviceId, $meta);
 
-    /**
-     * Check if password needs to be changed
-     */
-    public function needsPasswordChange(User $user): bool
-    {
-        if ($user->force_password_change) {
-            return true;
-        }
-
-        $expireDays = config('security.password.expire_days', 90);
+        // 2. Notify user via email
+        // Mail::to($user->email)->send(new \App\Mail\SuspiciousLoginAlert($user, $meta));
         
-        if (!$user->password_changed_at) {
-            return false;
-        }
-
-        return $user->password_changed_at->addDays($expireDays)->isPast();
-    }
-
-    /**
-     * Record password change
-     */
-    public function recordPasswordChange(User $user): void
-    {
-        $user->update([
-            'password_changed_at' => now(),
-            'force_password_change' => false,
-        ]);
-
-        $this->logActivity('password_changed', $user);
-
-        // Send Email Alert
-        \Illuminate\Support\Facades\Mail::to($user->email)->queue(new \App\Mail\SecurityAlert(
-            $user,
-            'Password Kamu Berhasil Diganti',
-            'Password untuk akun NexaCode kamu baru saja diganti. Jika ini adalah tindakan kamu, kamu bisa mengabaikan email ini.',
-            route('profile.edit'),
-            'Kelola Akun'
-        ));
-    }
-
-    /**
-     * Check rate limit for action
-     */
-    public function checkRateLimit(string $key, int $maxAttempts, int $decayMinutes): bool
-    {
-        $cacheKey = "rate_limit:{$key}";
-        $attempts = Cache::get($cacheKey, 0);
-
-        if ($attempts >= $maxAttempts) {
-            return false;
-        }
-
-        Cache::put($cacheKey, $attempts + 1, now()->addMinutes($decayMinutes));
-        return true;
-    }
-
-    /**
-     * Clear rate limit
-     */
-    public function clearRateLimit(string $key): void
-    {
-        $cacheKey = "rate_limit:{$key}";
-        Cache::forget($cacheKey);
+        // 3. Create a notification
+        $user->notify(new \App\Notifications\SuspiciousLoginDetected([
+            'ip' => request()->ip(),
+            'device' => $meta['device_name'] ?? 'Unknown',
+            'time' => now()->toDateTimeString(),
+        ]));
     }
 }

@@ -6,7 +6,7 @@
         </flux:breadcrumbs>
     </div>
     <flux:heading size="xl">My Orders</flux:heading>
-    <flux:subheading>View and manage your order history.</flux:subheading>
+    <flux:subheading>Pantau dan kelola seluruh riwayat pesanan kamu di sini.</flux:subheading>
 
     <flux:separator variant="subtle" class="my-8" />
 
@@ -14,39 +14,41 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         @if(!$readyToLoad)
             @for($i=0; $i<3; $i++)
-                <flux:card class="animate-pulse">
-                    <div class="space-y-2">
+                <div class="bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 animate-pulse">
+                    <div class="space-y-3">
                         <flux:skeleton class="h-3 w-20" />
                         <flux:skeleton class="h-8 w-16" />
                     </div>
-                </flux:card>
+                </div>
             @endfor
         @else
-            <flux:card>
+            <div class="bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 shadow-sm">
                 <div class="space-y-2">
-                    <flux:subheading class="text-xs uppercase tracking-wider text-zinc-500">Total Orders</flux:subheading>
-                    <div class="text-2xl font-bold">{{ $stats['total'] }}</div>
+                    <div class="text-[10px] font-black uppercase tracking-widest text-zinc-500">Total Orders</div>
+                    <div class="text-3xl font-black tabular-nums tracking-tight">{{ $stats['total'] }}</div>
                 </div>
-            </flux:card>
+            </div>
 
-            <flux:card>
-                <div class="space-y-2">
-                    <flux:subheading class="text-xs uppercase tracking-wider text-zinc-500">Completed</flux:subheading>
-                    <div class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{{ $stats['completed'] }}</div>
+            <div class="bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 shadow-sm relative overflow-hidden group">
+                <div class="absolute inset-0 bg-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div class="relative space-y-2">
+                    <div class="text-[10px] font-black uppercase tracking-widest text-zinc-500">Completed</div>
+                    <div class="text-3xl font-black tabular-nums tracking-tight text-emerald-600 dark:text-emerald-400">{{ $stats['completed'] }}</div>
                 </div>
-            </flux:card>
+            </div>
 
-            <flux:card>
-                <div class="space-y-2">
-                    <flux:subheading class="text-xs uppercase tracking-wider text-zinc-500">Pending</flux:subheading>
-                    <div class="text-2xl font-bold text-amber-600 dark:text-amber-400">{{ $stats['pending'] }}</div>
+            <div class="bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 shadow-sm relative overflow-hidden group">
+                <div class="absolute inset-0 bg-amber-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div class="relative space-y-2">
+                    <div class="text-[10px] font-black uppercase tracking-widest text-zinc-500">Pending</div>
+                    <div class="text-3xl font-black tabular-nums tracking-tight text-amber-600 dark:text-amber-400">{{ $stats['pending'] }}</div>
                 </div>
-            </flux:card>
+            </div>
         @endif
     </div>
 
     {{-- Filter --}}
-    <flux:card class="mb-8">
+    <div class="bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 shadow-sm mb-8 flex items-center justify-between">
         <flux:select wire:model.live="statusFilter" class="w-full md:w-48">
             <option value="all">All Orders</option>
             <option value="pending">Pending</option>
@@ -54,13 +56,13 @@
             <option value="completed">Completed</option>
             <option value="cancelled">Cancelled</option>
         </flux:select>
-    </flux:card>
+    </div>
 
     {{-- Orders List --}}
     <div class="space-y-6">
         @if(!$readyToLoad)
             @for($i=0; $i<3; $i++)
-                <flux:card class="animate-pulse">
+                <div class="bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 shadow-sm animate-pulse">
                     <div class="space-y-4">
                         <div class="flex items-center justify-between">
                             <div class="space-y-2">
@@ -71,7 +73,7 @@
                         </div>
                         <flux:separator variant="subtle" />
                         <div class="flex items-center gap-3">
-                            <flux:skeleton class="w-16 h-16 rounded-lg" />
+                            <flux:skeleton class="w-16 h-16 rounded-xl" />
                             <div class="flex-1 space-y-2">
                                 <flux:skeleton class="h-5 w-48" />
                                 <flux:skeleton class="h-4 w-20" />
@@ -84,65 +86,54 @@
                             <flux:skeleton class="h-8 w-32" />
                         </div>
                     </div>
-                </flux:card>
+                </div>
             @endfor
         @else
             @forelse($orders as $order)
-                <flux:card>
-                    <div class="space-y-4">
+                <div class="bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 md:p-8 shadow-sm">
+                    <div class="space-y-6">
                         {{-- Order Header --}}
-                        <div class="flex items-center justify-between">
+                        <div class="flex items-start md:items-center justify-between flex-col md:flex-row gap-4">
                             <div>
-                                <div class="font-semibold text-lg">Order #{{ $order->transaction_id }}</div>
-                                <div class="text-sm text-zinc-500">{{ $order->created_at->format('M d, Y g:i A') }}</div>
+                                <div class="text-sm font-bold text-zinc-900 dark:text-white mb-1">Order #{{ $order->transaction_id }}</div>
+                                <div class="text-xs text-zinc-500 font-medium">{{ $order->created_at->format('M d, Y g:i A') }}</div>
                             </div>
-                            <flux:badge :color="$order->status_color">
-                                {{ $order->status_label }}
-                            </flux:badge>
-                            
-                            @if($order->is_in_escrow)
-                                <div class="ml-3 flex items-center gap-1.5 px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/20 rounded text-[10px] font-bold text-emerald-600 dark:text-emerald-400 animate-pulse">
-                                    <flux:icon name="shield-check" class="size-3" />
-                                    SECURED BY ESCROW
-                                </div>
-                            @endif
+                            <div class="flex items-center gap-3">
+                                @if($order->is_in_escrow)
+                                    <div class="flex items-center gap-1.5 px-2 py-1 bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-800/50 rounded-lg text-[9px] font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400">
+                                        <flux:icon name="shield-check" variant="mini" class="w-3 h-3" />
+                                        Bebas Risiko
+                                    </div>
+                                @endif
+                                <flux:badge :color="$order->status_color" size="sm" class="uppercase font-black tracking-widest text-[9px]">
+                                    {{ $order->status_label }}
+                                </flux:badge>
+                            </div>
                         </div>
 
                         <flux:separator variant="subtle" />
 
                         {{-- Order Items --}}
-                        <div class="space-y-3">
+                        <div class="space-y-4">
                             @foreach($order->items as $item)
-                                <div class="flex items-center gap-3">
-                                    @if($order->isCompleted() && $item->product)
-                                        <a href="{{ route('products.show', $item->product) }}" class="flex items-center gap-3 flex-1 min-w-0 group/item">
-                                            <div class="w-16 h-16 bg-zinc-100 dark:bg-zinc-800 rounded-lg overflow-hidden flex-shrink-0 group-hover/item:opacity-80 transition-opacity">
+                                <div class="flex items-center gap-4">
+                                    @if($item->product)
+                                        <a href="{{ route('products.show', $item->product) }}" class="flex items-center gap-4 flex-1 min-w-0 group/item">
+                                            <div class="w-20 h-20 bg-zinc-50 dark:bg-zinc-800/50 rounded-2xl overflow-hidden flex-shrink-0 group-hover/item:opacity-80 transition-opacity relative border border-zinc-200 dark:border-zinc-700/50 shadow-sm">
                                                 <img src="{{ $item->product->thumbnail_url }}" alt="{{ $item->product->name }}" class="w-full h-full object-cover">
                                             </div>
                                             <div class="flex-1 min-w-0">
-                                                <div class="font-semibold truncate group-hover/item:text-emerald-600 dark:group-hover/item:text-emerald-400 transition-colors">{{ $item->product->name }}</div>
-                                                <div class="text-sm text-zinc-500">Qty: {{ $item->quantity ?? 1 }}</div>
+                                                <div class="font-bold text-sm text-zinc-900 dark:text-white truncate group-hover/item:text-emerald-600 dark:group-hover/item:text-emerald-400 transition-colors mb-1">{{ $item->product->name }}</div>
+                                                <div class="text-xs text-zinc-500 font-medium">Qty: <span class="text-zinc-900 dark:text-white font-bold">{{ $item->quantity ?? 1 }}</span></div>
                                             </div>
                                         </a>
-                                    @elseif($item->product)
-                                        <div class="flex items-center gap-3 flex-1 min-w-0">
-                                            <div class="w-16 h-16 bg-zinc-100 dark:bg-zinc-800 rounded-lg overflow-hidden flex-shrink-0">
-                                                <img src="{{ $item->product->thumbnail_url }}" alt="{{ $item->product->name }}" class="w-full h-full object-cover">
-                                            </div>
-                                            <div class="flex-1 min-w-0">
-                                                <div class="font-semibold truncate">{{ $item->product->name }}</div>
-                                                <div class="text-sm text-zinc-500">Qty: {{ $item->quantity ?? 1 }}</div>
-                                            </div>
-                                        </div>
                                     @endif
                                     
-                                    <div class="font-semibold text-indigo-600 dark:text-indigo-400">
-                                        <div class="mt-1 flex items-center justify-between">
-                                            <span>Rp {{ number_format($item->price * ($item->quantity ?? 1), 0, ',', '.') }}</span>
-                                            @if($order->isCompleted() && $item->product)
-                                                <flux:button href="{{ route('products.download', $item->product->slug) }}" variant="subtle" size="xs" icon="arrow-down-tray" class="text-[9px] uppercase font-bold tracking-wider">Download</flux:button>
-                                            @endif
-                                        </div>
+                                    <div class="text-right">
+                                        <div class="font-bold text-sm text-zinc-900 dark:text-white mb-2 tabular-nums tracking-tight">Rp {{ number_format($item->price * ($item->quantity ?? 1), 0, ',', '.') }}</div>
+                                        @if($order->isCompleted() && $item->product)
+                                            <flux:button href="{{ route('products.download', $item->product->slug) }}" variant="outline" size="sm" icon="arrow-down-tray" class="rounded-xl font-bold shrink-0">Download</flux:button>
+                                        @endif
                                     </div>
                                 </div>
                             @endforeach
@@ -151,35 +142,35 @@
                         <flux:separator variant="subtle" />
 
                         {{-- Order Total --}}
-                        <div class="flex items-center justify-between">
-                            <div class="font-black text-xs uppercase tracking-widest text-zinc-500">Total Amount</div>
-                            <div class="flex items-center gap-4">
-                                <div class="text-xl font-black tabular-nums">Rp {{ number_format($order->total_amount, 0, ',', '.') }}</div>
-                                
-                                <div class="flex items-center gap-2">
-                                    @if($order->isCompleted())
-                                        @if($order->type === 'product')
-                                            <flux:button wire:click="openRefundModal({{ $order->id }})" variant="ghost" size="sm" icon="arrow-path" class="text-[10px] uppercase font-bold tracking-wider">Request Refund</flux:button>
-                                        @endif
-                                        <flux:button href="{{ route('orders.invoice', $order) }}" variant="ghost" size="sm" icon="document-text" class="text-[10px] uppercase font-bold tracking-wider">Invoice</flux:button>
-                                        <flux:button wire:click="$dispatch('open-ticket-modal', { productId: {{ $order->items->first()->product_id ?? 'null' }} })" variant="ghost" size="sm" icon="lifebuoy" class="text-[10px] uppercase font-bold tracking-wider">Support</flux:button>
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-zinc-50 dark:bg-zinc-800/30 p-4 rounded-2xl border border-zinc-100 dark:border-zinc-800/50">
+                            <div>
+                                <div class="font-black text-[10px] uppercase tracking-widest text-zinc-500 mb-1">Total Amount</div>
+                                <div class="text-2xl font-black tabular-nums tracking-tight text-zinc-900 dark:text-white">Rp {{ number_format($order->total_amount, 0, ',', '.') }}</div>
+                            </div>
+                            
+                            <div class="flex flex-wrap items-center gap-2">
+                                @if($order->isCompleted())
+                                    @if($order->type === 'product')
+                                        <flux:button wire:click="openRefundModal({{ $order->id }})" variant="ghost" size="sm" icon="arrow-path" class="text-xs font-bold rounded-xl text-zinc-500">Request Refund</flux:button>
                                     @endif
+                                    <flux:button href="{{ route('orders.invoice', $order) }}" variant="subtle" size="sm" icon="document-text" class="text-xs font-bold rounded-xl">Invoice</flux:button>
+                                    <flux:button wire:click="$dispatch('open-ticket-modal', { productId: {{ $order->items->first()->product_id ?? 'null' }} })" variant="outline" size="sm" icon="lifebuoy" class="text-xs font-bold rounded-xl">Support</flux:button>
+                                @endif
 
-                                    @if($order->isPending())
-                                        <flux:button href="{{ route('checkout.payment', $order) }}" variant="primary" size="sm" icon="credit-card" class="text-[10px] uppercase font-bold tracking-wider">Pay Now</flux:button>
-                                    @endif
-                                </div>
+                                @if($order->isPending())
+                                    <flux:button href="{{ route('checkout.payment', $order) }}" variant="primary" size="sm" icon="credit-card" class="text-xs font-bold rounded-xl px-6">Pay Now</flux:button>
+                                @endif
                             </div>
                         </div>
                     </div>
-                </flux:card>
+                </div>
             @empty
                 <flux:card class="text-center py-20 px-6">
                     <div class="w-20 h-20 bg-zinc-100 dark:bg-zinc-800 rounded-full flex items-center justify-center mx-auto mb-6">
                         <flux:icon.shopping-bag class="w-10 h-10 text-zinc-300 dark:text-zinc-600" />
                     </div>
-                    <flux:heading size="xl" class="mb-2">No orders found</flux:heading>
-                    <flux:subheading class="mb-8">Start shopping to see your orders here.</flux:subheading>
+                    <flux:heading size="xl" class="mb-2">Pesanan tidak ditemukan</flux:heading>
+                    <flux:subheading class="mb-8">Mulai belanja sekarang untuk melihat daftar pesanan kamu di sini.</flux:subheading>
                     <flux:button href="{{ route('products.index') }}" variant="primary" icon="sparkles">Browse Marketplace</flux:button>
                 </flux:card>
             @endforelse
@@ -234,7 +225,7 @@
     <flux:modal name="refund-modal" :open="$showRefundModal" wire:model="showRefundModal" class="space-y-6">
         <div>
             <flux:heading size="lg">Request Refund</flux:heading>
-            <flux:subheading>Please provide a reason for your refund request. Our team will review it within 24-48 hours.</flux:subheading>
+            <flux:subheading>Silakan berikan alasan pengajuan refund kamu. Tim kami akan meninjau permintaan ini dalam waktu 24-48 jam.</flux:subheading>
         </div>
 
         <flux:separator variant="subtle" />
@@ -244,12 +235,12 @@
                 <flux:label>Reason for Refund</flux:label>
                 <flux:textarea 
                     wire:model="refundReason" 
-                    placeholder="Please describe why you're requesting a refund (minimum 10 characters)..."
+                    placeholder="Jelaskan alasan kamu mengajukan refund (minimal 10 karakter)..."
                     rows="5"
                     required
                 />
                 <flux:error name="refundReason" />
-                <flux:description>Minimum 10 characters, maximum 500 characters</flux:description>
+                <flux:description>Minimal 10 karakter, maksimal 500 karakter</flux:description>
             </flux:field>
 
             <div class="flex gap-3 justify-end">

@@ -13,55 +13,52 @@
             </div>
 
             {{-- Professional Checkout Stepper --}}
-            <div class="relative">
+            <div class="relative py-4">
                 <div class="flex items-center justify-between">
                     {{-- Step 1: Select Payment --}}
                     <div class="flex flex-col items-center flex-1">
-                        <div class="relative z-10 flex items-center justify-center w-12 h-12 rounded-full bg-indigo-600 text-white font-bold shadow-lg">
-                            <flux:icon.check class="w-6 h-6" />
+                        <div class="relative z-10 flex items-center justify-center w-10 h-10 rounded-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 font-bold shadow-sm">
+                            <flux:icon.check class="w-5 h-5" />
                         </div>
                         <div class="mt-3 text-center">
-                            <div class="text-sm font-bold text-indigo-600">Select Payment</div>
-                            <div class="text-xs text-zinc-500 mt-0.5">Choose payment method</div>
+                            <div class="text-xs font-black uppercase tracking-widest text-zinc-900 dark:text-white">Select Payment</div>
                         </div>
                     </div>
 
                     {{-- Connector Line 1 --}}
-                    <div class="flex-1 h-0.5 bg-zinc-200 dark:bg-zinc-800 -mx-6 relative" style="top: -36px;">
-                        <div class="h-full bg-indigo-600 transition-all duration-500" style="width: 0%;"></div>
+                    <div class="flex-1 h-[2px] bg-zinc-200 dark:bg-zinc-800 -mx-8 relative top-[-14px]">
+                        <div class="h-full bg-zinc-900 dark:bg-white transition-all duration-500" style="width: 0%;"></div>
                     </div>
 
                     {{-- Step 2: Review Order --}}
                     <div class="flex flex-col items-center flex-1">
-                        <div class="relative z-10 flex items-center justify-center w-12 h-12 rounded-full border-2 border-indigo-600 bg-white dark:bg-zinc-900 text-indigo-600 font-bold shadow-lg ring-4 ring-indigo-100 dark:ring-indigo-900/30">
+                        <div class="relative z-10 flex items-center justify-center w-10 h-10 rounded-full border border-zinc-900 dark:border-white bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white font-bold shadow-sm ring-4 ring-zinc-50 dark:ring-zinc-900/50">
                             2
                         </div>
                         <div class="mt-3 text-center">
-                            <div class="text-sm font-bold text-indigo-600">Review Order</div>
-                            <div class="text-xs text-zinc-500 mt-0.5">Confirm your purchase</div>
+                            <div class="text-xs font-bold text-zinc-900 dark:text-white">Review Order</div>
                         </div>
                     </div>
 
                     {{-- Connector Line 2 --}}
-                    <div class="flex-1 h-0.5 bg-zinc-200 dark:bg-zinc-800 -mx-6 relative" style="top: -36px;">
+                    <div class="flex-1 h-[2px] bg-zinc-200 dark:bg-zinc-800 -mx-8 relative top-[-14px]">
                         <div class="h-full bg-zinc-200 dark:bg-zinc-800 transition-all duration-500" style="width: 0%;"></div>
                     </div>
 
                     {{-- Step 3: Instant Access --}}
                     <div class="flex flex-col items-center flex-1">
-                        <div class="relative z-10 flex items-center justify-center w-12 h-12 rounded-full border-2 border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-400 font-bold">
+                        <div class="relative z-10 flex items-center justify-center w-10 h-10 rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 text-zinc-400 font-bold">
                             3
                         </div>
                         <div class="mt-3 text-center">
-                            <div class="text-sm font-bold text-zinc-400">Instant Access</div>
-                            <div class="text-xs text-zinc-500 mt-0.5">Download your files</div>
+                            <div class="text-xs font-bold text-zinc-400">Instant Access</div>
                         </div>
                     </div>
                 </div>
             </div>
 
             {{-- Product Summary --}}
-            <flux:card class="p-6">
+            <div class="p-6 bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-3xl shadow-sm">
                 <flux:heading size="lg" class="mb-6">Order Summary</flux:heading>
                 <div class="flex gap-6">
                     <img src="{{ $product->thumbnail_url }}" class="w-24 h-24 rounded-xl object-cover border border-zinc-200 dark:border-zinc-800" alt="{{ $product->name }}">
@@ -69,51 +66,50 @@
                         <h3 class="font-bold text-lg mb-1">{{ $product->name }}</h3>
                         <p class="text-sm text-zinc-500 mb-3">by {{ $product->author->name }}</p>
                         
-                        <div class="p-4 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl mb-6">
+                        <div class="p-4 bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800 rounded-2xl mb-4">
                             <div class="flex items-center gap-2 mb-2">
                                 <flux:icon.shield-check variant="mini" class="text-emerald-500" />
-                                <span class="text-xs font-black uppercase tracking-widest text-emerald-600">Akses Full Source Code</span>
+                                <span class="text-[10px] font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400">Lifetime Access</span>
                             </div>
                             <div class="flex items-baseline gap-2">
-                                <span class="text-3xl font-black">
+                                <span class="text-3xl font-black tabular-nums tracking-tight">
                                     Rp {{ number_format($product->price, 0, ',', '.') }}
                                 </span>
-                                <span class="text-sm text-zinc-500 font-medium">one-time payment</span>
                             </div>
                         </div>
                     </div>
                 </div>
-            </flux:card>
+            </div>
 
             @livewire('checkout.checkout-form', ['product' => $product])
         </div>
 
         {{-- Right: Security Info --}}
-        <div class="space-y-6">
-            <flux:card class="p-6">
-                <flux:heading size="lg" class="mb-6">Secure Checkout</flux:heading>
-                <div class="space-y-4">
-                    <div class="flex gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/20 flex items-center justify-center shrink-0">
-                            <flux:icon.shield-check class="w-5 h-5 text-emerald-600" />
+        <div class="space-y-6 lg:mt-8">
+            <div class="p-6 bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-3xl shadow-sm">
+                <div class="text-xs font-bold uppercase tracking-widest mb-6 text-zinc-900 dark:text-white">Secure Checkout</div>
+                <div class="space-y-5">
+                    <div class="flex gap-4">
+                        <div class="w-10 h-10 rounded-xl bg-zinc-50 dark:bg-zinc-800 flex items-center justify-center shrink-0 border border-zinc-100 dark:border-zinc-700">
+                            <flux:icon.shield-check class="w-5 h-5 text-zinc-600 dark:text-zinc-400" />
                         </div>
                         <div>
                             <div class="font-bold text-sm">Secure Payment</div>
-                            <div class="text-xs text-zinc-500">Your payment is protected</div>
+                            <div class="text-xs text-zinc-500">Your payment is encrypted</div>
                         </div>
                     </div>
-                    <div class="flex gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/20 flex items-center justify-center shrink-0">
-                            <flux:icon.clock class="w-5 h-5 text-emerald-600" />
+                    <div class="flex gap-4">
+                        <div class="w-10 h-10 rounded-xl bg-zinc-50 dark:bg-zinc-800 flex items-center justify-center shrink-0 border border-zinc-100 dark:border-zinc-700">
+                            <flux:icon.clock class="w-5 h-5 text-zinc-600 dark:text-zinc-400" />
                         </div>
                         <div>
                             <div class="font-bold text-sm">24 Hour Window</div>
                             <div class="text-xs text-zinc-500">Complete payment within 24 hours</div>
                         </div>
                     </div>
-                    <div class="flex gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/20 flex items-center justify-center shrink-0">
-                            <flux:icon.check-circle class="w-5 h-5 text-emerald-600" />
+                    <div class="flex gap-4">
+                        <div class="w-10 h-10 rounded-xl bg-zinc-50 dark:bg-zinc-800 flex items-center justify-center shrink-0 border border-zinc-100 dark:border-zinc-700">
+                            <flux:icon.check-circle class="w-5 h-5 text-emerald-500" />
                         </div>
                         <div>
                             <div class="font-bold text-sm">Instant Access</div>
@@ -121,27 +117,25 @@
                         </div>
                     </div>
                 </div>
-            </flux:card>
+            </div>
 
-            <flux:card class="p-6 bg-zinc-50 dark:bg-zinc-900">
-                <div class="text-sm text-zinc-600 dark:text-zinc-400 space-y-2">
-                    <p class="font-bold text-zinc-900 dark:text-white">What's included:</p>
-                    <ul class="space-y-1.5">
-                        <li class="flex gap-2">
-                            <flux:icon.check class="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                            <span>Quality checked by NEXACODE</span>
-                        </li>
-                        <li class="flex gap-2">
-                            <flux:icon.check class="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                            <span>Future updates included</span>
-                        </li>
-                        <li class="flex gap-2">
-                            <flux:icon.check class="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                            <span>6 months support</span>
-                        </li>
-                    </ul>
-                </div>
-            </flux:card>
+            <div class="p-6 bg-zinc-50/50 dark:bg-zinc-900/30 border border-zinc-200/50 dark:border-zinc-800/50 rounded-3xl">
+                <div class="text-sm font-bold text-zinc-900 dark:text-white mb-4">What's included:</div>
+                <ul class="space-y-3 text-sm text-zinc-600 dark:text-zinc-400">
+                    <li class="flex items-start gap-3">
+                        <flux:icon.check class="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                        <span>Quality checked by NEXACODE</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <flux:icon.check class="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                        <span>Future updates included</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <flux:icon.check class="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                        <span>6 months support</span>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>

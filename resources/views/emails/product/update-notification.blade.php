@@ -5,7 +5,7 @@
     'actionColor' => 'success'
 ])
 
-Produk **{{ $product->name }}** yang Anda beli telah diperbarui ke versi **{{ $version->version_number }}**.
+Produk **{{ $product->name }}** yang kamu beli telah diperbarui ke versi **{{ $version->version_number }}**.
 
 ---
 
@@ -21,7 +21,7 @@ Produk **{{ $product->name }}** yang Anda beli telah diperbarui ke versi **{{ $v
 ---
 
 ### Cara Mengunduh
-Anda dapat mengunduh versi terbaru melalui dashboard akun Anda. Semua update produk tersedia gratis untuk pembeli yang sudah ada.
+kamu dapat mengunduh versi terbaru melalui dashboard akun kamu. Semua update produk tersedia gratis untuk pembeli yang sudah ada.
 
 Kamu dapat langsung mengunduh versi terbaru melalui dashboard pesanan.
 

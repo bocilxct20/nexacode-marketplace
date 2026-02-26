@@ -155,7 +155,11 @@
                             <div class="absolute left-0 top-0 bottom-0 w-1 bg-emerald-500 rounded-r-full"></div>
                         @endif
                         <div class="relative">
-                            <flux:avatar :name="$conv->author?->name ?? 'Nexa Support'" :initials="$conv->author?->initials ?? 'S'" class="bg-emerald-500 text-white" />
+                            <flux:avatar 
+                                :name="$conv->author?->name ?? 'Nexa Support'" 
+                                :initials="$conv->author?->initials ?? 'S'" 
+                                class="bg-emerald-500 text-white {{ $conv->author?->isElite() ? 'ring-2 ring-amber-400' : '' }}" 
+                            />
                             @if($conv->author?->isOnline())
                                 <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-zinc-900 shadow-sm" title="Online"></div>
                             @endif
@@ -205,7 +209,11 @@
                 <div class="flex flex-col gap-4">
                     <div class="flex justify-between items-center gap-4">
                         <div class="flex items-center gap-4 min-w-0 flex-1">
-                            <flux:avatar :name="$activeConversation->author?->name ?? 'Nexa Support'" :initials="$activeConversation->author?->initials ?? 'S'" class="bg-emerald-500 text-white" />
+                            <flux:avatar 
+                                :name="$activeConversation->author?->name ?? 'Nexa Support'" 
+                                :initials="$activeConversation->author?->initials ?? 'S'" 
+                                class="bg-emerald-500 text-white {{ $activeConversation->author?->isElite() ? 'ring-2 ring-amber-400 elite-glow-gold' : '' }}" 
+                            />
                             <div class="min-w-0 flex-1">
                                 <flux:heading size="lg" class="truncate">
                                     {{ $activeConversation->author?->name ?? 'Nexa Support' }}
@@ -218,6 +226,14 @@
                                         </div>
                                     @else
                                         <span class="text-[10px] text-zinc-400 uppercase font-bold tracking-wider">Offline</span>
+                                    @endif
+
+                                    @if($activeConversation->author?->isElite())
+                                        <flux:separator vertical class="h-2 mx-1 opacity-50" />
+                                        <div class="flex items-center gap-1">
+                                            <flux:icon.shield-check variant="mini" class="w-3 h-3 text-amber-500" />
+                                            <span class="text-[9px] text-amber-600 font-black uppercase tracking-widest">Elite Chat Active</span>
+                                        </div>
                                     @endif
                                 </div>
                             </div>
@@ -362,7 +378,7 @@
                                             p-4 rounded-2xl text-sm leading-relaxed relative group
                                             {{ !$msg->is_admin 
                                                 ? 'bg-emerald-500 text-white rounded-tr-none shadow-md shadow-emerald-500/20' 
-                                                : 'bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-800 dark:text-zinc-200 rounded-tl-none shadow-sm' 
+                                                : ($activeConversation->author?->isElite() ? 'bg-amber-50 dark:bg-amber-400/10 text-amber-900 dark:text-amber-300 font-medium rounded-tl-none border border-amber-200 dark:border-amber-400/20' : 'bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-800 dark:text-zinc-200 rounded-tl-none shadow-sm') 
                                             }}
                                             {{ $msg->is_pinned ? 'ring-2 ring-amber-400/50' : '' }}
                                         ">
@@ -381,13 +397,13 @@
 
                                             {{-- Pinned Indicator --}}
                                             @if($msg->is_pinned)
-                                                <div class="flex items-center gap-1 mb-1 text-[9px] font-bold uppercase {{ !$msg->is_admin ? 'text-emerald-100' : 'text-amber-600' }}">
+                                                <div class="flex items-center gap-1 mb-1 text-[9px] font-bold uppercase {{ !$msg->is_admin ? 'text-emerald-100' : ($activeConversation->author?->isElite() ? 'text-[#451a03]' : 'text-amber-600') }}">
                                                     <flux:icon.map-pin variant="mini" class="w-3 h-3" />
                                                     <span>Pinned</span>
                                                 </div>
                                             @endif
 
-                                            <div class="prose dark:prose-invert prose-sm max-w-none {{ !$msg->is_admin ? 'text-white' : '' }}">
+                                            <div class="prose dark:prose-invert prose-sm max-w-none {{ !$msg->is_admin ? 'text-white' : ($activeConversation->author?->isElite() ? 'text-amber-900 dark:text-amber-300' : '') }}">
                                                 @if($msg->voice_path)
                                                     {{-- Voice Note Player --}}
                                                     <div class="flex items-center gap-3 py-2 min-w-[200px]" x-data="{ 

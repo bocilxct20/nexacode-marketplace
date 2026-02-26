@@ -27,3 +27,4 @@ Broadcast::channel('presence-support-team', function ($user) {
         'is_admin' => $user->isAdmin(),
     ];
 });
+

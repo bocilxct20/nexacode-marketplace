@@ -5,7 +5,7 @@
     'actionColor' => 'primary'
 ])
 
-Permintaan penarikan dana Anda telah diterima dan sedang dalam proses verifikasi.
+Permintaan penarikan dana kamu telah diterima dan sedang dalam proses verifikasi.
 
 ---
 
@@ -17,8 +17,8 @@ Permintaan penarikan dana Anda telah diterima dan sedang dalam proses verifikasi
 ---
 
 ### Estimasi Waktu
-Permintaan Anda akan ditinjau dalam 1-2 hari kerja. Setelah disetujui, dana akan ditransfer ke rekening terdaftar Anda dalam 1-3 hari kerja.
+Permintaan kamu akan ditinjau dalam 1-2 hari kerja. Setelah disetujui, dana akan ditransfer ke rekening terdaftar kamu dalam 1-3 hari kerja.
 
-Anda akan menerima notifikasi email saat status permintaan diperbarui.
+kamu akan menerima notifikasi email saat status permintaan diperbarui.
 
 @endcomponent

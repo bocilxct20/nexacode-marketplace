@@ -1,11 +1,11 @@
 @component('emails.layouts.nexacode', [
-    'title' => 'Ulasan Baru untuk Produk Anda',
+    'title' => 'Ulasan Baru untuk Produk kamu',
     'actionText' => 'Lihat dan Balas Ulasan',
     'actionUrl' => route('author.products.show', $review->product->id) . '#reviews',
     'actionColor' => 'primary'
 ])
 
-Produk Anda baru saja menerima ulasan dari pembeli.
+Produk kamu baru saja menerima ulasan dari pembeli.
 
 ---
 
@@ -23,8 +23,8 @@ Produk Anda baru saja menerima ulasan dari pembeli.
 ---
 
 ### Langkah Selanjutnya
-Merespons ulasan—baik yang positif maupun konstruktif—menunjukkan bahwa Anda adalah author yang aktif dan peduli terhadap kepuasan pelanggan.
+Merespons ulasan—baik yang positif maupun konstruktif—menunjukkan bahwa kamu adalah author yang aktif dan peduli terhadap kepuasan pelanggan.
 
-Anda dapat membalas ulasan ini melalui Author Dashboard.
+kamu dapat membalas ulasan ini melalui Author Dashboard.
 
 @endcomponent

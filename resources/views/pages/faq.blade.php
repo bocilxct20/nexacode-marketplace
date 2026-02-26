@@ -262,8 +262,6 @@
                 <flux:accordion.item heading="Can I request a custom product?">
                     While we don't offer custom development services directly, you can:
                     <ul class="list-disc list-inside mt-2 space-y-1">
-                        <li>Contact individual authors to discuss custom work</li>
-                        <li>Post a request in our community forum</li>
                         <li>Check if similar products exist that can be customized</li>
                     </ul>
                 </flux:accordion.item>

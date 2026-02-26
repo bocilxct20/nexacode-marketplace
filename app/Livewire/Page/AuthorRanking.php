@@ -27,6 +27,7 @@ class AuthorRanking extends Component
                     ->whereColumn('id', 'users.subscription_plan_id')
                     ->limit(1),
             ])
+            ->with(['products', 'communityBadges'])
             ->withCount('products')
             ->orderByRaw('
                 (IFNULL(total_sales, 0) * 15) + 

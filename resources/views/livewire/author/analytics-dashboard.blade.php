@@ -1,8 +1,13 @@
 <div class="space-y-8" wire:init="loadData">
     <div class="flex items-center justify-between">
-        <div>
-            <flux:heading size="2xl">Author Intelligence Hub</flux:heading>
-            <flux:subheading>Monitor pergerakan produk, pendapatan, dan strategi pemasaran kamu secara real-time.</flux:subheading>
+        <div class="flex items-center gap-4">
+            <div class="shrink-0">
+                <flux:heading size="2xl">Author Intelligence Hub</flux:heading>
+                <flux:subheading>Monitor pergerakan produk, pendapatan, dan strategi pemasaran kamu secara real-time.</flux:subheading>
+            </div>
+            <div class="hidden sm:flex items-center gap-2 pt-1">
+                <x-community-badge :user="auth()->user()" size="md" />
+            </div>
         </div>
         <div class="flex items-center gap-2">
             <flux:dropdown>
@@ -22,11 +27,19 @@
         <div class="absolute -right-8 -top-8 w-32 h-32 bg-indigo-500/10 blur-3xl rounded-full"></div>
         <div class="flex flex-col md:flex-row items-center gap-8 relative">
             <div class="shrink-0 flex flex-col items-center">
-                <div class="relative">
-                    <div class="size-20 rounded-[2rem] bg-indigo-600 flex items-center justify-center shadow-xl shadow-indigo-500/20 border-4 border-white dark:border-zinc-900 text-white">
-                        <span class="text-3xl font-black">{{ $levelProgress['level'] }}</span>
+                <div class="relative group/level">
+                    <div class="size-20 rounded-[2rem] flex items-center justify-center shadow-xl border-4 border-white dark:border-zinc-900 text-white relative overflow-hidden {{ auth()->user()->isElite() ? 'bg-amber-500' : (auth()->user()->isPro() ? 'bg-indigo-600' : 'bg-zinc-800') }}">
+                        @if(auth()->user()->isElite())
+                            <div class="absolute inset-0 elite-shimmer opacity-30"></div>
+                        @elseif(auth()->user()->isPro())
+                            <div class="absolute inset-0 pro-shimmer opacity-20"></div>
+                        @endif
+                        <span class="text-3xl font-black relative z-10 {{ auth()->user()->isElite() ? 'text-amber-950 font-black italic' : '' }}">{{ $levelProgress['level'] }}</span>
                     </div>
-                    <div class="absolute -top-2 -right-2 bg-amber-500 text-white text-[10px] font-black px-2 py-0.5 rounded-lg shadow-lg uppercase tracking-widest">Lvl</div>
+                    @if(auth()->user()->isTrueElite())
+                        <div class="absolute -inset-2 bg-amber-400/20 rounded-[2.5rem] blur-xl animate-pulse"></div>
+                    @endif
+                    <div class="absolute -top-2 -right-2 {{ auth()->user()->isElite() ? 'bg-amber-500' : 'bg-indigo-600' }} text-white text-[10px] font-black px-2 py-0.5 rounded-lg shadow-lg uppercase tracking-widest z-20">Lvl</div>
                 </div>
             </div>
 

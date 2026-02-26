@@ -1,62 +1,56 @@
-@php
-    $layout = 'layouts.app';
-    $profileRoute = 'profile';
-    if (auth()->check()) {
-        if (auth()->user()->isAdmin()) {
-            $layout = 'layouts.admin';
-            $profileRoute = 'admin.profile';
-        } elseif (auth()->user()->isAuthor()) {
-            $layout = 'layouts.author';
-            $profileRoute = 'author.profile';
-        }
-    }
-@endphp
+@extends('layouts.auth')
 
-@extends($layout)
+@section('title', 'Enable 2FA')
+
+@section('side-testimonial')
+    "Scanning a QR code takes seconds, but the protection it provides lasts forever. Secure your digital empire today."
+@endsection
+
+@section('side-author', 'Ahmad Dani Saputra')
+@section('side-role', 'Creator of NEXACODE')
 
 @section('content')
-<div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-2xl w-full space-y-8">
-        <div>
-            <flux:heading size="xl" class="text-center">Enable Two-Factor Authentication</flux:heading>
-            <flux:subheading class="text-center mt-2">
+    <div class="w-full max-w-lg space-y-8">
+        <div class="text-center">
+            <flux:heading size="xl">2FA Activation</flux:heading>
+            <flux:subheading class="mt-2">
                 Secure your account with an authenticator app
             </flux:subheading>
         </div>
 
         <flux:card class="p-8">
-            <div class="space-y-6">
+            <div class="space-y-8">
                 {{-- Step 1: Scan QR Code --}}
                 <div>
-                    <flux:heading size="lg">1. Scan QR Code</flux:heading>
+                    <flux:heading size="lg" class="text-indigo-600 dark:text-indigo-400">1. Scan QR Code</flux:heading>
                     <flux:subheading class="mt-2">
-                        Use an authenticator app like Google Authenticator, Microsoft Authenticator, or Authy
+                        Scan this code with Google Authenticator or Authy.
                     </flux:subheading>
                     
                     <div class="mt-4 flex justify-center">
-                        <div class="p-4 bg-white rounded-lg">
+                        <div class="p-4 bg-white rounded-2xl border-2 border-zinc-100 dark:border-zinc-800 shadow-xl">
                             {!! $qrCode !!}
                         </div>
                     </div>
                 </div>
 
                 {{-- Step 2: Manual Entry --}}
-                <div>
-                    <flux:heading size="lg">2. Or Enter Manually</flux:heading>
+                <div class="pt-6 border-t border-zinc-100 dark:border-zinc-800">
+                    <flux:heading size="lg" class="text-indigo-600 dark:text-indigo-400">2. Manual Backup</flux:heading>
                     <flux:subheading class="mt-2">
-                        If you can't scan the QR code, enter this secret key manually:
+                        If scanning fails, enter this secret key manually:
                     </flux:subheading>
                     
-                    <div class="mt-4 p-4 bg-zinc-100 dark:bg-zinc-800 rounded-lg">
-                        <code class="text-lg font-mono">{{ $secret }}</code>
+                    <div class="mt-4 p-4 bg-zinc-50 dark:bg-zinc-900/50 rounded-xl border border-dashed border-zinc-200 dark:border-zinc-800">
+                        <code class="text-lg font-mono font-bold text-zinc-900 dark:text-white">{{ $secret }}</code>
                     </div>
                 </div>
 
                 {{-- Step 3: Verify Code --}}
-                <div>
-                    <flux:heading size="lg">3. Verify Code</flux:heading>
+                <div class="pt-6 border-t border-zinc-100 dark:border-zinc-800">
+                    <flux:heading size="lg" class="text-indigo-600 dark:text-indigo-400">3. Verification</flux:heading>
                     <flux:subheading class="mt-2">
-                        Enter the 6-digit code from your authenticator app
+                        Enter the 6-digit code to activate 2FA.
                     </flux:subheading>
 
                     <form method="POST" action="{{ route('two-factor.enable') }}" class="mt-4">
@@ -71,38 +65,26 @@
                                 pattern="[0-9]{6}"
                                 required
                                 autofocus
-                                class="text-center text-2xl tracking-widest"
+                                class="text-center text-3xl font-black tracking-[0.3em] h-16"
                             />
 
                             @error('code')
                                 <flux:error>{{ $message }}</flux:error>
                             @enderror
 
-                            <div class="flex gap-3">
-                                <flux:button type="submit" variant="primary" class="flex-1">
-                                    Enable 2FA
+                            <div class="flex gap-3 pt-2">
+                                <flux:button type="submit" variant="primary" class="flex-1 font-bold h-11 shadow-lg">
+                                    Activate Security
                                 </flux:button>
                                 
-                                <flux:button href="{{ route($profileRoute) }}" variant="ghost">
+                                <flux:button href="{{ auth()->user()->isAdmin() ? route('admin.profile') : (auth()->user()->isAuthor() ? route('author.profile') : route('profile')) }}" variant="ghost" class="h-11">
                                     Cancel
                                 </flux:button>
                             </div>
                         </div>
                     </form>
                 </div>
-
-                {{-- Security Notice --}}
-                <div class="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                    <div class="flex gap-3">
-                        <div class="text-blue-600 dark:text-blue-400">ℹ️</div>
-                        <div class="text-sm text-blue-800 dark:text-blue-200">
-                            <strong>Important:</strong> After enabling 2FA, you'll receive backup codes. 
-                            Save them in a secure location. You'll need them if you lose access to your authenticator app.
-                        </div>
-                    </div>
-                </div>
             </div>
         </flux:card>
     </div>
-</div>
 @endsection

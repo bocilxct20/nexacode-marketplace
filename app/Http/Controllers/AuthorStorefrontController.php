@@ -28,6 +28,17 @@ class AuthorStorefrontController extends Controller
         $followerCount = $user->followers()->count();
         $memberSince  = $user->created_at->format('M Y');
 
-        return view('authors.show', compact('user', 'totalSales', 'avgRating', 'isElite', 'productCount', 'followerCount', 'memberSince'));
+        $reputation        = $user->reputation;
+
+        return view('authors.show', compact(
+            'user', 
+            'totalSales', 
+            'avgRating', 
+            'isElite', 
+            'productCount', 
+            'followerCount', 
+            'memberSince',
+            'reputation'
+        ));
     }
 }

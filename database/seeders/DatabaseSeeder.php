@@ -72,6 +72,17 @@ class DatabaseSeeder extends Seeder
             }
         }
 
+        // Midtrans Testing Account (Required for Payment Gateway Review)
+        $midtransTester = User::firstOrCreate(['email' => 'testing@nexacode.id'], [
+            'name' => 'Midtrans Tester',
+            'username' => 'midtranstester',
+            'password' => bcrypt('MidtransTest123!'),
+            'email_verified_at' => now(),
+        ]);
+        if (!$midtransTester->roles()->where('slug', 'buyer')->exists()) {
+            $midtransTester->roles()->attach($buyerRole);
+        }
+
         // 5. Plans, Payment Methods & Platform Settings
         $this->call([
             SubscriptionPlanSeeder::class,

@@ -5,7 +5,7 @@
     'actionColor' => 'success'
 ])
 
-Permintaan penarikan dana Anda telah diproses dan dana akan ditransfer ke rekening terdaftar dalam 1-3 hari kerja.
+Permintaan penarikan dana kamu telah diproses dan dana akan ditransfer ke rekening terdaftar dalam 1-3 hari kerja.
 
 ---
 
@@ -20,6 +20,6 @@ Permintaan penarikan dana Anda telah diproses dan dana akan ditransfer ke rekeni
 ### Informasi Penting
 Dana akan ditransfer sesuai dengan jadwal pemrosesan bank. Jika dana belum diterima setelah 3 hari kerja, silakan hubungi tim support kami.
 
-Anda dapat memantau status penarikan melalui Author Dashboard.
+kamu dapat memantau status penarikan melalui Author Dashboard.
 
 @endcomponent

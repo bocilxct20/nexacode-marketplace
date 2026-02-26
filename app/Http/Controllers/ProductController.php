@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\HelpArticle;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -27,10 +28,32 @@ class ProductController extends Controller
             $q->where('status', 'active')->with('products');
         }]);
         
-        // Track view
+        // Track view (Global Product Stats)
         $product->trackView();
+
+        // Personalization: Track user interest if logged in
+        if (auth()->check() && $product->category_id) {
+            \App\Models\UserBehavior::trackView(auth()->id(), $product->category_id);
+        }
+
+        // INTERCONNECTION: Fetch related docs based on category
+        $relatedDocs = HelpArticle::with('category')->where('is_published', true)
+            ->whereHas('category', function($q) use ($product) {
+                // Try to match Help Category name with Product Category name
+                if ($product->category) {
+                    $q->where('name', 'like', '%' . $product->category->name . '%');
+                }
+            })
+            ->latest()
+            ->take(3)
+            ->get();
+
+        // Fallback to generic docs if nothing found
+        if ($relatedDocs->isEmpty()) {
+            $relatedDocs = HelpArticle::with('category')->where('is_published', true)->latest()->take(3)->get();
+        }
         
-        return view('products.show', compact('product'));
+        return view('products.show', compact('product', 'relatedDocs'));
     }
 
     /**

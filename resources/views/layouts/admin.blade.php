@@ -9,6 +9,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Admin Panel - {{ $platformSettings['site_name'] ?? 'NEXACODE' }}</title>
 
     @fluxAppearance
@@ -111,6 +112,15 @@
         <flux:spacer />
 
         <flux:navbar class="me-4">
+                <flux:dropdown>
+                    <flux:navbar.item icon:trailing="chevron-down">Shortcuts</flux:navbar.item>
+                    <flux:menu>
+                        <flux:menu.item icon="home" href="{{ route('home') }}">Marketplace</flux:menu.item>
+                        <flux:menu.item icon="question-mark-circle" href="{{ route('help.index') }}">Help Center</flux:menu.item>
+                        <flux:menu.item icon="shopping-bag" href="{{ route('purchases.index') }}">My Purchases</flux:menu.item>
+                    </flux:menu>
+                </flux:dropdown>
+
                 <livewire:global.notification-hub />
 
                 <flux:dropdown x-data align="end">
@@ -135,6 +145,28 @@
             <flux:profile :avatar="Auth::user()->avatar" :initials="Auth::user()->initials" />
 
             <flux:menu>
+                <div class="p-4 bg-zinc-50 dark:bg-zinc-900/50 rounded-2xl mb-2 mx-2 border border-zinc-100 dark:border-zinc-800">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-2">
+                            <div class="size-8 rounded-lg bg-cyan-500/10 flex items-center justify-center text-cyan-600">
+                                <flux:icon.sparkles variant="mini" class="size-4" />
+                            </div>
+                            <div>
+                                <div class="text-[10px] font-black uppercase tracking-widest text-zinc-500 leading-none mb-1">Nexus Level</div>
+                                <div class="text-sm font-black text-zinc-900 dark:text-white leading-none">Level {{ Auth::user()->level }}</div>
+                            </div>
+                        </div>
+                        <div class="text-[10px] font-black uppercase text-zinc-400">{{ number_format(Auth::user()->xp) }} XP</div>
+                    </div>
+                    <div class="h-1.5 w-full bg-zinc-200 dark:bg-zinc-800 rounded-full overflow-hidden">
+                        @php 
+                            $xpInLevel = Auth::user()->xp % 1000; 
+                            $progress = ($xpInLevel / 1000) * 100;
+                        @endphp
+                        <div class="h-full bg-cyan-500 rounded-full" style="width: {{ $progress }}%"></div>
+                    </div>
+                </div>
+
                 <flux:menu.item icon="user-circle" href="{{ route('admin.profile') }}">Profile Settings</flux:menu.item>
                 <flux:menu.item href="{{ route('purchases.index') }}">My Purchases</flux:menu.item>
                 @if(Auth::user()->isAuthor())
@@ -167,45 +199,47 @@
         @yield('content')
 
         <flux:footer container class="mt-24 pt-16 pb-8 border-t">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-12 mb-16">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-20">
+                <div class="lg:col-span-2">
+                    <flux:brand href="/" name="{{ $platformSettings['site_name'] ?? 'NEXACODE' }}" class="mb-8 font-bold text-xl">
+                        <x-slot name="logo" class="size-6 flex items-center justify-center">
+                            <x-nexacode-brand-n variant="footer" class="size-full" />
+                        </x-slot>
+                    </flux:brand>
+                    <p class="text-zinc-500 dark:text-zinc-400 text-base leading-relaxed mb-4 max-w-sm">
+                        {{ $platformSettings['meta_description'] ?? 'The world\'s premium marketplace for the best scripts, themes, and templates.' }}
+                    </p>
+                    <div class="flex gap-3">
+                        <flux:button href="{{ $platformSettings['social_facebook'] ?? '#' }}" variant="ghost" square aria-label="Facebook">
+                            <x-lucide-facebook class="w-5 h-5" />
+                        </flux:button>
+                        <flux:button href="{{ $platformSettings['social_twitter'] ?? '#' }}" variant="ghost" square aria-label="Twitter">
+                            <x-lucide-twitter class="w-5 h-5" />
+                        </flux:button>
+                        <flux:button href="{{ $platformSettings['social_github'] ?? '#' }}" variant="ghost" square aria-label="GitHub">
+                            <x-lucide-github class="w-5 h-5" />
+                        </flux:button>
+                    </div>
+                </div>
+                
                 <div>
                     <flux:heading size="sm" class="mb-6 uppercase tracking-[0.2em]">Marketplace</flux:heading>
                     <ul class="space-y-4 text-sm text-zinc-500 dark:text-zinc-400">
-                        <li><flux:link href="{{ route('categories.show', 'php-scripts') }}" variant="subtle">PHP Scripts</flux:link></li>
-                        <li><flux:link href="{{ route('categories.show', 'wordpress') }}" variant="subtle">WordPress Themes</flux:link></li>
-                        <li><flux:link href="{{ route('products.index', ['sort' => 'newest']) }}" variant="subtle">Latest Items</flux:link></li>
-                        <li><flux:link href="{{ route('products.index', ['sort' => 'popular']) }}" variant="subtle">Best Sellers</flux:link></li>
+                        <li><a href="{{ route('categories.show', 'php-scripts') }}" class="hover:text-emerald-500 transition-colors">PHP Scripts</a></li>
+                        <li><a href="{{ route('categories.show', 'wordpress') }}" class="hover:text-emerald-500 transition-colors">WordPress Themes</a></li>
+                        <li><a href="{{ route('products.index', ['sort' => 'newest']) }}" class="hover:text-emerald-500 transition-colors">Latest Items</a></li>
+                        <li><a href="{{ route('products.index', ['sort' => 'popular']) }}" class="hover:text-emerald-500 transition-colors">Best Sellers</a></li>
                     </ul>
                 </div>
 
-                <div>
-                    <flux:heading size="sm" class="mb-6 uppercase tracking-[0.2em]">Community</flux:heading>
-                    <ul class="space-y-4 text-sm text-zinc-500 dark:text-zinc-400">
-                        <li><flux:link href="{{ route('author.register') }}" variant="subtle">Become an Author</flux:link></li>
-                        <li><flux:link href="{{ route('author.dashboard') }}" variant="subtle">Author Dashboard</flux:link></li>
-                        <li><flux:link href="#" variant="subtle">Affiliates</flux:link></li>
-                        <li><flux:link href="#" variant="subtle">Forum</flux:link></li>
-                    </ul>
-                </div>
 
                 <div>
                     <flux:heading size="sm" class="mb-6 uppercase tracking-[0.2em]">Support</flux:heading>
                     <ul class="space-y-4 text-sm text-zinc-500 dark:text-zinc-400">
-                        <li><flux:link href="{{ route('home') }}" variant="subtle">Help Center</flux:link></li>
-                        <li><flux:link href="{{ route('faq') }}" variant="subtle">FAQ</flux:link></li>
-                        <li><flux:link href="{{ route('terms') }}" variant="subtle">Terms of Service</flux:link></li>
-                        <li><flux:link href="{{ route('privacy') }}" variant="subtle">Privacy Policy</flux:link></li>
-                    </ul>
-                </div>
-
-                <div>
-                    <flux:heading size="sm" class="mb-6 uppercase tracking-[0.2em]">Admin</flux:heading>
-                    <ul class="space-y-4 text-sm text-zinc-500 dark:text-zinc-400">
-                        <li><a href="{{ route('admin.dashboard') }}" class="hover:text-emerald-500 transition-colors">Dashboard</a></li>
-                        <li><a href="{{ route('admin.moderation') }}" class="hover:text-emerald-500 transition-colors">Moderation</a></li>
-                        <li><a href="{{ route('admin.users') }}" class="hover:text-emerald-500 transition-colors">Users</a></li>
-                        <li><a href="{{ route('admin.subscriptions') }}" class="hover:text-emerald-500 transition-colors">Subscriptions</a></li>
-                        <li><a href="{{ route('admin.settings') }}" class="hover:text-emerald-500 transition-colors">Settings</a></li>
+                        <li><a href="{{ route('help.index') }}" class="hover:text-emerald-500 transition-colors">Help Center</a></li>
+                        <li><a href="{{ route('faq') }}" class="hover:text-emerald-500 transition-colors">FAQ</a></li>
+                        <li><a href="{{ route('terms') }}" class="hover:text-emerald-500 transition-colors">Terms of Service</a></li>
+                        <li><a href="{{ route('privacy') }}" class="hover:text-emerald-500 transition-colors">Privacy Policy</a></li>
                     </ul>
                 </div>
             </div>

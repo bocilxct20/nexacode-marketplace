@@ -32,12 +32,17 @@ class ArticleDetail extends Component
         }
     }
 
-    public function voteAction($type)
+    public function voteAction($type, \App\Services\GamificationService $gamification)
     {
         if ($this->hasVoted) return;
 
         if ($type === 'helpful') {
             $this->article->increment('helpful_count');
+            
+            // award XP for helpful feedback
+            if (auth()->check()) {
+                $gamification->awardActionXP(auth()->user(), 'help_article_feedback');
+            }
             
             // Store vote in session
             $votes = session()->get('article_votes', []);
@@ -53,7 +58,7 @@ class ArticleDetail extends Component
         }
     }
 
-    public function submitDetailedFeedback()
+    public function submitDetailedFeedback(\App\Services\GamificationService $gamification)
     {
         if ($this->hasVoted) return;
 
@@ -67,6 +72,11 @@ class ArticleDetail extends Component
             'comment' => $this->feedbackComment,
             'user_id' => auth()->id(),
         ]);
+
+        // award XP for detailed feedback (usually more valuable)
+        if (auth()->check()) {
+            $gamification->awardXP(auth()->user(), 15, 'Detailed article feedback');
+        }
 
         $this->article->increment('unhelpful_count');
         

@@ -9,6 +9,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>@yield('title', $platformSettings['meta_title'] ?? config('app.name', 'NexaCode Marketplace'))</title>
         <meta name="description" content="@yield('meta_description', $platformSettings['meta_description'] ?? 'Premium source code and digital products.')">
@@ -35,7 +36,7 @@
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800" rel="stylesheet" />
+        <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800|jetbrains-mono:400,500,700" rel="stylesheet" />
 
         <!-- Styles / Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -43,6 +44,8 @@
         <!-- Flux UI -->
         @fluxAppearance
         @livewireStyles
+
+        
         @stack('head')
 
         <script>
@@ -172,35 +175,31 @@
             </flux:brand>
 
             <flux:navbar class="-mb-px max-lg:hidden">
-                <flux:navbar.item href="{{ route('products.index') }}" :current="request()->routeIs('products.index')">Browse</flux:navbar.item>
-                <flux:navbar.item href="{{ route('products.index', ['sort' => 'popular']) }}" :current="request()->routeIs('products.index') && request('sort') === 'popular'">Trending</flux:navbar.item>
-                <flux:navbar.item href="{{ route('products.index', ['sort' => 'newest']) }}" :current="request()->routeIs('products.index') && request('sort') === 'newest' || (request()->routeIs('products.index') && !request('sort'))">New Arrivals</flux:navbar.item>
-
+                <flux:navbar.item href="{{ route('products.index') }}" :current="request()->routeIs('products.index')">Marketplace</flux:navbar.item>
                 <flux:navbar.item href="{{ route('help.index') }}" :current="request()->routeIs('help.*')">Help Center</flux:navbar.item>
 
                 <flux:separator vertical variant="subtle" class="my-2"/>
 
                 <flux:dropdown class="max-lg:hidden">
-                    <flux:navbar.item icon:trailing="chevron-down">Categories</flux:navbar.item>
+                    <flux:navbar.item icon:trailing="chevron-down">Explore</flux:navbar.item>
 
                     <flux:navmenu>
-                        @foreach($categories->take(5) as $cat)
+                        <flux:navmenu.item href="{{ route('products.index', ['sort' => 'popular']) }}">Trending</flux:navmenu.item>
+                        <flux:navmenu.item href="{{ route('products.index', ['sort' => 'newest']) }}">New Arrivals</flux:navmenu.item>
+                        <flux:navmenu.separator />
+                        <div class="px-2 pb-2">
+                            <flux:heading size="xs" class="uppercase tracking-widest text-zinc-400">Categories</flux:heading>
+                        </div>
+                        @foreach($categories->take(8) as $cat)
                             <flux:navmenu.item href="{{ route('categories.show', $cat->slug) }}">{{ $cat->name }}</flux:navmenu.item>
                         @endforeach
                     </flux:navmenu>
                 </flux:dropdown>
 
-                @auth
-                    <flux:separator vertical variant="subtle" class="my-2"/>
-                    
-                    <flux:navbar.item href="{{ route('purchases.index') }}" :current="request()->routeIs('purchases.*')">My Purchases</flux:navbar.item>
-                    <flux:navbar.item href="{{ route('affiliate.dashboard') }}" :current="request()->routeIs('affiliate.dashboard')">Affiliates</flux:navbar.item>
-                    <flux:navbar.item href="{{ route('inbox') }}" :current="request()->routeIs('inbox')">Messages</flux:navbar.item>
-                    <flux:navbar.item href="{{ route('wishlist.index') }}" :current="request()->routeIs('wishlist.*')">Wishlist</flux:navbar.item>
-                @endauth
             </flux:navbar>
 
             <flux:spacer />
+
 
             <flux:navbar class="me-4">
 
@@ -229,14 +228,39 @@
 
             @if (Route::has('login'))
                 @auth
-                    <flux:dropdown position="top" align="start">
-                        <flux:profile 
-                            :avatar="auth()->user()->avatar" 
-                            :initials="auth()->user()->initials" 
-                            name="{{ auth()->user()->name }}" 
-                        />
+                    <flux:dropdown x-data align="end">
+                        <flux:button variant="subtle" class="flex items-center gap-3 px-3 rounded-2xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors group">
+                            <x-user-avatar :user="auth()->user()" size="xs" class="group-hover:scale-110 transition-transform" />
+                            <div class="flex flex-col items-start leading-none gap-1">
+                                <span class="text-xs font-black uppercase tracking-widest text-zinc-900 dark:text-white">{{ auth()->user()->name }}</span>
+                                <span class="text-[9px] font-bold text-emerald-500 uppercase tracking-tighter">Level {{ auth()->user()->level }}</span>
+                            </div>
+                            <flux:icon.chevron-down variant="micro" class="size-3 text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors" />
+                        </flux:button>
 
                         <flux:menu>
+                            <div class="p-4 bg-zinc-50 dark:bg-zinc-900/50 rounded-2xl mb-2 mx-2 border border-zinc-100 dark:border-zinc-800">
+                                <div class="flex items-center justify-between mb-3">
+                                    <div class="flex items-center gap-2">
+                                        <div class="size-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-600">
+                                            <flux:icon.sparkles variant="mini" class="size-4" />
+                                        </div>
+                                        <div>
+                                            <div class="text-[10px] font-black uppercase tracking-widest text-zinc-500 leading-none mb-1">Nexus Level</div>
+                                            <div class="text-sm font-black text-zinc-900 dark:text-white leading-none">Level {{ auth()->user()->level }}</div>
+                                        </div>
+                                    </div>
+                                    <div class="text-[10px] font-black uppercase text-zinc-400">{{ number_format(auth()->user()->xp) }} XP</div>
+                                </div>
+                                <div class="h-1.5 w-full bg-zinc-200 dark:bg-zinc-800 rounded-full overflow-hidden">
+                                    @php 
+                                        $xpInLevel = auth()->user()->xp % 1000; 
+                                        $progress = ($xpInLevel / 1000) * 100;
+                                    @endphp
+                                    <div class="h-full bg-emerald-500 rounded-full" style="width: {{ $progress }}%"></div>
+                                </div>
+                            </div>
+
                             <flux:menu.item icon="user-circle" href="{{ auth()->user()->isAdmin() ? route('admin.profile') : (auth()->user()->isAuthor() ? route('author.profile') : route('profile')) }}">Profile Settings</flux:menu.item>
                             <flux:menu.item icon="chat-bubble-left-right" href="{{ route('inbox') }}">Messages</flux:menu.item>
                             <flux:menu.item icon="shopping-bag" href="{{ route('purchases.index') }}">My Purchases</flux:menu.item>
@@ -302,8 +326,7 @@
             </flux:sidebar.nav>
 
             <flux:sidebar.spacer />
-
-            @guest
+                @guest
                 <flux:sidebar.nav>
                     <flux:sidebar.item href="{{ route('login') }}">Log in</flux:sidebar.item>
                     <flux:sidebar.item href="{{ route('author.register') }}">Become an Author</flux:sidebar.item>
@@ -327,7 +350,7 @@
                             </x-slot>
                         </flux:brand>
                         <p class="text-zinc-500 dark:text-zinc-400 text-base leading-relaxed mb-4 max-w-sm">
-                            {{ $platformSettings['meta_description'] ?? 'The world\'s premium marketplace for the best scripts, themes, and templates.' }}
+                            {{ $platformSettings['meta_description'] ?? 'Marketplace premium untuk script, tema, dan template terbaik dunia untuk proyek digital kamu.' }}
                         </p>
                         @if(isset($platformSettings['site_address']))
                             <p class="text-zinc-400 dark:text-zinc-500 text-xs mb-8 max-w-sm whitespace-pre-line">
@@ -355,22 +378,13 @@
                     <div>
                         <flux:heading size="sm" class="mb-6 uppercase tracking-[0.2em]">Marketplace</flux:heading>
                         <ul class="space-y-4 text-sm text-zinc-500 dark:text-zinc-400">
-                            <li><a href="{{ route('categories.show', 'php-scripts') }}" class="hover:text-emerald-500 transition-colors">PHP Scripts</a></li>
-                            <li><a href="{{ route('categories.show', 'wordpress') }}" class="hover:text-emerald-500 transition-colors">WordPress Themes</a></li>
+                            <li><a href="{{ route('categories.show', 'laravel-scripts') }}" class="hover:text-emerald-500 transition-colors">Laravel Scripts</a></li>
+                            <li><a href="{{ route('categories.show', 'wordpress-themes') }}" class="hover:text-emerald-500 transition-colors">WordPress Themes</a></li>
                             <li><a href="{{ route('products.index', ['sort' => 'newest']) }}" class="hover:text-emerald-500 transition-colors">Latest Items</a></li>
                             <li><a href="{{ route('products.index', ['sort' => 'popular']) }}" class="hover:text-emerald-500 transition-colors">Best Sellers</a></li>
                         </ul>
                     </div>
 
-                    <div>
-                        <flux:heading size="sm" class="mb-6 uppercase tracking-[0.2em]">Community</flux:heading>
-                        <ul class="space-y-4 text-sm text-zinc-500 dark:text-zinc-400">
-                            <li><flux:link href="{{ route('author.register') }}" variant="subtle">Become an Author</flux:link></li>
-                            <li><flux:link href="{{ route('author.dashboard') }}" variant="subtle">Author Dashboard</flux:link></li>
-                            <li><flux:link href="{{ route('affiliate.dashboard') }}" variant="subtle">Affiliates</flux:link></li>
-                            <li><flux:link href="#" variant="subtle">Forum</flux:link></li>
-                        </ul>
-                    </div>
 
                     <div>
                         <flux:heading size="sm" class="mb-6 uppercase tracking-[0.2em]">Support</flux:heading>
@@ -387,13 +401,16 @@
 
                 <div class="pt-12 flex flex-col md:flex-row justify-between items-center gap-8">
                     <div class="text-sm text-zinc-500 dark:text-zinc-500">
-                        &copy; {{ date('Y') }} {{ $platformSettings['site_name'] ?? 'NexaCode Marketplace' }}. All rights reserved.
+                        &copy; {{ date('Y') }} {{ $platformSettings['site_name'] ?? 'NexaCode Marketplace' }}. Hak cipta dilindungi undang-undang.
                     </div>
                     <div class="flex items-center gap-6">
                         <span class="font-bold text-zinc-400 opacity-50">NEXACODE</span>
                         <flux:separator vertical />
                         <div class="flex gap-6 text-sm text-zinc-500 dark:text-zinc-500">
-                            <a href="#" class="hover:text-emerald-500 transition-colors">English (USD)</a>
+                            <span class="flex items-center gap-2">
+                                <flux:icon name="globe-alt" variant="micro" class="size-3" />
+                                Indonesia (IDR)
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -405,6 +422,7 @@
         <livewire:global.lightbox />
         @livewireScripts
         @fluxScripts
+        <script src="{{ asset('js/tracking.js') }}"></script>
 
         <script>
             document.addEventListener('livewire:init', () => {
@@ -425,7 +443,35 @@
                 @if(session('status'))
                     window.Flux.toast({ heading: 'Status Update', text: '{{ session('status') }}' });
                 @endif
+
+                @if(session('badge_awarded'))
+                    window.Flux.toast({ 
+                        variant: 'success', 
+                        heading: 'New Badge Unlocked!', 
+                        text: 'Selamat! Kamu baru saja mendapatkan lencana {{ session('badge_awarded')['name'] }}. Cek profilmu untuk melihat koleksi lencana!',
+                        icon: 'sparkles'
+                    });
+                @endif
+
+                // Real-time Notification Listener
+                @auth
+                    if (window.Echo) {
+                        window.Echo.private('App.Models.User.{{ auth()->id() }}')
+                            .notification((notification) => {
+                                window.Flux.toast({
+                                    variant: 'success',
+                                    heading: 'Notification',
+                                    text: notification.message || 'Ada pembaruan baru untuk kamu.',
+                                    icon: 'bell'
+                                });
+                                
+                                // Dispatch event for other components if needed
+                                window.dispatchEvent(new CustomEvent('notification-received', { detail: notification }));
+                            });
+                    }
+                @endauth
             });
         </script>
+        @livewire('home.social-proof')
     </body>
 </html>

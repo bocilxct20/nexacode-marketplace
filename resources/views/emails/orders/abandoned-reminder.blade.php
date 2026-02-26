@@ -5,11 +5,11 @@
     'actionColor' => 'success'
 ])
 
-Kami melihat bahwa Anda belum menyelesaikan pembelian untuk item berikut di NexaCode Marketplace.
+Kami melihat bahwa kamu belum menyelesaikan pembelian untuk item berikut di NexaCode Marketplace.
 
 ---
 
-## Item di Keranjang Anda
+## Item di Keranjang kamu
 @foreach($order->items as $item)
 @component('mail::panel')
 ### {{ $item->product->name }}
@@ -24,8 +24,8 @@ Kami melihat bahwa Anda belum menyelesaikan pembelian untuk item berikut di Nexa
 ---
 
 ### Butuh Bantuan?
-Jika Anda memiliki pertanyaan mengenai produk atau metode pembayaran, silakan hubungi tim support kami di [support@nexacode.id](mailto:support@nexacode.id).
+Jika kamu memiliki pertanyaan mengenai produk atau metode pembayaran, silakan hubungi tim support kami di [support@nexacode.id](mailto:support@nexacode.id).
 
-Keranjang Anda akan tetap tersimpan selama 7 hari ke depan.
+Keranjang kamu akan tetap tersimpan selama 7 hari ke depan.
 
 @endcomponent

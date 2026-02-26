@@ -30,7 +30,7 @@ class PlatformSettingSeeder extends Seeder
 
             // SEO
             ['key' => 'meta_title',       'value' => 'NexaCode - Digital Marketplace'],
-            ['key' => 'meta_description', 'value' => 'Premium source code and digital products for developers.'],
+            ['key' => 'meta_description', 'value' => 'Source code premium dan aset digital profesional untuk mempercepat pekerjaan developer dan designer.'],
         ];
 
         foreach ($settings as $setting) {

@@ -5,7 +5,7 @@
     'actionColor' => 'success'
 ])
 
-Terima kasih atas pembelian Anda di NexaCode Marketplace. Pembayaran telah diverifikasi dan item digital Anda siap untuk diunduh.
+Terima kasih atas pembelian kamu di NexaCode Marketplace. Pembayaran telah diverifikasi dan item digital kamu siap untuk diunduh.
 
 ---
 
@@ -27,14 +27,14 @@ Terima kasih atas pembelian Anda di NexaCode Marketplace. Pembayaran telah diver
 ---
 
 ### Invoicing
-Anda dapat mengunduh invoice resmi untuk pesanan ini melalui tautan berikut:
+kamu dapat mengunduh invoice resmi untuk pesanan ini melalui tautan berikut:
 [Download PDF Invoice]({{ route('orders.invoice', $order) }})
 
 ---
 
 ### Bantuan Teknis
-Jika Anda mengalami kendala saat mengunduh produk, silakan hubungi penulis melalui sistem pesan atau buka tiket support.
+Jika kamu mengalami kendala saat mengunduh produk, silakan hubungi penulis melalui sistem pesan atau buka tiket support.
 
-Semua produk yang telah dibeli dapat diunduh kembali kapan saja melalui dashboard akun Anda.
+Semua produk yang telah dibeli dapat diunduh kembali kapan saja melalui dashboard akun kamu.
 
 @endcomponent

@@ -28,8 +28,8 @@ Your payment has been successfully verified. Your account has been upgraded to *
 ---
 
 ### Langkah Selanjutnya
-Anda sekarang dapat mengakses fitur premium melalui Author Dashboard, termasuk analitik mendalam, kupon promosi, dan potongan komisi sesuai tier Anda.
+kamu sekarang dapat mengakses fitur premium melalui Author Dashboard, termasuk analitik mendalam, kupon promosi, dan potongan komisi sesuai tier kamu.
 
-Jika Anda memiliki pertanyaan, tim support kami siap membantu.
+Jika kamu memiliki pertanyaan, tim support kami siap membantu.
 
 @endcomponent

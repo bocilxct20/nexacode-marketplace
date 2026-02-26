@@ -31,11 +31,11 @@
                     @endforeach
                 </flux:navlist>
 
-                <div class="mt-12 p-6 bg-zinc-900 rounded-3xl text-center overflow-hidden relative">
-                    <div class="absolute -top-10 -right-10 w-24 h-24 bg-emerald-500/20 blur-2xl rounded-full"></div>
-                    <flux:heading size="sm" class="text-white mb-2">Need Help?</flux:heading>
-                    <p class="text-xs text-zinc-500 mb-4">Contact our support team anytime.</p>
-                    <flux:button wire:click="contactSupport" size="sm" variant="primary" class="w-full h-10 bg-emerald-600 border-none">Chat Now</flux:button>
+                <div class="mt-12 p-6 bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-3xl text-center overflow-hidden relative shadow-sm">
+                    <div class="absolute -top-10 -right-10 w-24 h-24 bg-emerald-500/10 blur-2xl rounded-full"></div>
+                    <div class="font-black text-sm text-zinc-900 dark:text-white uppercase tracking-tight mb-2">Need Help?</div>
+                    <p class="text-[10px] font-medium uppercase tracking-widest text-zinc-500 mb-4">Contact our support team anytime.</p>
+                    <flux:button wire:click="contactSupport" size="sm" variant="primary" class="w-full text-[10px] font-black uppercase tracking-widest h-10 shadow-sm hover:-translate-y-0.5 transition-transform">Chat Now</flux:button>
                 </div>
             </div>
         </aside>
@@ -63,26 +63,26 @@
             <div class="grid grid-cols-1 gap-4">
                 @forelse($articles as $article)
                     <a href="{{ route('help.article', [$category->slug, $article->slug]) }}" class="group">
-                        <flux:card class="p-6 hover:shadow-lg hover:border-emerald-500/30 transition-all duration-300 border-zinc-100 dark:border-zinc-800">
+                        <div class="bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 shadow-sm hover:border-emerald-500/30 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-all duration-300">
                             <div class="flex items-center">
-                                <div class="w-10 h-10 rounded-lg bg-zinc-50 dark:bg-zinc-800 flex items-center justify-center text-zinc-400 group-hover:text-emerald-500 transition-colors mr-6">
+                                <div class="w-10 h-10 rounded-xl bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700/50 flex items-center justify-center text-zinc-400 group-hover:text-emerald-500 transition-colors mr-6 flex-shrink-0">
                                     <flux:icon name="document-text" variant="mini" class="w-5 h-5" />
                                 </div>
                                 <div class="flex-1">
-                                    <flux:heading size="lg" class="group-hover:text-emerald-600 transition-colors">{{ $article->title }}</flux:heading>
+                                    <div class="font-bold text-lg text-zinc-900 dark:text-white group-hover:text-emerald-600 transition-colors tracking-tight">{{ $article->title }}</div>
                                     @if($article->excerpt)
-                                        <p class="text-sm text-zinc-500 mt-1 line-clamp-1 truncate">{{ $article->excerpt }}</p>
+                                        <p class="text-xs font-medium text-zinc-500 mt-1 line-clamp-1 truncate">{{ $article->excerpt }}</p>
                                     @endif
                                 </div>
-                                <flux:icon name="chevron-right" class="w-5 h-5 text-zinc-300 group-hover:text-emerald-500 group-hover:translate-x-1 transition-all" />
+                                <flux:icon name="chevron-right" variant="mini" class="w-5 h-5 text-zinc-300 group-hover:text-emerald-500 transition-all" />
                             </div>
-                        </flux:card>
+                        </div>
                     </a>
                 @empty
-                    <div class="text-center py-20 bg-zinc-50 dark:bg-zinc-800/50 rounded-3xl border-2 border-dashed border-zinc-200 dark:border-zinc-800">
-                        <flux:icon name="document-text" class="mx-auto w-16 h-16 text-zinc-300 mb-4" />
-                        <flux:heading>No articles yet</flux:heading>
-                        <flux:subheading>This category doesn't have any guides published yet.</flux:subheading>
+                    <div class="text-center py-20 bg-zinc-50 dark:bg-zinc-900/30 rounded-3xl border border-dashed border-zinc-200 dark:border-zinc-800">
+                        <flux:icon name="document-text" class="mx-auto w-12 h-12 text-zinc-300 mb-4" />
+                        <div class="font-black uppercase tracking-tight text-lg mb-1">No articles yet</div>
+                        <div class="text-xs font-medium text-zinc-500">This category doesn't have any guides published yet.</div>
                     </div>
                 @endforelse
             </div>

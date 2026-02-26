@@ -271,4 +271,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::get('/affiliate/coupons', \App\Livewire\Admin\Affiliate\AffiliateCouponManager::class)->name('admin.affiliate.coupons');
 });
 
+// Behavioral Tracking Route (Heat Insight)
+Route::post('/tracking/track', [App\Http\Controllers\Api\TrackingController::class, 'store'])->name('tracking.track');
+
 

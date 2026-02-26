@@ -5,7 +5,7 @@
     'actionColor' => 'success'
 ])
 
-Masa percobaan gratis untuk paket **{{ $plan->name }}** telah diaktifkan. Selama 7 hari ke depan, Anda dapat mengakses semua fitur premium tanpa biaya.
+Masa percobaan gratis untuk paket **{{ $plan->name }}** telah diaktifkan. Selama 7 hari ke depan, kamu dapat mengakses semua fitur premium tanpa biaya.
 
 ---
 
@@ -22,10 +22,10 @@ Masa percobaan gratis untuk paket **{{ $plan->name }}** telah diaktifkan. Selama
 
 ## Panduan Penggunaan
 Manfaatkan masa percobaan ini untuk:
-1. **Analitik Mendalam**: Pantau performa produk Anda secara real-time
+1. **Analitik Mendalam**: Pantau performa produk kamu secara real-time
 2. **Kupon Promosi**: Buat kampanye diskon untuk meningkatkan konversi
 3. **Komisi Lebih Rendah**: Nikmati margin keuntungan yang lebih besar
 
-Setelah masa trial berakhir, akun Anda akan kembali ke paket Basic secara otomatis kecuali Anda melakukan upgrade. Semua data Anda akan tetap tersimpan dengan aman.
+Setelah masa trial berakhir, akun kamu akan kembali ke paket Basic secara otomatis kecuali kamu melakukan upgrade. Semua data kamu akan tetap tersimpan dengan aman.
 
 @endcomponent
