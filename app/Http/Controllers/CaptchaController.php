@@ -31,7 +31,7 @@ class CaptchaController extends Controller
         // Store HMAC of lowercased answer under per-instance session key
         session([
             "captcha_{$key}" => [
-                'token'      => hash_hmac('sha256', strtolower($text), config('app.key')),
+                'token'      => hash_hmac('sha256', strtoupper($text), config('app.key')),
                 'expires_at' => now()->addMinutes(5)->toDateTimeString(),
             ]
         ]);

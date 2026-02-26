@@ -69,7 +69,7 @@ class Register extends Component
         }
 
         // Constant-time comparison (timing-attack safe)
-        $expected = hash_hmac('sha256', strtolower(trim($value)), config('app.key'));
+        $expected = hash_hmac('sha256', strtoupper(trim($value)), config('app.key'));
         if (!hash_equals($expected, $captcha['token'])) {
             session()->forget($sessionKey); // One-time use — invalidate immediately
             return 'Jawaban captcha salah. Silakan refresh dan coba lagi.';
