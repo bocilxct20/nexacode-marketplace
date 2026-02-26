@@ -21,7 +21,7 @@ class ResetPasswordNotification extends BaseResetPassword
         return (new MailMessage)
             ->from(config('mail.aliases.security'), 'NexaCode Security')
             ->subject('Reset Password Akun NexaCode Kamu')
-            ->view('emails.security', [
+            ->markdown('emails.security', [
                 'title' => '🔐 Reset Password Kamu',
                 'actionText' => 'Reset Password',
                 'actionUrl' => $url,
